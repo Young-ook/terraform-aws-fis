@@ -16,7 +16,10 @@ resource "random_integer" "az" {
   max = length(var.azs) - 1
 }
 
-locals {
+module "awsfis" {
+  source = "Young-ook/fis/aws"
+  name   = var.name
+  tags   = var.tags
   experiments = [
     {
       name     = "cpu-stress"
@@ -70,11 +73,4 @@ locals {
       }
     },
   ]
-}
-
-module "awsfis" {
-  source      = "Young-ook/fis/aws"
-  name        = var.name
-  tags        = var.tags
-  experiments = local.experiments
 }
