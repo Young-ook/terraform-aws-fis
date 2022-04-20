@@ -48,3 +48,8 @@ tfenv install latest
 tfenv use 0.12.18
 ```
 
+# Additional Resources
+- [Terraform module: Amazon Aurora](https://github.com/Young-ook/terraform-aws-aurora)
+- [Terraform module: Amazon EKS](https://github.com/Young-ook/terraform-aws-eks)
+- [Terraform module: AWS Systems Manager](https://github.com/Young-ook/terraform-aws-ssm)
+- [Terraform module: Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker)
