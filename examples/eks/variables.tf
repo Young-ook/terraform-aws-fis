@@ -21,6 +21,12 @@ variable "cidr" {
   type        = string
 }
 
+### kubernetes cluster
+variable "kubernetes_version" {
+  description = "The target version of kubernetes"
+  type        = string
+}
+
 ### description
 variable "name" {
   description = "The logical name of the module instance"
