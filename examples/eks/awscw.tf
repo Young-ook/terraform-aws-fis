@@ -1,4 +1,4 @@
-### application/monitoring
+# application/monitoring
 resource "aws_cloudwatch_metric_alarm" "cpu" {
   alarm_name                = join("-", [var.name, "cpu", "alarm"])
   alarm_description         = "This metric monitors ec2 cpu utilization"
