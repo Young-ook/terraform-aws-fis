@@ -22,6 +22,7 @@ module "vpc" {
 # eks
 module "eks" {
   source             = "Young-ook/eks/aws"
+  version            = "1.7.5"
   name               = var.name
   tags               = var.tags
   subnets            = values(module.vpc.subnets["private"])
@@ -38,6 +39,7 @@ module "eks" {
 # aurora
 module "mysql" {
   source           = "Young-ook/aurora/aws"
+  version          = "2.0.4"
   name             = var.name
   tags             = var.tags
   vpc              = module.vpc.vpc.id
