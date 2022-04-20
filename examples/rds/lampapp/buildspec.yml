@@ -1,0 +1,14 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - $(aws ecr get-login --no-include-email)
+      - TAG="$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | head -c 8)"
+      - IMAGE_URI="${ECR_URI}:${TAG}"
+  build:
+    commands:
+      - cd "$APP_SRC"
+      - docker build --tag "$IMAGE_URI" .
+  post_build:
+    commands:
+      - docker push "$IMAGE_URI"

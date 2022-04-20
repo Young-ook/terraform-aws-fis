@@ -11,11 +11,6 @@ variable "azs" {
   type        = list(string)
 }
 
-variable "use_default_vpc" {
-  description = "A feature flag for whether to use default vpc"
-  type        = bool
-}
-
 variable "cidr" {
   description = "The vpc CIDR (e.g. 10.0.0.0/16)"
   type        = string
