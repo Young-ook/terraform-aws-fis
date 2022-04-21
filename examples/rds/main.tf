@@ -29,10 +29,10 @@ module "eks" {
   subnets            = values(module.vpc.subnets["private"])
   kubernetes_version = var.kubernetes_version
   enable_ssm         = true
-  fargate_profiles = [
+  managed_node_groups = [
     {
-      name      = "lamp"
-      namespace = "lamp"
+      name          = "lamp"
+      instance_type = "t3.medium"
     },
   ]
 }
