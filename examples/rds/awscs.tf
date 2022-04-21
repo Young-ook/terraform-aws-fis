@@ -39,3 +39,13 @@ module "ecr" {
   name         = "lamp"
   scan_on_push = false
 }
+
+# application/manifest
+resource "local_file" "lamp" {
+  depends_on = [module.ecr]
+  content = templatefile(join("/", [path.cwd, "templates", "kubectl-lamp.tpl"]),
+    { ecr_url = module.ecr.url }
+  )
+  filename        = join("/", [path.cwd, "lampapp", "kubectl-lamp.yml"])
+  file_permission = "0600"
+}
