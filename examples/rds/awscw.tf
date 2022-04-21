@@ -17,3 +17,20 @@ resource "aws_cloudwatch_metric_alarm" "cpu" {
     DBClusterIdentifier = module.mysql.cluster.id
   }
 }
+
+# application/logs
+module "logs" {
+  source  = "Young-ook/lambda/aws//modules/logs"
+  version = "0.2.1"
+  for_each = { for l in [
+    {
+      type = "codebuild"
+      log_group = {
+        namespace      = "/aws/codebuild"
+        retension_days = 5
+      }
+    },
+  ] : l.type => l }
+  name      = join("-", [var.name, each.key])
+  log_group = each.value.log_group
+}
