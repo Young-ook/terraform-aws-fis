@@ -31,8 +31,8 @@ module "eks" {
   enable_ssm         = true
   fargate_profiles = [
     {
-      name      = "php-apache"
-      namespace = "php-apache"
+      name      = "lamp"
+      namespace = "lamp"
     },
   ]
 }
