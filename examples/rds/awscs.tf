@@ -1,10 +1,13 @@
 # application/build
 module "ci" {
-  source      = "Young-ook/spinnaker/aws//modules/codebuild"
-  version     = "2.3.1"
-  name        = var.name
-  tags        = var.tags
-  policy_arns = [module.ecr.policy_arns["write"]]
+  source  = "Young-ook/spinnaker/aws//modules/codebuild"
+  version = "2.3.1"
+  name    = var.name
+  tags    = var.tags
+  policy_arns = [
+    module.ecr.policy_arns["write"],
+    module.ecr.policy_arns["read"]
+  ]
   project = {
     source = {
       type      = "GITHUB"
@@ -18,7 +21,6 @@ module "ci" {
       environment_variables = {
         APP_SRC = join("/", ["examples/rds/lampapp"])
         ECR_URI = module.ecr.url
-        TAG     = "latest"
       }
     }
   }
