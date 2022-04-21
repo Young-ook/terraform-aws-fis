@@ -15,7 +15,7 @@ module "vpc" {
   vpc_config = {
     cidr        = var.cidr
     azs         = var.azs
-		single_ngw = true
+    single_ngw  = true
     subnet_type = "private"
   }
 }
