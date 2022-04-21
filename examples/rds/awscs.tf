@@ -13,6 +13,8 @@ module "ci" {
       version   = "main"
     }
     environment = {
+      image           = "aws/codebuild/standard:4.0"
+      privileged_mode = true
       environment_variables = {
         APP_SRC = join("/", ["examples/rds/lampapp"])
         ECR_URI = module.ecr.url
