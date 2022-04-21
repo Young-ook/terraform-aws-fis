@@ -4,7 +4,7 @@ module "ci" {
   version     = "2.3.1"
   name        = var.name
   tags        = var.tags
-  policy_arns = []
+  policy_arns = [module.ecr.policy_arns["write"]]
   project = {
     source = {
       type      = "GITHUB"
