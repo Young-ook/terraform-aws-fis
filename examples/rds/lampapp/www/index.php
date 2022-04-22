@@ -11,12 +11,12 @@
 </head>
 <body>
     <div class="container">
-    <?php echo "<h1>Hi! I'm happy</h1>"; ?>
+    <?php echo "<h1>Hi!</h1>"; ?>
 
     <?php
 
-    // Connexion et sélection de la base
-    $conn = mysqli_connect('db', 'user', 'test', "myDb");
+    // mysql connection
+    $conn = mysqli_connect($_ENV["DB_HOST"], $_ENV["DB_USER"], $_ENV["DB_PASS"], $_ENV["DB_NAME"]);
 
 
     $query = 'SELECT * From Person';
@@ -35,7 +35,6 @@
     }
     echo '</table>';
 
-    /* Libération du jeu de résultats */
     $result->close();
 
     mysqli_close($conn);

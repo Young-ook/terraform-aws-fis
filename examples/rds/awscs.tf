@@ -21,6 +21,10 @@ module "ci" {
       environment_variables = {
         APP_SRC = join("/", ["examples/rds/lampapp"])
         ECR_URI = module.ecr.url
+        DB_HOST = module.mysql.endpoint.writer
+        DB_NAME = module.mysql.user.database
+        DB_USER = module.mysql.user.name
+        DB_PASS = module.mysql.user.password
       }
     }
   }
