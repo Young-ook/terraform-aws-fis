@@ -33,7 +33,7 @@ kubectl apply -f lampapp/lamp.yaml
 Run mysql client:
 ```
 kubectl -n lamp exec -it mysql-client-xxxxxxxxxx-xxxxx -- bash
-mysql-client-xxxxxxxxxx-xxxxx :/$ mysql -h {amazon-aurora-endpoint} -P 3306 -u normaluser -p
+mysql-client-xxxxxxxxxx-xxxxx :/$ mysql -h {amazon-aurora-endpoint} -P 3306 -u myuser -p
 ```
 
 ### Access an application

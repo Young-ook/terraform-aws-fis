@@ -50,9 +50,9 @@ module "mysql" {
     engine            = "aurora-mysql"
     version           = "5.7.12"
     port              = "3306"
-    user              = "normaluser"
+    user              = "myuser"
     password          = "supersecret"
-    database          = "myDB"
+    database          = "mydb"
     backup_retention  = "5"
     apply_immediately = "false"
     cluster_parameters = {
