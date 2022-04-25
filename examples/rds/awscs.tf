@@ -50,6 +50,6 @@ resource "local_file" "lamp" {
   content = templatefile(join("/", [path.cwd, "templates", "lamp.tpl"]),
     { ecr_url = module.ecr.url }
   )
-  filename        = join("/", [path.cwd, "lampapp", "lamp.yml"])
+  filename        = join("/", [path.cwd, "lampapp", "lamp.yaml"])
   file_permission = "0600"
 }
