@@ -1,7 +1,4 @@
 {
-    "tags": {
-        "Name": "FailoverCluster"
-    },
     "description": "Runs the failover action on the target Aurora DB cluster",
     "targets": {
         "rds-cluster": {
@@ -28,5 +25,14 @@
             "value": "${alarm}"
         }
     ],
-    "roleArn": "${role}"
+    "roleArn": "${role}",
+    "logConfiguration": {
+        "logSchemaVersion": 1,
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "${logs}"
+        }
+    },
+    "tags": {
+        "Name": "FailoverCluster"
+    }
 }

@@ -1,7 +1,4 @@
 {
-    "tags": {
-        "Name": "RebootDBInstances"
-    },
     "description": "Reboot DB instances on the target DB instance",
     "targets": {
         "rds-instances": {
@@ -12,7 +9,9 @@
             "filters": [
                 {
                     "path": "State.Name",
-                    "values": ["running"]
+                    "values": [
+                        "running"
+                    ]
                 }
             ],
             "selectionMode": "ALL"
@@ -36,5 +35,14 @@
             "value": "${alarm}"
         }
     ],
-    "roleArn": "${role}"
+    "roleArn": "${role}",
+    "logConfiguration": {
+        "logSchemaVersion": 1,
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "${logs}"
+        }
+    },
+    "tags": {
+        "Name": "RebootDBInstances"
+    }
 }
