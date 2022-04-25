@@ -11,6 +11,7 @@ module "awsfis" {
         region = var.aws_region
         db     = module.mysql.instances.0.arn
         alarm  = aws_cloudwatch_metric_alarm.cpu.arn
+        logs   = format("%s:*", module.logs["fis"].log_group.arn)
         role   = module.awsfis.role.arn
       }
     },
@@ -21,6 +22,7 @@ module "awsfis" {
         region  = var.aws_region
         cluster = module.mysql.cluster.arn
         alarm   = aws_cloudwatch_metric_alarm.cpu.arn
+        logs    = format("%s:*", module.logs["fis"].log_group.arn)
         role    = module.awsfis.role.arn
       }
     },
