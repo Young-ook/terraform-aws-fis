@@ -21,6 +21,10 @@ module "ci" {
       environment_variables = {
         APP_SRC = join("/", ["examples/rds/lampapp"])
         ECR_URI = module.ecr.url
+        DB_HOST = module.mysql.endpoint.writer
+        DB_NAME = module.mysql.user.database
+        DB_USER = module.mysql.user.name
+        DB_PASS = module.mysql.user.password
       }
     }
   }
@@ -43,9 +47,9 @@ module "ecr" {
 # application/manifest
 resource "local_file" "lamp" {
   depends_on = [module.ecr]
-  content = templatefile(join("/", [path.cwd, "templates", "kubectl-lamp.tpl"]),
+  content = templatefile(join("/", [path.cwd, "templates", "lamp.tpl"]),
     { ecr_url = module.ecr.url }
   )
-  filename        = join("/", [path.cwd, "lampapp", "kubectl-lamp.yml"])
+  filename        = join("/", [path.cwd, "lampapp", "lamp.yaml"])
   file_permission = "0600"
 }

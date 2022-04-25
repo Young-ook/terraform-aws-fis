@@ -27,7 +27,7 @@ module "eks" {
   name               = var.name
   tags               = var.tags
   subnets            = values(module.vpc.subnets["private"])
-  kubernetes_version = var.kubernetes_version
+  kubernetes_version = "1.21"
   enable_ssm         = true
   managed_node_groups = [
     {
@@ -39,13 +39,33 @@ module "eks" {
 
 # aurora
 module "mysql" {
-  source           = "Young-ook/aurora/aws"
-  version          = "2.0.4"
-  name             = var.name
-  tags             = var.tags
-  vpc              = module.vpc.vpc.id
-  subnets          = values(module.vpc.subnets["private"])
-  cidrs            = [var.cidr]
-  aurora_cluster   = var.aurora_cluster
-  aurora_instances = var.aurora_instances
+  source  = "Young-ook/aurora/aws"
+  version = "2.1.2"
+  name    = var.name
+  tags    = var.tags
+  vpc     = module.vpc.vpc.id
+  subnets = values(module.vpc.subnets["private"])
+  cidrs   = [var.cidr]
+  aurora_cluster = {
+    engine            = "aurora-mysql"
+    version           = "5.7.12"
+    port              = "3306"
+    user              = "myuser"
+    password          = "supersecret"
+    database          = "mydb"
+    backup_retention  = "5"
+    apply_immediately = "false"
+    cluster_parameters = {
+      character_set_server = "utf8"
+      character_set_client = "utf8"
+    }
+  }
+  aurora_instances = [
+    {
+      instance_type = "db.t3.medium"
+    },
+    {
+      instance_type = "db.t3.medium"
+    }
+  ]
 }

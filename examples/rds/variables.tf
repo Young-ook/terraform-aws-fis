@@ -16,24 +16,6 @@ variable "cidr" {
   type        = string
 }
 
-### kubernetes cluster
-variable "kubernetes_version" {
-  description = "The target version of kubernetes"
-  type        = string
-}
-
-### aurora cluster
-
-#  [CAUTION] Changing the snapshot ID. will force a new resource.
-
-variable "aurora_cluster" {
-  description = "RDS Aurora for mysql cluster definition"
-}
-
-variable "aurora_instances" {
-  description = "RDS Aurora for mysql instances definition"
-}
-
 ### description
 variable "name" {
   description = "The logical name of the module instance"
