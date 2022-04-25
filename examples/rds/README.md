@@ -20,20 +20,29 @@ Also you can use the `-var-file` option for customized paramters when you run th
 terraform plan -var-file fixture.tc1.tfvars
 terraform apply -var-file fixture.tc1.tfvars
 ```
+
 ## Docker LAMP
-Docker example with Apache, MySql 8.0, PhpMyAdmin and Php (Linux, Apache, MySQL, PHP)
-If you use docker-compose as an orchestrator. Run these containers:
+In this lab, we use docker example with Apache, PHP, and Amazon Aurora (Linux, Apache, MySQL, PHP) as an user application.
 
+Run containers:
 ```
-docker-compose up -d
+kubectl apply -f lampapp/lamp.yaml
 ```
 
-Open phpmyadmin at [http://localhost:8000](http://localhost:8000)
-Open web browser to look at a simple php example at [http://localhost:8001](http://localhost:8001)
-
+### Initialize a database
 Run mysql client:
+```
+kubectl -n lamp exec -it mysql-client-xxxxxxxxxx-xxxxx -- bash
+mysql-client-xxxxxxxxxx-xxxxx :/$ mysql -h {amazon-aurora-endpoint} -P 3306 -u normaluser -p
+```
 
-- `docker-compose exec db mysql -u root -p`
+### Access an application
+After installation and configuration is complete, start port-forwarding through the kubernetes proxy.
+```
+kubectl -n lamp port-forward svc/apache 8080:80
+```
+
+Open `http://localhost:8080` on a web browser to look at a simple php example. Or if your are running this example in Cloud9, click `Preview` and `Preview Running Application`. This opens up a preview tab and shows the spinnaker application.
 
 ## Create Experiment Templates
 This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Conosol and select Experiment templates menu on the left. Then users will see the created experiment templates for chaos engineering.
