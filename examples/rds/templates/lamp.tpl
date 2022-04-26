@@ -28,6 +28,15 @@ spec:
         ports:
         - name: www
           containerPort: 80
+        env:
+        - name: MYSQL_HOST
+          value: ${mysql_host}
+        - name: MYSQL_USER
+          value: ${mysql_user}
+        - name: MYSQL_PASSWORD
+          value: ${mysql_pw}
+        - name: MYSQL_DB
+          value: ${mysql_db}
 ---
 apiVersion: v1
 kind: Service

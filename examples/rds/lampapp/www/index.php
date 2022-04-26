@@ -16,7 +16,7 @@
     <?php
 
     // mysql connection
-    $conn = mysqli_connect($_ENV["DB_HOST"], $_ENV["DB_USER"], $_ENV["DB_PASS"], $_ENV["DB_NAME"]);
+    $conn = mysqli_connect($_ENV["MYSQL_HOST"], $_ENV["MYSQL_USER"], $_ENV["MYSQL_PASSWORD"], $_ENV["MYSQL_DB"]);
 
 
     $query = 'SELECT * From Person';
