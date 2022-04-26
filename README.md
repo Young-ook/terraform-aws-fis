@@ -25,6 +25,12 @@ Follow the official guide to install and configure profiles.
 - [AWS CLI Installation](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 - [AWS CLI Configuration](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-profiles.html)
 
+After the installation is complete, you can check the aws cli version:
+```
+aws --version
+aws-cli/2.5.8 Python/3.9.11 Darwin/21.4.0 exe/x86_64 prompt/off
+```
+
 ### Terraform
 Infrastructure Engineering team is using terraform to build and manage infrastucure for DevOps. And we have a plan to migrate cloudformation termplate to terraform.
 
@@ -46,6 +52,14 @@ tfenv use 0.12.18
 tfenv use 0.11.14
 tfenv install latest
 tfenv use 0.12.18
+```
+
+# Known Issues
+## Unknown parameter
+You might see error like belows if your aws cli does not support log configuration parameter of aws fis command. Upgrade your aws cli when you see that. This module requires aws cli version 2.5.8 or higher.
+```
+module.awsfis.null_resource.awsfis-init (local-exec): Parameter validation failed:
+module.awsfis.null_resource.awsfis-init (local-exec): Unknown parameter in input: "logConfiguration", must be one of: clientToken, description, stopConditions, targets, actions, roleArn, tags
 ```
 
 # Additional Resources
