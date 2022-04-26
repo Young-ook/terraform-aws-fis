@@ -46,6 +46,7 @@ locals {
       out = "awsfis-init.sh"
       params = {
         region   = local.aws.region
+        explist  = join("/", [path.cwd, ".fis_cli_result"])
         jsonlist = trimsuffix(join(".json ", concat(keys({ for exp in var.experiments : exp.name => exp }), [""])), " ")
       }
     },
@@ -53,7 +54,8 @@ locals {
       in  = "awsfis-cleanup.tpl"
       out = "awsfis-cleanup.sh"
       params = {
-        region = local.aws.region
+        region  = local.aws.region
+        explist = join("/", [path.cwd, ".fis_cli_result"])
       }
     },
   ]
