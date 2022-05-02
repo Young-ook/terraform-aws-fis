@@ -131,12 +131,11 @@ locals {
 
 # application/ec2
 module "ec2" {
-  depends_on  = [aws_ssm_association.cwagent]
-  source      = "Young-ook/ssm/aws"
-  version     = "0.0.6"
-  name        = var.name
-  tags        = var.tags
-  policy_arns = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
+  depends_on = [aws_ssm_association.cwagent]
+  source     = "Young-ook/ssm/aws"
+  version    = "1.0.0"
+  name       = var.name
+  tags       = var.tags
   node_groups = [
     {
       name              = "baseline"
@@ -147,6 +146,7 @@ module "ec2" {
       security_groups   = [aws_security_group.alb_aware.id]
       target_group_arns = [aws_lb_target_group.http.arn]
       tags              = { release = "baseline" }
+      policy_arns       = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
       user_data         = local.vserver
     },
     {
@@ -158,6 +158,7 @@ module "ec2" {
       security_groups   = [aws_security_group.alb_aware.id]
       target_group_arns = [aws_lb_target_group.http.arn]
       tags              = { release = "canary" }
+      policy_arns       = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
       user_data         = local.vserver
     },
     {
@@ -168,6 +169,7 @@ module "ec2" {
       instance_type     = "t3.small"
       security_groups   = [aws_security_group.alb_aware.id]
       target_group_arns = [aws_lb_target_group.http.arn]
+      policy_arns       = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
       user_data         = local.vclient
     }
   ]

@@ -26,7 +26,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/cpu-stress.tpl"
       params = {
         region = var.aws_region
-        asg    = module.ec2.cluster.data_plane.node_groups.baseline.name
+        asg    = module.ec2.cluster.data_plane.node_groups.canary.name
         alarm  = aws_cloudwatch_metric_alarm.cpu.arn
         role   = module.awsfis.role.arn
       }
@@ -37,7 +37,7 @@ module "awsfis" {
       params = {
         doc_arn = aws_ssm_document.disk-stress.arn
         region  = var.aws_region
-        asg     = module.ec2.cluster.data_plane.node_groups.baseline.name
+        asg     = module.ec2.cluster.data_plane.node_groups.canary.name
         alarm   = aws_cloudwatch_metric_alarm.cpu.arn
         role    = module.awsfis.role.arn
       }
@@ -47,7 +47,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/network-latency.tpl"
       params = {
         region = var.aws_region
-        asg    = module.ec2.cluster.data_plane.node_groups.baseline.name
+        asg    = module.ec2.cluster.data_plane.node_groups.canary.name
         alarm  = aws_cloudwatch_metric_alarm.cpu.arn
         role   = module.awsfis.role.arn
       }
@@ -67,7 +67,7 @@ module "awsfis" {
       name     = "throttle-ec2-api"
       template = "${path.cwd}/templates/throttle-ec2-api.tpl"
       params = {
-        asg_role = module.ec2.role.arn
+        asg_role = module.ec2.role.node_groups.canary.arn
         alarm    = aws_cloudwatch_metric_alarm.cpu.arn
         role     = module.awsfis.role.arn
       }
