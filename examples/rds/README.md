@@ -33,10 +33,16 @@ kubectl apply -f lampapp/lamp.yaml
 ```
 
 ### Initialize a database
-Run mysql client:
+Get pod a name of mysql client and and start a interactive bash session with mysql client:
 ```
-kubectl -n lamp exec -it mysql-client-xxxxxxxxxx-xxxxx -- bash
-mysql-client-xxxxxxxxxx-xxxxx :/$ mysql -h {amazon-aurora-endpoint} -P 3306 -u myuser -p
+export MYSQL_CLIENT=$(kubectl get pods -n lamp -l name=mysql --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
+kubectl -n lamp cp lampapp/dump/mydb.sql $MYSQL_CLIENT:/
+kubectl -n lamp exec -it $MYSQL_CLIENT -- bash
+```
+
+Inside the mysql container, enter the mysql cli command to access the Aurora cluster. Replace the {amazon-aurora-endpoint} with the terraform output value and enter the passwword when terminal propmted. The password is `supersecret`, it is not secure and is only used in this workshop.
+```
+mysql -h {amazon-aurora-endpoint} -u myuser -p mydb < mydb.sql
 ```
 
 ### Access an application
