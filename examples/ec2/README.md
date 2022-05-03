@@ -160,6 +160,11 @@ Following screenshot shows how it works. First line shows the request and repons
 
 ![aws-fis-throttling-ec2-api](../../images/ec2/aws-fis-throttling-ec2-api.png)
 
+### Disk Stress
+
+![aws-fis-ec2-disk-stress-metrics](../../images/ec2/aws-fis-ec2-disk-stress-metrics.png)
+![aws-fis-ec2-disk-stress](../../images/ec2/aws-fis-ec2-disk-stress.png)
+
 ## Clean up
 Run terraform:
 ```
