@@ -1,5 +1,8 @@
 [[English](README.md)] [[한국어](README.ko.md)]
 
+# Chaos Engineering
+Chaos engineering is the discipline of experimenting on a distributed system in order to build confidence in the system's capability to withstand turbulent and unexpected conditions in production. If you want know why and how to do chaos engineering, please refer to this [page](https://github.com/Young-ook/terraform-aws-fis/blob/main/README.md).
+
 ## Download example
 Download this example on your workspace
 ```sh

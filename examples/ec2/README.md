@@ -1,5 +1,8 @@
 [[English](README.md)] [[한국어](README.ko.md)]
 
+# Chaos Engineering
+Chaos engineering is the discipline of experimenting on a distributed system in order to build confidence in the system's capability to withstand turbulent and unexpected conditions in production. If you want know why and how to do chaos engineering, please refer to this [page](https://github.com/Young-ook/terraform-aws-fis/blob/main/README.md).
+
 ## Download example
 Download this example on your workspace
 ```sh
@@ -156,6 +159,11 @@ When running API throttling test, you can see the throttling error when you call
 Following screenshot shows how it works. First line shows the request and reponse about ec2-describe-instances api using AWS CLI. The error message is `Unauthorized` because the target role the instance has does not have right permission to describe instances. And second line is the reponse of the same AWS API call when throttling event is running. You will find out that the error message has been changed becuase of fault injection experiment.
 
 ![aws-fis-throttling-ec2-api](../../images/ec2/aws-fis-throttling-ec2-api.png)
+
+### Disk Stress
+
+![aws-fis-ec2-disk-stress-metrics](../../images/ec2/aws-fis-ec2-disk-stress-metrics.png)
+![aws-fis-ec2-disk-stress](../../images/ec2/aws-fis-ec2-disk-stress.png)
 
 ## Clean up
 Run terraform:
