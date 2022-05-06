@@ -27,6 +27,13 @@ terraform apply -var-file fixture.tc1.tfvars
 ## Docker LAMP
 In this lab, we use docker example with Apache, PHP, and Amazon Aurora (Linux, Apache, MySQL, PHP) as an user application.
 
+### Build an application
+Run a build job to create a php-apache application container image. Copy the `build` command from the terraform output and run it:
+```
+aws codebuild start-build --region ap-northeast-2 --output text --project-name arn:aws:codebuild:ap-northeast-2:111122223333:project/fis-rds-hnuee
+```
+
+### Deploy LAMP stack
 Run containers:
 ```
 kubectl apply -f lampapp/lamp.yaml
