@@ -1,21 +1,39 @@
-# application/monitoring
-resource "aws_cloudwatch_metric_alarm" "cpu" {
-  alarm_name                = join("-", [var.name, "cpu", "alarm"])
-  alarm_description         = "This metric monitors rds cpu utilization"
-  tags                      = merge(local.default-tags, var.tags)
-  metric_name               = "CPUUtilization"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  datapoints_to_alarm       = 1
-  evaluation_periods        = 1
-  namespace                 = "AWS/RDS"
-  period                    = 60
-  threshold                 = 60
-  statistic                 = "Average"
-  insufficient_data_actions = []
-
-  dimensions = {
-    DBClusterIdentifier = module.mysql.cluster.id
-  }
+# application/alarm
+module "alarm" {
+  source  = "Young-ook/lambda/aws//modules/alarm"
+  version = "0.2.1"
+  for_each = { for a in [
+    {
+      name        = "cpu"
+      description = "This metric monitors rds cpu utilization"
+      alarm_metric = {
+        comparison_operator = "GreaterThanOrEqualToThreshold"
+        evaluation_periods  = 1
+        datapoints_to_alarm = 1
+        threshold           = 60
+      }
+      metric_query = [
+        {
+          id          = "rds_cpu_high"
+          return_data = true
+          metric = [
+            {
+              metric_name = "CPUUtilization"
+              namespace   = "AWS/RDS"
+              stat        = "Average"
+              period      = 60
+              dimensions  = { DBClusterIdentifier = module.mysql.cluster.id }
+            },
+          ]
+        },
+      ]
+    },
+  ] : a.name => a }
+  name         = join("-", [each.key, "alarm"])
+  tags         = merge(local.default-tags, var.tags)
+  description  = each.value.description
+  alarm_metric = each.value.alarm_metric
+  metric_query = each.value.metric_query
 }
 
 # application/logs
