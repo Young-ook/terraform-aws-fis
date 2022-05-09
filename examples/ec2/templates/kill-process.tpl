@@ -1,7 +1,4 @@
 {
-    "tags": {
-        "Name": "KillProcess"
-    },
     "description": "Run a process kill fault injection on the specified instance",
     "targets": {
         "ec2-instances": {
@@ -27,7 +24,7 @@
         }
     },
     "actions": {
-        "CPUStress": {
+        "KillProcess": {
             "actionId": "aws:ssm:send-command",
             "description": "run to kill process using ssm",
             "parameters": {
@@ -46,5 +43,14 @@
             "value": "${alarm}"
         }
     ],
-    "roleArn": "${role}"
+    "roleArn": "${role}",
+    "logConfiguration": {
+        "logSchemaVersion": 1,
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "${logs}"
+        }
+    },
+    "tags": {
+        "Name": "KillProcess"
+    }
 }

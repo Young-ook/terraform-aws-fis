@@ -81,6 +81,7 @@ module "awsfis" {
         az      = var.azs[random_integer.az.result]
         process = "httpd"
         alarm   = aws_cloudwatch_metric_alarm.cpu.arn
+        logs    = format("%s:*", module.logs["fis"].log_group.arn)
         role    = module.awsfis.role.arn
       }
     },
