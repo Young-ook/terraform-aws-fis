@@ -61,6 +61,29 @@ This test will inject network latency to target instances. A response from the i
 #### Define Steady State
 First of all, we need to define steady state of the service. This means the service is healthy and working well. We use ‘p90’ to refer to the 90th percentile data; that is, 90% of the observations fall below this value. Percentiles for p90, p95, p99, p99.9, p99.99 or any other percentile from 0.1 to 100 in increments of 0.1% (including p100) of request metric can now be visualized in near real time. We will use this alarm for stop condition of fault injection experiment.
 
+**Steady State Hypothesis Example**
+
++ Title: Services are all available and healthy
++ Type: What are your assumptions?
+   - [ ] No Impact
+   - [ ] Degraded Performance
+   - [ ] Service Outage
+   - [ ] Impproved Performance
++ Probes:
+   - Type: CloudWatch Metric
+   - Status: `p90`
++ Stop condition (Abort condition):
+   - Type: CloudWatch Alarm
+   - Status: `p90`
++ Results:
+   - What did you see?
++ Conclusions:
+   - [ ] Everything is as expected
+   - [ ] Detected something
+   - [ ] Handleable error has occurred
+   - [ ] Need to automate
+   - [ ] Need to dig deeper
+
 #### Stop Condition
 This scenario shows how to abort an experiment when an emergency alert is raised. This is a very important feature for reducing customer impact during chaotic engineering of production systems. Some experiments have a lot of impact on customers during fault injection. If the application goes wrong, the experiment must be stopped autumatically.
 
