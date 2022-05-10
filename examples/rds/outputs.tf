@@ -2,7 +2,10 @@
 
 output "endpoint" {
   description = "The enpoints of Aurora cluster"
-  value       = module.mysql.endpoint
+  value = {
+    aurora = module.mysql.endpoint
+    proxy  = module.proxy.proxy.endpoint
+  }
 }
 
 output "kubeconfig" {

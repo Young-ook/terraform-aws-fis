@@ -69,3 +69,24 @@ module "mysql" {
     }
   ]
 }
+
+resource "time_sleep" "wait" {
+  depends_on      = [module.vpc, module.mysql]
+  create_duration = "60s"
+}
+
+module "proxy" {
+  depends_on = [time_sleep.wait]
+  source     = "Young-ook/aurora/aws//modules/proxy"
+  version    = "2.1.2"
+  name       = join("-", [var.name, "proxy"])
+  tags       = var.tags
+  subnets    = values(module.vpc.subnets["private"])
+  proxy_config = {
+    cluster_id = module.mysql.cluster.id
+  }
+  auth_config = {
+    user_name     = module.mysql.user.name
+    user_password = module.mysql.user.password
+  }
+}
