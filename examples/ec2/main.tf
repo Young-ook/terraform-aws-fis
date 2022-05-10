@@ -111,7 +111,7 @@ resource "aws_lb_target_group" "http" {
 
 # application/script
 locals {
-  vclient = join("\n", [
+  client = join("\n", [
     "#!/bin/bash",
     "while true; do",
     "  curl -I http://${aws_lb.alb.dns_name}",
@@ -120,7 +120,7 @@ locals {
     "done",
     ]
   )
-  vserver = join("\n", [
+  server = join("\n", [
     "sudo yum update -y",
     "sudo yum install -y httpd",
     "sudo rm /etc/httpd/conf.d/welcome.conf",
@@ -147,7 +147,7 @@ module "ec2" {
       target_group_arns = [aws_lb_target_group.http.arn]
       tags              = { release = "baseline" }
       policy_arns       = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-      user_data         = local.vserver
+      user_data         = local.server
     },
     {
       name              = "canary"
@@ -159,7 +159,7 @@ module "ec2" {
       target_group_arns = [aws_lb_target_group.http.arn]
       tags              = { release = "canary" }
       policy_arns       = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-      user_data         = local.vserver
+      user_data         = local.server
     },
     {
       name              = "loadgen"
@@ -170,7 +170,7 @@ module "ec2" {
       security_groups   = [aws_security_group.alb_aware.id]
       target_group_arns = [aws_lb_target_group.http.arn]
       policy_arns       = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-      user_data         = local.vclient
+      user_data         = local.client
     }
   ]
 

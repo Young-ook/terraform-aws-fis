@@ -72,5 +72,18 @@ module "awsfis" {
         role     = module.awsfis.role.arn
       }
     },
+    {
+      name     = "kill-process"
+      template = "${path.cwd}/templates/kill-process.tpl"
+      params = {
+        region  = var.aws_region
+        asg     = module.ec2.cluster.data_plane.node_groups.baseline.name
+        az      = var.azs[random_integer.az.result]
+        process = "httpd"
+        alarm   = aws_cloudwatch_metric_alarm.cpu.arn
+        logs    = format("%s:*", module.logs["fis"].log_group.arn)
+        role    = module.awsfis.role.arn
+      }
+    },
   ]
 }
