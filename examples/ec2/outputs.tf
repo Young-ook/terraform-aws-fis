@@ -1,6 +1,6 @@
 ### output variables
 
-output "vclient" {
+output "loadgen" {
   description = "Script to call APIs as a virtual client"
-  value       = local.client
+  value       = local.loadgen
 }

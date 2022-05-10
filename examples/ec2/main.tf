@@ -9,7 +9,7 @@ provider "aws" {
 # network/vpc
 module "vpc" {
   source  = "Young-ook/vpc/aws"
-  version = "1.0.1"
+  version = "1.0.2"
   name    = var.name
   tags    = var.tags
   vpc_config = var.use_default_vpc ? null : {
@@ -111,7 +111,7 @@ resource "aws_lb_target_group" "http" {
 
 # application/script
 locals {
-  client = join("\n", [
+  loadgen = join("\n", [
     "#!/bin/bash",
     "while true; do",
     "  curl -I http://${aws_lb.alb.dns_name}",
@@ -133,7 +133,7 @@ locals {
 module "ec2" {
   depends_on = [aws_ssm_association.cwagent]
   source     = "Young-ook/ssm/aws"
-  version    = "1.0.0"
+  version    = "1.0.2"
   name       = var.name
   tags       = var.tags
   node_groups = [
@@ -169,7 +169,6 @@ module "ec2" {
       instance_type   = "t3.small"
       security_groups = [aws_security_group.alb_aware.id]
       policy_arns     = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-      user_data       = local.client
     }
   ]
 
