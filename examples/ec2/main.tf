@@ -139,9 +139,9 @@ module "ec2" {
   node_groups = [
     {
       name              = "baseline"
-      min_size          = 2
+      min_size          = 3
       max_size          = 6
-      desired_size      = 2
+      desired_size      = 3
       instance_type     = "t3.small"
       security_groups   = [aws_security_group.alb_aware.id]
       target_group_arns = [aws_lb_target_group.http.arn]
@@ -168,7 +168,6 @@ module "ec2" {
       desired_size      = 1
       instance_type     = "t3.small"
       security_groups   = [aws_security_group.alb_aware.id]
-      target_group_arns = [aws_lb_target_group.http.arn]
       policy_arns       = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
       user_data         = local.client
     }
