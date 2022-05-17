@@ -13,7 +13,7 @@ locals {
 }
 
 resource "aws_iam_role" "fis-run" {
-  name = local.name
+  name = join("-", [local.name, "fis-run"])
   tags = merge(local.default-tags, var.tags)
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -27,9 +27,46 @@ resource "aws_iam_role" "fis-run" {
   })
 }
 
+resource "aws_iam_policy" "fis-pass-role" {
+  name = join("-", [local.name, "fis-pass-role"])
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+        Action   = ["iam:PassRole"],
+        Effect   = "Allow"
+        Resource = [aws_iam_role.fis-ssm-run.arn]
+      },]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "fis-pass-role" {
+  policy_arn = aws_iam_policy.fis-pass-role.arn
+  role       = aws_iam_role.fis-run.id
+}
+
 resource "aws_iam_role_policy_attachment" "fis-run" {
   policy_arn = format("arn:%s:iam::aws:policy/PowerUserAccess", local.aws.partition)
   role       = aws_iam_role.fis-run.id
+}
+
+resource "aws_iam_role" "fis-ssm-run" {
+  name = join("-", [local.name, "fis-ssm-run"])
+  tags = merge(local.default-tags, var.tags)
+  assume_role_policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [{
+      Action = "sts:AssumeRole"
+      Effect = "Allow"
+      Principal = {
+        Service = [format("ssm.%s", local.aws.dns)]
+      }
+    }]
+  })
+}
+
+resource "aws_iam_role_policy_attachment" "fis-ssm-vpcfull" {
+  policy_arn = format("arn:%s:iam::aws:policy/AmazonVPCFullAccess", local.aws.partition)
+  role       = aws_iam_role.fis-ssm-run.id
 }
 
 resource "local_file" "exp" {
@@ -86,3 +123,15 @@ resource "null_resource" "awsfis-cleanup" {
     command = "cd ${path.module} \n bash awsfis-cleanup.sh"
   }
 }
+
+### systems manager document for fault injection simulator experiment
+
+resource "aws_ssm_document" "az-outage" {
+  name            = "FIS-Run-AZ-Outage"
+  tags            = merge(local.default-tags, var.tags)
+  document_format = "YAML"
+  document_type   = "Automation"
+  content         = file("${path.module}/templates/az-outage.yaml")
+}
+
+
