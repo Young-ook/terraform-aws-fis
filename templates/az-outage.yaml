@@ -1,0 +1,212 @@
+description: |
+  ### Document name - FIS-Run-AZ-Outage
+
+  ## What does this document do?  Modify Subnets to deny traffic in a particular AZ. Rollback on Cancel or Failure.
+
+  ## Input Parameters
+  * Region: (Required) The Region to impact
+  * AvailabilityZone: (Required) The Availability Zone to impact
+  * VPCId: (Required) The ID of the VPC where the subnet reside
+  * Duration: (Optional) The duration - in ISO-8601 format - of the attack
+  * AutomationAssumeRole: (Optional) The ARN of the role that allows Automation to perform
+
+  ## Output Parameters
+  None.
+schemaVersion: '0.3'
+parameters:
+  Region:
+    type: String
+    description: "(Required) The Region to impact"
+    default: "us-east-1"
+  AvailabilityZone:
+    type: String
+    description: "(Required) The Availability Zone to impact"
+    default: "us-east-1a"
+  VPCId:
+    type: String
+    description: "(Required) The ID of the VPC where the subnet reside"
+  Duration:
+    type: String
+    description: "(Required) The duration - in ISO-8601 format - of the attack"
+    default: "PT1M"
+  AutomationAssumeRole:
+    type: String
+    description: "(Optional) The ARN of the role that allows Automation to perform
+      the actions on your behalf."
+assumeRole: '{{AutomationAssumeRole}}'
+mainSteps:
+- name: InjectFaultNacl
+  action: 'aws:executeScript'
+  onFailure: 'step:Rollback'
+  onCancel: 'step:Rollback'
+  inputs:
+    Runtime: python3.6
+    Handler: inject_fault
+    InputPayload:
+      region:
+        - "{{ Region }}"
+      az_name:
+        - "{{ AvailabilityZone }}"
+      vpc_id:
+        - "{{ VPCId }}"
+    Script: |-
+        import logging
+        import boto3
+        import time
+
+        def create_blackhole_nacl(ec2_client, vpc_id):
+          blackhole_nacl = ec2_client.create_network_acl(
+              VpcId=vpc_id,
+          )
+          associations = blackhole_nacl['NetworkAcl']
+          blackhole_nacl_id = associations['NetworkAclId']
+          time.sleep(5)
+          # Tagging the network ACL with chaos for obvious reasons
+          ec2_client.create_tags(
+              Resources=[
+                  blackhole_nacl_id,
+              ],
+              Tags=[
+                  {
+                      'Key': 'Name',
+                      'Value': 'fis-nacl-for-az-outage'
+                  },
+              ]
+          )
+          # Create Egress and Ingress rule blocking all inbound and outbound traffic
+          ec2_client.create_network_acl_entry(
+              CidrBlock='0.0.0.0/0',
+              Egress=True,
+              PortRange={'From': 0, 'To': 65535, },
+              NetworkAclId=blackhole_nacl_id,
+              Protocol='-1',
+              RuleAction='deny',
+              RuleNumber=100,
+          )
+          ec2_client.create_network_acl_entry(
+              CidrBlock='0.0.0.0/0',
+              Egress=False,
+              PortRange={'From': 0, 'To': 65535, },
+              NetworkAclId=blackhole_nacl_id,
+              Protocol='-1',
+              RuleAction='deny',
+              RuleNumber=101,
+          )
+          return blackhole_nacl_id
+
+        def get_subnets_to_chaos(ec2_client, vpc_id, az_name):
+          subnets_response = ec2_client.describe_subnets(
+            Filters=[
+              {
+                'Name': 'availability-zone',
+                'Values': [az_name]
+              },
+              {
+                'Name': 'vpc-id',
+                'Values': [vpc_id]
+              }
+            ]
+          )
+          subnets_to_chaos = [
+            subnet['SubnetId'] for subnet in subnets_response['Subnets']
+          ]
+          return subnets_to_chaos
+
+        def get_nacls_to_chaos(ec2_client, subnets_to_chaos):
+          acls_response = ec2_client.describe_network_acls(
+            Filters=[
+              {
+                'Name': 'association.subnet-id',
+                'Values': subnets_to_chaos
+              }
+            ]
+          )
+          network_acls = acls_response['NetworkAcls']
+
+          # SAVE THEM so it can revert
+          nacl_ids = []
+          for nacl in network_acls:
+            for nacl_association in nacl['Associations']:
+              if nacl_association['SubnetId'] in subnets_to_chaos:
+                nacl_association_id, nacl_id = nacl_association['NetworkAclAssociationId'], nacl_association['NetworkAclId']
+                nacl_ids.append((nacl_association_id, nacl_id))
+          return nacl_ids
+
+        def apply_chaos_config(ec2_client, nacl_ids, blackhole_nacl_id):
+          save_for_rollback = []
+          # Modify the association of the subnets_to_chaos with the NACL
+          for nacl_association_id, nacl_id in nacl_ids:
+            response = ec2_client.replace_network_acl_association(
+              AssociationId=nacl_association_id,
+              NetworkAclId=blackhole_nacl_id
+            )
+            save_for_rollback.append(
+              {
+                "NewAssociationId": response['NewAssociationId'],
+                "Nacl_Id": nacl_id
+              }
+            )
+
+          return save_for_rollback
+
+        def inject_fault(events, context):
+          region = events['region'][0]
+          az_name = events['az_name'][0]
+          vpc_id = events['vpc_id'][0]
+
+          ec2_client = boto3.client('ec2', region_name=region)
+          blackhole_nacl_id = create_blackhole_nacl(ec2_client, vpc_id)
+          subnets_to_chaos = get_subnets_to_chaos(ec2_client, vpc_id, az_name)
+          nacl_ids = get_nacls_to_chaos(ec2_client, subnets_to_chaos)
+
+          # Blackhole networking to EC2 instances in failed AZ
+          save_for_rollback = apply_chaos_config(ec2_client, nacl_ids, blackhole_nacl_id)
+
+          return {
+            'saved_configuration': save_for_rollback,
+            'black_hole': blackhole_nacl_id
+          }
+  outputs:
+    - Name: Configuration
+      Selector: $.Payload.saved_configuration
+      Type: MapList
+    - Name: BlackHole
+      Selector: $.Payload.black_hole
+      Type: String
+- name: Sleep
+  action: 'aws:sleep'
+  onFailure: 'step:Rollback'
+  onCancel: 'step:Rollback'
+  inputs:
+    Duration: "{{ Duration }}"
+- name: Rollback
+  action: 'aws:executeScript'
+  inputs:
+    Runtime: python3.6
+    Handler: rollback
+    InputPayload:
+      region:
+        - "{{ Region }}"
+      saved_configuration:
+        - "{{ InjectFaultNacl.Configuration }}"
+      black_hole:
+        - "{{ InjectFaultNacl.BlackHole }}"
+    Script: |-
+        import logging
+        import boto3
+
+        def rollback(events, context):
+          save_for_rollback = events['saved_configuration']
+          region = events['region'][0]
+
+          ec2_client = boto3.client('ec2', region_name=region)
+          # Rollback the initial association
+          for conf in save_for_rollback:
+            ec2_client.replace_network_acl_association(
+              AssociationId=conf["NewAssociationId"],
+              NetworkAclId=conf["Nacl_Id"]
+            )
+
+          ec2_client.delete_network_acl(
+            NetworkAclId=events['black_hole'][0]
+          )
