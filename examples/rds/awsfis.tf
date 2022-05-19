@@ -12,7 +12,7 @@ module "awsfis" {
         db     = module.mysql.instances.0.arn
         alarm  = module.alarm["cpu"].alarm.arn
         logs   = format("%s:*", module.logs["fis"].log_group.arn)
-        role   = module.awsfis.role.arn
+        role   = module.awsfis.role["fis"].arn
       }
     },
     {
@@ -23,7 +23,7 @@ module "awsfis" {
         cluster = module.mysql.cluster.arn
         alarm   = module.alarm["cpu"].alarm.arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
-        role    = module.awsfis.role.arn
+        role    = module.awsfis.role["fis"].arn
       }
     },
   ]

@@ -1,13 +1,3 @@
-### systems manager document for fault injection simulator experiment
-
-resource "aws_ssm_document" "disk-stress" {
-  name            = "FIS-Run-Disk-Stress"
-  tags            = merge(local.default-tags, var.tags)
-  document_format = "YAML"
-  document_type   = "Command"
-  content         = file("${path.module}/templates/disk-stress.yaml")
-}
-
 ### fault injection simulator experiment templates
 
 # drawing lots for choosing a subnet
@@ -28,18 +18,18 @@ module "awsfis" {
         region = var.aws_region
         asg    = module.ec2.cluster.data_plane.node_groups.canary.name
         alarm  = aws_cloudwatch_metric_alarm.cpu.arn
-        role   = module.awsfis.role.arn
+        role   = module.awsfis.role["fis"].arn
       }
     },
     {
       name     = "disk-stress"
       template = "${path.cwd}/templates/disk-stress.tpl"
       params = {
-        doc_arn = aws_ssm_document.disk-stress.arn
+        doc_arn = module.awsfis.experiment["FIS-Run-Disk-Stress"].arn
         region  = var.aws_region
         asg     = module.ec2.cluster.data_plane.node_groups.canary.name
         alarm   = aws_cloudwatch_metric_alarm.cpu.arn
-        role    = module.awsfis.role.arn
+        role    = module.awsfis.role["fis"].arn
       }
     },
     {
@@ -49,7 +39,7 @@ module "awsfis" {
         region = var.aws_region
         asg    = module.ec2.cluster.data_plane.node_groups.canary.name
         alarm  = aws_cloudwatch_metric_alarm.cpu.arn
-        role   = module.awsfis.role.arn
+        role   = module.awsfis.role["fis"].arn
       }
     },
     {
@@ -60,7 +50,7 @@ module "awsfis" {
         az    = var.azs[random_integer.az.result]
         vpc   = module.vpc.vpc.id
         alarm = aws_cloudwatch_metric_alarm.cpu.arn
-        role  = module.awsfis.role.arn
+        role  = module.awsfis.role["fis"].arn
       }
     },
     {
@@ -69,7 +59,7 @@ module "awsfis" {
       params = {
         asg_role = module.ec2.role.node_groups.canary.arn
         alarm    = aws_cloudwatch_metric_alarm.cpu.arn
-        role     = module.awsfis.role.arn
+        role     = module.awsfis.role["fis"].arn
       }
     },
     {
@@ -82,7 +72,7 @@ module "awsfis" {
         process = "httpd"
         alarm   = aws_cloudwatch_metric_alarm.cpu.arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
-        role    = module.awsfis.role.arn
+        role    = module.awsfis.role["fis"].arn
       }
     },
   ]

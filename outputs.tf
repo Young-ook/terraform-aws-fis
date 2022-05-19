@@ -10,7 +10,5 @@ output "role" {
 
 output "experiment" {
   description = "Systems manager documents for experiments "
-  value = {
-    az-outage = aws_ssm_document.az-outage
-  }
+  value = aws_ssm_document.doc
 }

@@ -16,7 +16,7 @@ module "awsfis" {
       name     = "az-outage"
       template = "${path.cwd}/templates/az-outage.tpl"
       params = {
-        ssm_doc  = module.awsfis.experiment["az-outage"].arn
+        ssm_doc  = module.awsfis.experiment["FIS-Run-AZ-Outage"].arn
         region   = var.aws_region
         az       = var.azs[random_integer.az.result]
         vpc      = module.vpc["vpc"].id

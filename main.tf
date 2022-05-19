@@ -32,10 +32,10 @@ resource "aws_iam_policy" "fis-pass-role" {
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [{
-        Action   = ["iam:PassRole"],
-        Effect   = "Allow"
-        Resource = [aws_iam_role.fis-ssm-run.arn]
-      },]
+      Action   = ["iam:PassRole"],
+      Effect   = "Allow"
+      Resource = [aws_iam_role.fis-ssm-run.arn]
+    }, ]
   })
 }
 
@@ -126,12 +126,28 @@ resource "null_resource" "awsfis-cleanup" {
 
 ### systems manager document for fault injection simulator experiment
 
-resource "aws_ssm_document" "az-outage" {
-  name            = "FIS-Run-AZ-Outage"
-  tags            = merge(local.default-tags, var.tags)
-  document_format = "YAML"
-  document_type   = "Automation"
-  content         = file("${path.module}/templates/az-outage.yaml")
+locals {
+  doc = [
+    {
+      name            = "FIS-Run-AZ-Outage"
+      document_format = "YAML"
+      document_type   = "Automation"
+      content         = file("${path.module}/templates/az-outage.yaml")
+    },
+    {
+      name            = "FIS-Run-Disk-Stress"
+      document_format = "YAML"
+      document_type   = "Command"
+      content         = file("${path.module}/templates/disk-stress.yaml")
+    },
+  ]
 }
 
-
+resource "aws_ssm_document" "doc" {
+  for_each        = { for d in local.doc : d.name => d }
+  name            = each.value["name"]
+  tags            = merge(local.default-tags, var.tags)
+  document_format = each.value["document_format"]
+  document_type   = each.value["document_type"]
+  content         = each.value["content"]
+}
