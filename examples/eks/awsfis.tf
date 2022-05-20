@@ -17,6 +17,7 @@ module "awsfis" {
         region = var.aws_region
         alarm  = aws_cloudwatch_metric_alarm.cpu.arn
         role   = module.awsfis.role["fis"].arn
+        logs   = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
     {
@@ -26,6 +27,7 @@ module "awsfis" {
         region = var.aws_region
         alarm  = aws_cloudwatch_metric_alarm.svc-health.arn
         role   = module.awsfis.role["fis"].arn
+        logs   = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
     {
@@ -35,6 +37,7 @@ module "awsfis" {
         asg_role = module.eks.role.arn
         alarm    = aws_cloudwatch_metric_alarm.cpu.arn
         role     = module.awsfis.role["fis"].arn
+        logs     = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
     {
@@ -45,6 +48,7 @@ module "awsfis" {
         vpc       = module.vpc.vpc.id
         nodegroup = module.eks.cluster.data_plane.managed_node_groups.sockshop.arn
         role      = module.awsfis.role["fis"].arn
+        logs      = format("%s:*", module.logs["fis"].log_group.arn)
         alarm = jsonencode([
           {
             source = "aws:cloudwatch:alarm"
@@ -63,6 +67,7 @@ module "awsfis" {
         doc_arn = module.awsfis.experiment["FIS-Run-Disk-Stress"].arn
         alarm   = aws_cloudwatch_metric_alarm.disk.arn
         role    = module.awsfis.role["fis"].arn
+        logs    = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
   ]

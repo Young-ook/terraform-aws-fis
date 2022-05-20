@@ -1,7 +1,4 @@
 {
-    "tags": {
-        "Name": "CPUStress"
-    },
     "description": "Run a CPU fault injection on the specified instance",
     "targets": {
         "ec2-instances": {
@@ -38,5 +35,14 @@
             "value": "${alarm}"
         }
     ],
-    "roleArn": "${role}"
+    "roleArn": "${role}",
+    "logConfiguration": {
+        "logSchemaVersion": 1,
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "${logs}"
+        }
+    },
+    "tags": {
+        "Name": "CPUStress"
+    }
 }

@@ -1,7 +1,4 @@
 {
-    "tags": {
-        "Name": "ThrottleEC2APIs"
-    },
     "description": "Throttle the specified EC2 API actions on the specified IAM role",
     "targets": {
         "ec2-role": {
@@ -31,5 +28,14 @@
             "value": "${alarm}"
         }
     ],
-    "roleArn": "${role}"
+    "roleArn": "${role}",
+    "logConfiguration": {
+        "logSchemaVersion": 1,
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "${logs}"
+        }
+    },
+    "tags": {
+        "Name": "ThrottleEC2APIs"
+    }
 }
