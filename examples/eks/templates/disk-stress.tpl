@@ -25,7 +25,7 @@
             "parameters": {
                 "duration": "PT5M",
                 "documentArn": "${doc_arn}",
-                "documentParameters": "{\"DurationSeconds\": \"300\", \"Workers\": \"4\", \"Bytes\": \"4g\", \"InstallDependencies\": \"True\"}"
+                "documentParameters": "{\"DurationSeconds\": \"300\", \"Workers\": \"4\", \"Percent\": \"70\", \"InstallDependencies\": \"True\"}"
             },
             "targets": {
                 "Instances": "ec2-instances"
