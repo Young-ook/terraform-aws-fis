@@ -1,7 +1,4 @@
 {
-    "tags": {
-        "Name": "TerminateEKSNodes"
-    },
     "description": "Terminate EKS nodes",
     "targets": {
         "eks-nodes": {
@@ -25,5 +22,14 @@
         }
     },
     "stopConditions": ${alarm},
-    "roleArn": "${role}"
+    "roleArn": "${role}",
+    "logConfiguration": {
+        "logSchemaVersion": 1,
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "${logs}"
+        }
+    },
+    "tags": {
+        "Name": "TerminateEKSNodes"
+    }
 }
