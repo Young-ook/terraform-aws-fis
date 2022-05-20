@@ -19,6 +19,7 @@ module "awsfis" {
         asg    = module.ec2.cluster.data_plane.node_groups.canary.name
         alarm  = aws_cloudwatch_metric_alarm.cpu.arn
         role   = module.awsfis.role["fis"].arn
+        logs   = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
     {
@@ -30,6 +31,7 @@ module "awsfis" {
         asg     = module.ec2.cluster.data_plane.node_groups.canary.name
         alarm   = aws_cloudwatch_metric_alarm.cpu.arn
         role    = module.awsfis.role["fis"].arn
+        logs    = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
     {
@@ -40,6 +42,7 @@ module "awsfis" {
         asg    = module.ec2.cluster.data_plane.node_groups.canary.name
         alarm  = aws_cloudwatch_metric_alarm.cpu.arn
         role   = module.awsfis.role["fis"].arn
+        logs   = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
     {
@@ -51,6 +54,7 @@ module "awsfis" {
         vpc   = module.vpc.vpc.id
         alarm = aws_cloudwatch_metric_alarm.cpu.arn
         role  = module.awsfis.role["fis"].arn
+        logs  = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
     {
@@ -60,6 +64,7 @@ module "awsfis" {
         asg_role = module.ec2.role.node_groups.canary.arn
         alarm    = aws_cloudwatch_metric_alarm.cpu.arn
         role     = module.awsfis.role["fis"].arn
+        logs     = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
     {
@@ -71,8 +76,8 @@ module "awsfis" {
         az      = var.azs[random_integer.az.result]
         process = "httpd"
         alarm   = aws_cloudwatch_metric_alarm.cpu.arn
-        logs    = format("%s:*", module.logs["fis"].log_group.arn)
         role    = module.awsfis.role["fis"].arn
+        logs    = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
   ]

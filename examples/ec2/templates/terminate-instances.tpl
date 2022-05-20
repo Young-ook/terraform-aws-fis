@@ -1,7 +1,4 @@
 {
-    "tags": {
-        "Name": "TerminateEC2InstancesWithFilters"
-    },
     "description": "Terminate all instances with the tags in the specified VPC",
     "targets": {
         "ec2-instances": {
@@ -41,5 +38,14 @@
             "value": "${alarm}"
         }
     ],
-    "roleArn": "${role}"
+    "roleArn": "${role}",
+    "logConfiguration": {
+        "logSchemaVersion": 1,
+        "cloudWatchLogsConfiguration": {
+            "logGroupArn": "${logs}"
+        }
+    },
+    "tags": {
+        "Name": "TerminateEC2InstancesWithFilters"
+    }
 }
