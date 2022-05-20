@@ -2,12 +2,11 @@
     "tags": {
         "Name": "TerminateEC2InstancesWithFilters"
     },
-    "description": "Terminate all instances with the tag env=prod in the specified VPC",
+    "description": "Terminate all instances with the tags in the specified VPC",
     "targets": {
         "ec2-instances": {
             "resourceType": "aws:ec2:instance",
             "resourceTags": {
-                "env": "prod",
                 "Name": "${asg}"
             },
             "filters": [
