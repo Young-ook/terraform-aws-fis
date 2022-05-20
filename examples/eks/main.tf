@@ -55,6 +55,8 @@ provider "helm" {
 
 module "container-insights" {
   source       = "Young-ook/eks/aws//modules/container-insights"
+  version      = "1.7.5"
+  features     = { enable_metrics = true }
   cluster_name = module.eks.cluster.name
   oidc         = module.eks.oidc
 }
