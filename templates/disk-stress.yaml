@@ -7,9 +7,10 @@ description: |
 
   ## Input Parameters
   * DurationSeconds: (Required) The duration - in seconds - of the disk stress.
-  * Workers: The number of virtual disk stressors (default: 1).
-  * Percent: The percentage of virtual disk to use (required).
-  * InstallDependencies: If set to True, Systems Manager installs the required dependencies on the target instances. (default: True).
+  * Percent: (Required) The percentage of virtual disk to use.
+  * Bytes: (Optional) The bytes of virtual disk to use.
+  * Workers: (Optional) The number of virtual disk stressors (default: 1).
+  * InstallDependencies: (Optional) If set to True, Systems Manager installs the required dependencies on the target instances. (default: True).
 
   ## Output Parameters
   None.
@@ -18,20 +19,25 @@ schemaVersion: '2.2'
 parameters:
   DurationSeconds:
     type: String
-    description: "(Required) The duration - in seconds - of the disk stress."
-    allowedPattern: "^[0-9]+$"
-  Workers:
-    type: String
-    description: "The number of disk stressors (default: 1)."
-    default: "1"
+    description: "(Required) The duration - in seconds - of the disk stress"
     allowedPattern: "^[0-9]+$"
   Percent:
     type: String
-    description: "The percentage of disk to use (required)."
+    description: "(Required) The percentage of disk to use"
+    allowedPattern: "^[0-9]+$"
+  Bytes:
+    type: String
+    description: "(Optional) The bytes of disk to use"
+    default: "0b"
+    allowedPattern: "^[0-9]+(b|k|m|g)$"
+  Workers:
+    type: String
+    description: "(Optional) The number of disk stressors (default: 1)"
+    default: "1"
     allowedPattern: "^[0-9]+$"
   InstallDependencies:
     type: String
-    description: "If set to True, Systems Manager installs the required dependencies on the target instances. (default: True)."
+    description: "(Optional) If set to True, Systems Manager installs the required dependencies on the target instances. (default: True)."
     default: 'True'
     allowedValues:
       - 'True'

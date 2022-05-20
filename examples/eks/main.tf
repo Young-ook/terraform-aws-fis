@@ -15,7 +15,7 @@ module "vpc" {
   vpc_config = var.use_default_vpc ? null : {
     cidr        = var.cidr
     azs         = var.azs
-    subnet_type = "isolated"
+    subnet_type = "private"
     single_ngw  = true
   }
 }
@@ -55,6 +55,8 @@ provider "helm" {
 
 module "container-insights" {
   source       = "Young-ook/eks/aws//modules/container-insights"
+  version      = "1.7.5"
+  features     = { enable_metrics = true }
   cluster_name = module.eks.cluster.name
   oidc         = module.eks.oidc
 }
