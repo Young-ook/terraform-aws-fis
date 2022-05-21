@@ -8,7 +8,7 @@
             "parameters": {
                 "documentArn": "${ssm_doc}",
                 "documentParameters": "{\"Region\": \"${region}\", \"AvailabilityZone\": \"${az}\", \"VPCId\": \"${vpc}\", \"Duration\": \"${duration}\", \"AutomationAssumeRole\": \"${ssm_role}\"}",
-                "maxDuration": "PT10M"
+                "maxDuration": "PT30M"
             },
             "targets": {}
         }
