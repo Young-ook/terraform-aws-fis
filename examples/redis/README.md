@@ -65,6 +65,9 @@ First of all, we need to define steady state of the service. This means the serv
 
 #### Stop Condition
 #### Run Experiment
+
+![aws-fis-redis-cluster-failover-start](../../images/redis/aws-fis-redis-cluster-failover-start.png)
+
 #### Improvements
 
 ## Clean up
