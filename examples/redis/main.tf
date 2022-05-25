@@ -20,24 +20,41 @@ module "vpc" {
   }
 }
 
+# security/firewall
+resource "aws_security_group" "redis" {
+  name   = join("-", [var.name, "redis"])
+  tags   = merge(local.default-tags, var.tags)
+  vpc_id = module.vpc.vpc.id
+
+  ingress {
+    from_port   = 6379
+    to_port     = 6379
+    protocol    = "tcp"
+    cidr_blocks = [var.cidr]
+  }
+}
+
 # application/redis
-module "redis" {
-  source                               = "cloudposse/elasticache-redis/aws"
-  version                              = "0.42.1"
-  name                                 = var.name
-  vpc_id                               = module.vpc.vpc.id
-  subnets                              = values(module.vpc.subnets[var.use_default_vpc ? "public" : "private"])
-  availability_zones                   = var.azs
-  allowed_security_groups              = [aws_security_group.redis-aware.id]
-  apply_immediately                    = true
-  automatic_failover_enabled           = true
-  multi_az_enabled                     = true
-  cluster_mode_enabled                 = true
-  cluster_mode_num_node_groups         = 3
-  cluster_mode_replicas_per_node_group = 2
-  instance_type                        = "cache.t2.micro"
-  family                               = "redis6.x"
-  engine_version                       = "6.x"
+resource "aws_elasticache_replication_group" "redis" {
+  replication_group_id       = var.name
+  description                = "Cluster mode enabled ElastiCache for Redis"
+  engine                     = "redis"
+  engine_version             = "6.x"
+  port                       = 6379
+  security_group_ids         = [aws_security_group.redis.id]
+  node_type                  = "cache.t2.micro"
+  parameter_group_name       = "default.redis6.x.cluster.on"
+  num_node_groups            = 3
+  replicas_per_node_group    = 1
+  automatic_failover_enabled = true
+  multi_az_enabled           = true
+
+  log_delivery_configuration {
+    destination      = module.logs["redis"].log_group.name
+    destination_type = "cloudwatch-logs"
+    log_format       = "text"
+    log_type         = "slow-log"
+  }
 
   ###
   ###
@@ -45,20 +62,6 @@ module "redis" {
   # parameter = {
   #   "cluster-require-full-coverage" = "no"
   # }
-}
-
-# security/firewall
-resource "aws_security_group" "redis-aware" {
-  name   = join("-", [var.name, "redis-aware"])
-  tags   = merge(local.default-tags, var.tags)
-  vpc_id = module.vpc.vpc.id
-
-  egress {
-    from_port   = 6379
-    to_port     = 6379
-    protocol    = "tcp"
-    cidr_blocks = [var.cidr]
-  }
 }
 
 # application/ec2
@@ -69,14 +72,13 @@ module "ec2" {
   tags    = var.tags
   node_groups = [
     {
-      name            = "baseline"
-      desired_size    = 1
-      min_size        = 1
-      max_size        = 3
-      instance_type   = "t3.small"
-      tags            = { role = "client" }
-      security_groups = [aws_security_group.redis-aware.id]
-      policy_arns     = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy", ]
+      name          = "baseline"
+      desired_size  = 1
+      min_size      = 1
+      max_size      = 3
+      instance_type = "t3.small"
+      tags          = { role = "client" }
+      policy_arns   = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy", ]
     },
   ]
 

@@ -28,6 +28,13 @@ module "logs" {
         retension_days = 3
       }
     },
+    {
+      type = "redis"
+      log_group = {
+        namespace      = "/aws/elasticache"
+        retension_days = 3
+      }
+    },
   ] : l.type => l }
   name      = join("-", [var.name, each.key])
   log_group = each.value.log_group
