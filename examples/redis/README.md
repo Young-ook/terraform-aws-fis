@@ -7,11 +7,11 @@ Chaos engineering is the discipline of experimenting on a distributed system in 
 Download this example on your workspace
 ```sh
 git clone https://github.com/Young-ook/terraform-aws-fis
-cd terraform-aws-fis/examples/az
+cd terraform-aws-fis/examples/redis
 ```
 
 ## Setup
-[This](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/az/main.tf) is an example of terraform configuration file to create AWS Fault Injection Simulator experiments for chaos engineering. Check out and apply it using terraform command.
+[This](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/redis/main.tf) is an example of terraform configuration file to create AWS Fault Injection Simulator experiments for chaos engineering. Check out and apply it using terraform command.
 
 If you don't have the terraform tools in your environment, go to the main [page](https://github.com/Young-ook/terraform-aws-fis#terraform) of this repository and follow the installation instructions.
 

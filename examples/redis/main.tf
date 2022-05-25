@@ -31,13 +31,20 @@ module "redis" {
   allowed_security_groups              = [aws_security_group.redis-aware.id]
   apply_immediately                    = true
   automatic_failover_enabled           = true
+  multi_az_enabled                     = true
   cluster_mode_enabled                 = true
-  cluster_mode_num_node_groups         = 1
-  cluster_mode_replicas_per_node_group = 1
-  cluster_size                         = 1
+  cluster_mode_num_node_groups         = 3
+  cluster_mode_replicas_per_node_group = 2
   instance_type                        = "cache.t2.micro"
   family                               = "redis6.x"
   engine_version                       = "6.x"
+
+  ###
+  ###
+
+  # parameter = {
+  #   "cluster-require-full-coverage" = "no"
+  # }
 }
 
 # security/firewall
