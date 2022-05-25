@@ -54,6 +54,12 @@ tfenv install latest
 tfenv use 0.12.18
 ```
 
+# Experiments
+- [Amazon EC2](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/ec2)
+- [Amazon EKS](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/eks)
+- [Amazon RDS](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/rds)
+- [Amazon Redis](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/redis)
+
 # Known Issues
 ## Unknown parameter
 You might see error like belows if your aws cli does not support log configuration parameter of aws fis command. Upgrade your aws cli when you see that. This module requires aws cli version 2.5.8 or higher.
