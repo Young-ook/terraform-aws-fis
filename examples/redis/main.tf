@@ -38,6 +38,13 @@ module "redis" {
   instance_type                        = "cache.t2.micro"
   family                               = "redis6.x"
   engine_version                       = "6.x"
+
+  ###
+  ###
+
+  # parameter = {
+  #   "cluster-require-full-coverage" = "no"
+  # }
 }
 
 # security/firewall
