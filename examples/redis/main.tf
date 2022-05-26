@@ -49,7 +49,7 @@ resource "aws_elasticache_replication_group" "redis" {
   node_type                  = "cache.t2.micro"
   parameter_group_name       = "default.redis6.x.cluster.on"
   num_node_groups            = 3
-  replicas_per_node_group    = 1
+  replicas_per_node_group    = 2
   automatic_failover_enabled = true
   multi_az_enabled           = true
 
@@ -59,13 +59,6 @@ resource "aws_elasticache_replication_group" "redis" {
     log_format       = "text"
     log_type         = "slow-log"
   }
-
-  ###
-  ###
-
-  # parameter = {
-  #   "cluster-require-full-coverage" = "no"
-  # }
 }
 
 # application/ec2
