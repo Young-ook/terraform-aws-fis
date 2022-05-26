@@ -20,6 +20,10 @@ module "vpc" {
   }
 }
 
+locals {
+  redis_port = 6379
+}
+
 # security/firewall
 resource "aws_security_group" "redis" {
   name   = join("-", [var.name, "redis"])
@@ -27,8 +31,8 @@ resource "aws_security_group" "redis" {
   vpc_id = module.vpc.vpc.id
 
   ingress {
-    from_port   = 6379
-    to_port     = 6379
+    from_port   = local.redis_port
+    to_port     = local.redis_port
     protocol    = "tcp"
     cidr_blocks = [var.cidr]
   }
@@ -40,12 +44,12 @@ resource "aws_elasticache_replication_group" "redis" {
   description                = "Cluster mode enabled ElastiCache for Redis"
   engine                     = "redis"
   engine_version             = "6.x"
-  port                       = 6379
+  port                       = local.redis_port
   security_group_ids         = [aws_security_group.redis.id]
   node_type                  = "cache.t2.micro"
   parameter_group_name       = "default.redis6.x.cluster.on"
   num_node_groups            = 3
-  replicas_per_node_group    = 1
+  replicas_per_node_group    = 2
   automatic_failover_enabled = true
   multi_az_enabled           = true
 
@@ -55,13 +59,6 @@ resource "aws_elasticache_replication_group" "redis" {
     log_format       = "text"
     log_type         = "slow-log"
   }
-
-  ###
-  ###
-
-  # parameter = {
-  #   "cluster-require-full-coverage" = "no"
-  # }
 }
 
 # application/ec2
@@ -72,8 +69,8 @@ module "ec2" {
   tags    = var.tags
   node_groups = [
     {
-      name          = "baseline"
-      desired_size  = 1
+      name          = "redis-cli"
+      desired_size  = 3
       min_size      = 1
       max_size      = 3
       instance_type = "t3.small"
