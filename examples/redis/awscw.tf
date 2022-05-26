@@ -12,7 +12,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu" {
   threshold                 = 60
   insufficient_data_actions = []
   dimensions = {
-    AutoScalingGroupName = module.ec2.cluster.data_plane.node_groups.baseline.name
+    AutoScalingGroupName = module.ec2.cluster.data_plane.node_groups.redis-cli.name
   }
 }
 
