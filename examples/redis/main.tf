@@ -20,6 +20,10 @@ module "vpc" {
   }
 }
 
+locals {
+  redis_port = 6379
+}
+
 # security/firewall
 resource "aws_security_group" "redis" {
   name   = join("-", [var.name, "redis"])
@@ -27,8 +31,8 @@ resource "aws_security_group" "redis" {
   vpc_id = module.vpc.vpc.id
 
   ingress {
-    from_port   = 6379
-    to_port     = 6379
+    from_port   = local.redis_port
+    to_port     = local.redis_port
     protocol    = "tcp"
     cidr_blocks = [var.cidr]
   }
@@ -40,7 +44,7 @@ resource "aws_elasticache_replication_group" "redis" {
   description                = "Cluster mode enabled ElastiCache for Redis"
   engine                     = "redis"
   engine_version             = "6.x"
-  port                       = 6379
+  port                       = local.redis_port
   security_group_ids         = [aws_security_group.redis.id]
   node_type                  = "cache.t2.micro"
   parameter_group_name       = "default.redis6.x.cluster.on"
