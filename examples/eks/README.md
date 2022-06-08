@@ -1,7 +1,7 @@
 [[English](README.md)] [[한국어](README.ko.md)]
 
 # Chaos Engineering
-Chaos engineering is the discipline of experimenting on a distributed system in order to build confidence in the system's capability to withstand turbulent and unexpected conditions in production. If you want know why and how to do chaos engineering, please refer to this [page](https://github.com/Young-ook/terraform-aws-fis/blob/main/README.md).
+Chaos engineering is the discipline of experimenting on a distributed system in order to build confidence in the system's capability to withstand turbulent and unexpected conditions in production. The goal of chaos engineering is to identify and remediate weakness in a system through controlled experiments that introduce random and unpredictable behavior. Therefore, Chaos engineering is NOT about breaking thingsrandomly without a purpose, chaos engineering is about breaking things in a controlled environment and through well-planned experiments in order to build confidence in your application to withstand turbulent conditions. If you want know why and how to do chaos engineering, please refer to this [page](https://github.com/Young-ook/terraform-aws-fis/blob/main/README.md).
 
 ![aws-fis-eks-arch](../../images/eks/aws-fis-eks-arch.png)
 
@@ -100,9 +100,7 @@ Let’s go ahead and explore Sock Shop application. Some things to try out:
 1. Check out items
 
 #### Hypothesis
-The experiment we’ll run is to verify and fine-tune our application availability when compute nodes are terminated accidentally. Our application is deployed as a container on the Kubernetes cluster, we assume that if some nodes are teminated, the Kubernetes control plane will reschedule the pods to the other healthy nodes.
-
-We talked about following the scientific method when doing Chaos Engineering, starting with developing a hypothesis. To help with this, we use experiment chart (like the one below) to help design this experiment. Please take 5 minutes to write your experiment plan.
+The experiment we’ll run is to verify and fine-tune our application availability when compute nodes are terminated accidentally. The application is deployed as a container on the Kubernetes cluster, we assume that if some nodes are teminated, the Kubernetes control plane will reschedule the pods to the other healthy nodes. In order for chaos engineering to follow the scientific method, we need to start by making hypotheses. To help with this, you can use an experiment chart (see below) in your experiment design. We encourage you to take at least 5 minutes to write your experiment plan.
 
 **Steady State Hypothesis Example**
 
@@ -145,11 +143,11 @@ ip-10-1-9-221.ap-northeast-2.compute.internal   NotReady   <none>   4m40s   v1.2
 ```
 
 #### Discussion
-Then access the microservices application again. What happened? Perhaps a node shutdown by a fault injection experiment will cause the application to crash. This is because the first deployment of the application did not consider high availability.
+Then access the microservices application again. What happened? Perhaps a node shutdown by a fault injection experiment will cause the application to crash. This is because the first deployment of the application did not consider high availability (stateless, immutable, replicable) characteristics against single node or availability-zone failure. In the next stage, you will learn how to improve the architecture for reliabiliy and high availability.
 
-In this experiment, business healthy state (steady state) is specified as cpu utilization and number of healthy pods. But after the first experiment, you will see the service does not work properly even though the monitoring indicators are in the normal range. It would be weird it is also meaningful. This result shows that unintended problems can occur even if the monitoring numbers are normal. It could be one of the experimental results that can be obtained through chaos engineering.
+Before we move to the next step, we need to think about one thing. In this experiment, business healthy state (steady state) is specified as cpu utilization and number of healthy pods. But after the first experiment, you will see the service does not work properly even though the monitoring indicators are in the normal range. It would be weird it is also meaningful. This result shows that unintended problems can occur even if the monitoring numbers are normal. It could be one of the experimental results that can be obtained through chaos engineering.
 
-An important part of this lab is the high availability (stateless, immutable, replicable) characteristics. This example shows that a service problem occurs when such characteristics are not considered within the first experiment and suggests a way to secure high availability by improving the architecture. Go forward.
+Go forward.
 
 #### Architecture Improvements
 Cluster Autoscaler is a tool that automatically adjusts the size of the Kubernetes cluster when one of the following conditions is true:
