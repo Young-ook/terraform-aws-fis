@@ -22,6 +22,13 @@ module "logs" {
   version = "0.2.1"
   for_each = { for l in [
     {
+      type = "codebuild"
+      log_group = {
+        namespace      = "/aws/codebuild"
+        retension_days = 5
+      }
+    },
+    {
       type = "fis"
       log_group = {
         namespace      = "/aws/fis"
