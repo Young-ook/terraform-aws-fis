@@ -61,29 +61,35 @@ resource "aws_elasticache_replication_group" "redis" {
   }
 }
 
-# application/ec2
-module "ec2" {
-  source  = "Young-ook/ssm/aws"
-  version = "1.0.0"
-  name    = var.name
-  tags    = var.tags
-  node_groups = [
+# application/eks
+module "eks" {
+  source             = "Young-ook/eks/aws"
+  version            = "1.7.5"
+  name               = var.name
+  tags               = var.tags
+  subnets            = values(module.vpc.subnets[var.use_default_vpc ? "public" : "private"])
+  kubernetes_version = "1.21"
+  enable_ssm         = true
+  managed_node_groups = [
     {
-      name          = "redis-cli"
-      desired_size  = 3
-      min_size      = 1
-      max_size      = 3
-      instance_type = "t3.small"
-      tags          = { role = "client" }
-      policy_arns   = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy", ]
+      name          = "redispy"
+      instance_type = "t3.medium"
     },
   ]
+}
 
-  ### Initially, this module places all ec2 instances in a specific Availability Zone (AZ).
-  ### This configuration is not fault tolerant when Single AZ goes down.
-  ###
-  ### After first experiment run, switch the 'subnets' variable to the list of whole private subnets created in the example.
+provider "helm" {
+  kubernetes {
+    host                   = module.eks.helmconfig.host
+    token                  = module.eks.helmconfig.token
+    cluster_ca_certificate = base64decode(module.eks.helmconfig.ca)
+  }
+}
 
-  subnets = [module.vpc.subnets[var.use_default_vpc ? "public" : "private"][var.azs[random_integer.az.result]]]
-  # subnets = values(module.vpc.subnets[var.use_default_vpc ? "public" : "private"])
+module "container-insights" {
+  source       = "Young-ook/eks/aws//modules/container-insights"
+  version      = "1.7.5"
+  features     = { enable_metrics = true }
+  cluster_name = module.eks.cluster.name
+  oidc         = module.eks.oidc
 }

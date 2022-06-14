@@ -3,16 +3,17 @@ resource "aws_cloudwatch_metric_alarm" "cpu" {
   alarm_name                = join("-", [var.name, "cpu", "alarm"])
   alarm_description         = "This metric monitors ec2 cpu utilization"
   tags                      = merge(local.default-tags, var.tags)
+  metric_name               = "node_cpu_utilization"
   comparison_operator       = "GreaterThanOrEqualToThreshold"
-  evaluation_periods        = 3
-  metric_name               = "CPUUtilization"
-  namespace                 = "AWS/EC2"
-  period                    = 60
-  statistic                 = "Average"
+  datapoints_to_alarm       = 1
+  evaluation_periods        = 1
+  namespace                 = "ContainerInsights"
+  period                    = 30
   threshold                 = 60
+  statistic                 = "Average"
   insufficient_data_actions = []
   dimensions = {
-    AutoScalingGroupName = module.ec2.cluster.data_plane.node_groups.redis-cli.name
+    ClusterName = module.eks.cluster.name
   }
 }
 
