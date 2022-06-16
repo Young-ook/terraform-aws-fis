@@ -34,7 +34,7 @@ resource "aws_security_group" "redis" {
     from_port   = local.redis_port
     to_port     = local.redis_port
     protocol    = "tcp"
-    cidr_blocks = [var.cidr]
+    cidr_blocks = [module.vpc.vpc.cidr_block]
   }
 }
 
