@@ -7,23 +7,23 @@ from django.shortcuts import render
 from django.utils.decorators import classonlymethod
 from django.views import View
 from ipware import get_client_ip
-from redis import Redis
+from redis.cluster import RedisCluster
 
-if settings.REDIS_URL:
-    redis_default = Redis.from_url(url=settings.REDIS_URL)
-else:
-    redis_default = Redis(
-        host=settings.REDIS_HOST,
-        port=settings.REDIS_PORT,
-        password=settings.REDIS_PASSWORD,
-        db=settings.REDIS_DB
-    )
+redis_cluster = RedisCluster(
+    host=settings.REDIS_HOST,
+    port=settings.REDIS_PORT,
+    password=settings.REDIS_PASSWORD,
+    skip_full_coverage_check=True,  # Bypass Redis CONFIG call to elasticache
+    decode_responses=True,          # decode_responses must be set to True when used with python3
+    ssl=True,                       # in-transit encryption, https://docs.aws.amazon.com/AmazonElastiCache/latest/red-ug/in-transit-encryption.html
+    ssl_cert_reqs=None              # see https://github.com/andymccurdy/redis-py#ssl-connections
+)
 key = 'PING'
 limit = 10
 period = timedelta(seconds=10)
 
 
-def request_is_limited(red: Redis, redis_key: str, redis_limit: int, redis_period: timedelta):
+def request_is_limited(red: RedisCluster, redis_key: str, redis_limit: int, redis_period: timedelta):
     if red.setnx(redis_key, redis_limit):
         red.expire(redis_key, int(redis_period.total_seconds()))
     bucket_val = red.get(redis_key)
@@ -42,7 +42,7 @@ class GetPongView(View):
 
     async def get(self, request, *args, **kwargs):
         ip, is_routable = get_client_ip(request)
-        if request_is_limited(redis_default,  '%s:%s' % (ip, key), limit, period):
+        if request_is_limited(redis_cluster,  '%s:%s' % (ip, key), limit, period):
             return HttpResponse("Too many requests, please try again later.", status=429)
         return HttpResponse("PONG", status=200)
 
