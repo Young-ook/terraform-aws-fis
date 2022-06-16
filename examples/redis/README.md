@@ -25,20 +25,57 @@ Also you can use the `-var-file` option for customized paramters when you run th
 terraform plan -var-file fixture.tc1.tfvars
 terraform apply -var-file fixture.tc1.tfvars
 ```
+### Update kubeconfig
+Update and download kubernetes config file to local. You can see the bash command like below after terraform apply is complete. The output looks like below. Copy and run it to save the kubernetes configuration file to your local workspace. And export it as an environment variable to apply to the terminal.
+```
+bash -e .terraform/modules/eks/script/update-kubeconfig.sh -r ap-northeast-2 -n fis-az -k kubeconfig
+export KUBECONFIG=kubeconfig
+```
 
-## Experiment Templates
-This module creates fault injection simulator experiment templates when creating. Move to the AWS FIS service page on the AWS Management Conosol and select Experiment templates menu on the left. Then users will see the created experiment templates for chaos engineering.
+### Application
+For this lab, we picked up the Redis rate-limit application. Redis-rate-limiting is a simple application made by redis lab for learning and demonstration purposes.
 
+Create the namespace and deploy application.
+```
+kubectl apply -f redispy/redispy.yaml
+```
+Verify that the pod came up fine (ensure nothing else is running on port 8080):
+```
+kubectl -n redispy get pod -l name=www
+```
+The output will be something like this:
+```
+NAME                   READY   STATUS    RESTARTS   AGE
+www-59b86f6668-4sdr2   1/1     Running   0          43s
+```
+
+#### Local Workspace
+In your local workspace, connect through a proxy to access your application's endpoint.
+```
+kubectl -n redispy port-forward svc/www 8080:8080
+```
+Open `http://localhost:8080` on your web browser. This shows the redis-rate-limit main page.
+
+#### Cloud9
+In your Cloud9 IDE, run the application.
+```
+kubectl -n redispy port-forward svc/www 8080:8080
+```
+Click `Preview` and `Preview Running Application`. This opens up a preview tab and shows the redis-rate-limit main page.
+
+![aws-fis-redis-rate-limit](../../images/redis/aws-fis-redis-rate-limit.png)
+
+🎉 Congrats, you’ve deployed the sample application on your cluster.
+
+## Run Fault Injection Experiments
+This module creates fault injection simulator experiment templates when creating. Move to the AWS FIS service page on the AWS Management Conosol and select Experiment templates menu on the left. Then users will see the created experiment templates for chaos engineering. To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
 ![aws-fis-experiment-templates](../../images/ec2/aws-fis-experiment-templates.png)
-
-## Run Experiments
-To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
 
 ### AZ Outage
 This test will inject network outage to a target availability zone (AZ).
 
 #### Define Steady State
-First of all, we need to define steady state of the service. This means the service is healthy and working well.
+First of all, we need to define steady state of the service. This means the service is healthy and working well. Let’s go ahead and explore Redis RateLimit application. Try out to select one of the requests-per-second (RPS) options and run it.
 
 **Steady State Hypothesis Example**
 
@@ -71,6 +108,11 @@ First of all, we need to define steady state of the service. This means the serv
 #### Improvements
 
 ## Clean up
+Delete all kubernetes resources:
+```
+kubectl delete -f redispy/redispy.yaml
+```
+
 Run terraform:
 ```
 terraform destroy
@@ -79,3 +121,6 @@ Don't forget you have to use the `-var-file` option when you run terraform destr
 ```
 terraform destroy -var-file fixture.tc1.tfvars
 ```
+
+# Additional Resources
+- [New cluster-mode support in redis-py](https://aws.amazon.com/blogs/opensource/new-cluster-mode-support-in-redis-py/)

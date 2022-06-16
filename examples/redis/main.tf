@@ -34,8 +34,15 @@ resource "aws_security_group" "redis" {
     from_port   = local.redis_port
     to_port     = local.redis_port
     protocol    = "tcp"
-    cidr_blocks = [var.cidr]
+    cidr_blocks = [module.vpc.vpc.cidr_block]
   }
+}
+
+# security/password
+resource "random_password" "password" {
+  length           = 16
+  special          = true
+  override_special = "!#$%&*()-_=+[]{}<>?^"
 }
 
 # application/redis
@@ -52,7 +59,8 @@ resource "aws_elasticache_replication_group" "redis" {
   replicas_per_node_group    = 2
   automatic_failover_enabled = true
   multi_az_enabled           = true
-
+  transit_encryption_enabled = true
+  auth_token                 = random_password.password.result
   log_delivery_configuration {
     destination      = module.logs["redis"].log_group.name
     destination_type = "cloudwatch-logs"
@@ -61,29 +69,35 @@ resource "aws_elasticache_replication_group" "redis" {
   }
 }
 
-# application/ec2
-module "ec2" {
-  source  = "Young-ook/ssm/aws"
-  version = "1.0.0"
-  name    = var.name
-  tags    = var.tags
-  node_groups = [
+# application/eks
+module "eks" {
+  source             = "Young-ook/eks/aws"
+  version            = "1.7.5"
+  name               = var.name
+  tags               = var.tags
+  subnets            = values(module.vpc.subnets[var.use_default_vpc ? "public" : "private"])
+  kubernetes_version = "1.21"
+  enable_ssm         = true
+  managed_node_groups = [
     {
-      name          = "redis-cli"
-      desired_size  = 3
-      min_size      = 1
-      max_size      = 3
-      instance_type = "t3.small"
-      tags          = { role = "client" }
-      policy_arns   = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy", ]
+      name          = "redispy"
+      instance_type = "t3.medium"
     },
   ]
+}
 
-  ### Initially, this module places all ec2 instances in a specific Availability Zone (AZ).
-  ### This configuration is not fault tolerant when Single AZ goes down.
-  ###
-  ### After first experiment run, switch the 'subnets' variable to the list of whole private subnets created in the example.
+provider "helm" {
+  kubernetes {
+    host                   = module.eks.helmconfig.host
+    token                  = module.eks.helmconfig.token
+    cluster_ca_certificate = base64decode(module.eks.helmconfig.ca)
+  }
+}
 
-  subnets = [module.vpc.subnets[var.use_default_vpc ? "public" : "private"][var.azs[random_integer.az.result]]]
-  # subnets = values(module.vpc.subnets[var.use_default_vpc ? "public" : "private"])
+module "container-insights" {
+  source       = "Young-ook/eks/aws//modules/container-insights"
+  version      = "1.7.5"
+  features     = { enable_metrics = true }
+  cluster_name = module.eks.cluster.name
+  oidc         = module.eks.oidc
 }
