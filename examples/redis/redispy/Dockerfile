@@ -14,9 +14,6 @@ RUN pip install -r requirements.txt
 
 # Service must listen to $PORT environment variable.
 # This default value facilitates local development.
-ARG REDIS_URL_ADDRESS
-
-ENV REDIS_URL=$REDIS_URL_ADDRESS
 ENV PORT 8080
 
 # Setting this ensures print statements and log messages

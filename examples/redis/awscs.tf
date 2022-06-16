@@ -47,8 +47,9 @@ resource "local_file" "redispy" {
     {
       ecr_url        = module.ecr.url
       redis_endpoint = aws_elasticache_replication_group.redis.configuration_endpoint_address
+      redis_password = random_password.password.result
     }
   )
-  filename        = join("/", [path.cwd, "redispy.yaml"])
+  filename        = join("/", [path.cwd, "redispy", "redispy.yaml"])
   file_permission = "0600"
 }

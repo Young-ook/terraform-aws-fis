@@ -43,5 +43,7 @@ spec:
         - name: www
           containerPort: 8080
         env:
-        - name: REDIS_URL_ADDRESS
+        - name: REDIS_HOST
           value: ${redis_endpoint}
+        - name: REDIS_PASSWORD
+          value: '${redis_password}'
