@@ -79,3 +79,6 @@ Don't forget you have to use the `-var-file` option when you run terraform destr
 ```
 terraform destroy -var-file fixture.tc1.tfvars
 ```
+
+# Additional Resources
+- [New cluster-mode support in redis-py](https://aws.amazon.com/blogs/opensource/new-cluster-mode-support-in-redis-py/)
