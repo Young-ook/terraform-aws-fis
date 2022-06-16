@@ -12,14 +12,14 @@ module "ci" {
     source = {
       type      = "GITHUB"
       location  = "https://github.com/Young-ook/terraform-aws-fis.git"
-      buildspec = "examples/rds/lampapp/buildspec.yml"
+      buildspec = "examples/rds/lamp/buildspec.yml"
       version   = "main"
     }
     environment = {
       image           = "aws/codebuild/standard:4.0"
       privileged_mode = true
       environment_variables = {
-        APP_SRC = join("/", ["examples/rds/lampapp"])
+        APP_SRC = join("/", ["examples/rds/lamp"])
         ECR_URI = module.ecr.url
       }
     }
@@ -52,6 +52,6 @@ resource "local_file" "lamp" {
       mysql_db   = module.mysql.user.database
     }
   )
-  filename        = join("/", [path.cwd, "lampapp", "lamp.yaml"])
+  filename        = join("/", [path.cwd, "lamp", "lamp.yaml"])
   file_permission = "0600"
 }
