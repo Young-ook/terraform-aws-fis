@@ -36,6 +36,13 @@ export KUBECONFIG=kubeconfig
 ### Application
 For this lab, we picked up the Redis rate-limit application. Redis-rate-limiting is a simple application made by redis lab for learning and demonstration purposes.
 
+### Build an application
+Run a build job to create a redis client application container image. Copy the `build` command from the terraform output and run it:
+```
+aws codebuild start-build --region ap-northeast-2 --output text --project-name arn:aws:codebuild:ap-northeast-2:111122223333:project/fis-az-knuae
+```
+
+### Deploy application
 Create the namespace and deploy application.
 ```
 kubectl apply -f redispy/redispy.yaml
