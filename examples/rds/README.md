@@ -24,6 +24,13 @@ terraform plan -var-file fixture.tc1.tfvars
 terraform apply -var-file fixture.tc1.tfvars
 ```
 
+#### Update kubeconfig
+Update and download kubernetes config file to local. You can see the bash command like below after terraform apply is complete. Copy this and run it to save the kubernetes configuration file to your local workspace. And export it as an environment variable to apply to the terminal.
+```
+bash -e .terraform/modules/eks/script/update-kubeconfig.sh -r ap-northeast-2 -n fis-rds -k kubeconfig
+export KUBECONFIG=kubeconfig
+```
+
 ## Docker LAMP
 In this lab, we use docker example with Apache, PHP, and Amazon Aurora (Linux, Apache, MySQL, PHP) as an user application.
 
@@ -36,14 +43,14 @@ aws codebuild start-build --region ap-northeast-2 --output text --project-name a
 ### Deploy LAMP stack
 Run containers:
 ```
-kubectl apply -f lampapp/lamp.yaml
+kubectl apply -f lamp/lamp.yaml
 ```
 
 ### Initialize a database
 Get pod a name of mysql client and and start a interactive bash session with mysql client:
 ```
 export MYSQL_CLIENT=$(kubectl get pods -n lamp -l name=mysql --template '{{range .items}}{{.metadata.name}}{{"\n"}}{{end}}')
-kubectl -n lamp cp lampapp/dump/mydb.sql $MYSQL_CLIENT:/
+kubectl -n lamp cp lamp/dump/mydb.sql $MYSQL_CLIENT:/
 kubectl -n lamp exec -it $MYSQL_CLIENT -- bash
 ```
 
@@ -60,6 +67,8 @@ kubectl -n lamp port-forward svc/apache 8080:80
 
 Open `http://localhost:8080` on a web browser to look at a simple php example. Or if your are running this example in Cloud9, click `Preview` and `Preview Running Application`. This opens up a preview tab and shows the spinnaker application.
 
+![aws-fis-rds-lamp](../../images/rds/aws-fis-rds-lamp.png)
+
 ## Create Experiment Templates
 This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Conosol and select Experiment templates menu on the left. Then users will see the created experiment templates for chaos engineering.
 
@@ -70,13 +79,6 @@ To test your environment, select a experiment template that you want to run and 
 
 ### Failover DB Cluster
 AWS FIS allows you to test resilience of Aurora DB cluster.
-
-#### Update kubeconfig
-Update and download kubernetes config file to local. You can see the bash command like below after terraform apply is complete. Copy this and run it to save the kubernetes configuration file to your local workspace. And export it as an environment variable to apply to the terminal.
-```
-bash -e .terraform/modules/eks/script/update-kubeconfig.sh -r ap-northeast-2 -n aurora-fis -k kubeconfig
-export KUBECONFIG=kubeconfig
-```
 
 #### Define Steady State
 Before we begin a failure experiment, we need to validate the user experience and revise the dashboard and metrics to understand that the systems are working under normal state, in other words, steady state.

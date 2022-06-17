@@ -48,7 +48,7 @@ module "mysql" {
   cidrs   = [var.cidr]
   aurora_cluster = {
     engine            = "aurora-mysql"
-    version           = "5.7.12"
+    version           = "5.7.mysql_aurora.2.07.1"
     port              = "3306"
     user              = "myuser"
     password          = "supersecret"
