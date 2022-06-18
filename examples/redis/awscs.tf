@@ -1,7 +1,7 @@
 # application/build
 module "ci" {
   source  = "Young-ook/spinnaker/aws//modules/codebuild"
-  version = "2.3.1"
+  version = "2.3.2"
   name    = var.name
   tags    = var.tags
   policy_arns = [
