@@ -77,8 +77,8 @@ Run load generator inside kubernetes
 kubectl apply -f manifests/sockshop-loadtest.yaml
 ```
 
-## Fault Injection Experiments
-This module creates fault injection simulator experiment templates when creating. Move to the AWS FIS service page on the AWS Management Conosol and select Experiment templates menu on the left. Then you will see the created experiment templates for chaos engineering. To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
+## Run Fault Injection Experiments
+This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Console and select Experiment templates menu on the left. Then you will see the created experiment templates for chaos engineering. To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
 
 ![aws-fis-experiment-templates](../../images/eks/aws-fis-experiment-templates.png)
 

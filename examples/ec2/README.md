@@ -26,13 +26,10 @@ terraform plan -var-file fixture.tc1.tfvars
 terraform apply -var-file fixture.tc1.tfvars
 ```
 
-## Experiment Templates
-This module creates fault injection simulator experiment templates when creating. Move to the AWS FIS service page on the AWS Management Conosol and select Experiment templates menu on the left. Then users will see the created experiment templates for chaos engineering.
+## Run Fault Injection Experiments
+This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Console and select Experiment templates menu on the left. Then you will see the created experiment templates for chaos engineering. To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
 
 ![aws-fis-experiment-templates](../../images/ec2/aws-fis-experiment-templates.png)
-
-## Run Experiments
-To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
 
 ### Run Load Generator
 Terraform configuration also creates a load generator autoscaling group for your application instances. When running, this load generator instance runs a virtual client script that repeatedly sends http requests to the application load balancer. After running the terraform apply command, you can find the details of the script in the terraform output. It should look similar to the example below.

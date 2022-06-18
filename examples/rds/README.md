@@ -69,13 +69,10 @@ Open `http://localhost:8080` on a web browser to look at a simple php example. O
 
 ![aws-fis-rds-lamp](../../images/rds/aws-fis-rds-lamp.png)
 
-## Create Experiment Templates
-This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Conosol and select Experiment templates menu on the left. Then users will see the created experiment templates for chaos engineering.
+## Run Fault Injection Experiments
+This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Console and select Experiment templates menu on the left. Then you will see the created experiment templates for chaos engineering. To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
 
 ![aws-fis-experiment-templates](../../images/rds/aws-fis-experiment-templates.png)
-
-## Run Experiments
-To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
 
 ### Failover DB Cluster
 AWS FIS allows you to test resilience of Aurora DB cluster.
@@ -86,9 +83,11 @@ Before we begin a failure experiment, we need to validate the user experience an
 #### Run Experiment
 Go to the AWS FIS service page and select `FailoverDBCluster` from the list of experiment templates. Then use the on-screen `Actions` button to start the experiment.
 
-![aws-rds-aurora-cluster-failover-state](../../images/rds/aws-fis-aurora-cluster-failover-state.png)
+![aws-fis-rds-lamp-broken](../../images/rds/aws-fis-rds-lamp-broken.png)
 
 ![aws-rds-aurora-cluster-normal-state.png](../../images/rds/aws-fis-aurora-cluster-normal-state.png)
+
+![aws-rds-aurora-cluster-failover-state](../../images/rds/aws-fis-aurora-cluster-failover-state.png)
 
 ## Clean up
 Run terraform:
