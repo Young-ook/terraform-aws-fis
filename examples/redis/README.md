@@ -34,7 +34,7 @@ export KUBECONFIG=kubeconfig
 ```
 
 ### Application
-For this lab, we picked up the Redis rate-limit application. Redis-rate-limiting is a simple application made by redis lab for learning and demonstration purposes.
+For this lab, we picked up the Redis rate-limit application which is a simple application made by redis lab for learning and demonstration purposes.
 
 ### Build an application
 Run a build job to create a redis client application container image. Copy the `build` command from the terraform output and run it:
@@ -84,7 +84,7 @@ This module automatically creates fault injection simulator experiment templates
 This test will inject network outage to a target availability zone (AZ).
 
 #### Define Steady State
-First of all, we need to define steady state of the service. This means the service is healthy and working well. Let’s go ahead and explore Redis RateLimit application. Try out to select one of the requests-per-second (RPS) options and run it.
+First of all, we need to define steady state of the service. This means the service is healthy and working well. Let’s go ahead and explore Redis-rate-limit application. Try out to select one of the requests-per-second (RPS) options and run it.
 
 **Steady State Hypothesis Example**
 
