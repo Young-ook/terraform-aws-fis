@@ -31,13 +31,13 @@ bash -e .terraform/modules/eks/script/update-kubeconfig.sh -r ap-northeast-2 -n 
 export KUBECONFIG=kubeconfig
 ```
 
-## Docker LAMP
-In this lab, we use docker example with Apache, PHP, and Amazon Aurora (Linux, Apache, MySQL, PHP) as an user application.
+## Application
+In this lab, we use docker example with Apache, PHP, and Amazon Aurora (LAMP: Linux, Apache, MySQL, PHP) as an user application.
 
 ### Build an application
 Run a build job to create a php-apache application container image. Copy the `build` command from the terraform output and run it:
 ```
-aws codebuild start-build --region ap-northeast-2 --output text --project-name arn:aws:codebuild:ap-northeast-2:111122223333:project/fis-rds-hnuee
+bash -e .terraform/modules/ci/modules/codebuild/script/start-build.sh -r ap-northeast-2 -n arn:aws:codebuild:ap-northeast-2:111122223333:project/fis-rds-cxblf
 ```
 
 ### Deploy LAMP stack
@@ -69,13 +69,10 @@ Open `http://localhost:8080` on a web browser to look at a simple php example. O
 
 ![aws-fis-rds-lamp](../../images/rds/aws-fis-rds-lamp.png)
 
-## Create Experiment Templates
-This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Conosol and select Experiment templates menu on the left. Then users will see the created experiment templates for chaos engineering.
+## Run Fault Injection Experiments
+This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Console and select Experiment templates menu on the left. Then you will see the created experiment templates for chaos engineering. To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
 
 ![aws-fis-experiment-templates](../../images/rds/aws-fis-experiment-templates.png)
-
-## Run Experiments
-To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
 
 ### Failover DB Cluster
 AWS FIS allows you to test resilience of Aurora DB cluster.
@@ -83,12 +80,43 @@ AWS FIS allows you to test resilience of Aurora DB cluster.
 #### Define Steady State
 Before we begin a failure experiment, we need to validate the user experience and revise the dashboard and metrics to understand that the systems are working under normal state, in other words, steady state.
 
+![aws-rds-aurora-cluster-normal-state.png](../../images/rds/aws-fis-aurora-cluster-normal-state.png)
+
+**Steady State Hypothesis Example**
+
++ Title: Services are all available and healthy
++ Type: What are your assumptions?
+   - [ ] No Impact
+   - [ ] Degraded Performance
+   - [ ] Service Outage
+   - [ ] Impproved Performance
++ Probes:
+   - Type: CloudWatch Metric
+   - Status: `p90`
++ Stop condition (Abort condition):
+   - Type: CloudWatch Alarm
+   - Status: `p90`
++ Results:
+   - What did you see?
++ Conclusions:
+   - [ ] Everything is as expected
+   - [ ] Detected something
+   - [ ] Handleable error has occurred
+   - [ ] Need to automate
+   - [ ] Need to dig deeper
+
+#### Stop Condition
 #### Run Experiment
-Go to the AWS FIS service page and select `FailoverDBCluster` from the list of experiment templates. Then use the on-screen `Actions` button to start the experiment.
+Go to the AWS FIS service page and select `FailoverDBCluster` from the list of experiment templates. Then use the on-screen `Actions` button to start the experiment. After the experiment successfully started, move to the application and refresh the web page several times to check the application is working. At some point, the application will not work.
+
+![aws-fis-rds-lamp-broken](../../images/rds/aws-fis-rds-lamp-broken.png)
 
 ![aws-rds-aurora-cluster-failover-state](../../images/rds/aws-fis-aurora-cluster-failover-state.png)
 
-![aws-rds-aurora-cluster-normal-state.png](../../images/rds/aws-fis-aurora-cluster-normal-state.png)
+#### Improvements
+
+### Reboot DB Instance
+AWS FIS allows you to test resilience of Aurora DB cluster.
 
 ## Clean up
 Run terraform:

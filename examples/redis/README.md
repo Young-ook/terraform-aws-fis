@@ -34,12 +34,12 @@ export KUBECONFIG=kubeconfig
 ```
 
 ### Application
-For this lab, we picked up the Redis rate-limit application. Redis-rate-limiting is a simple application made by redis lab for learning and demonstration purposes.
+For this lab, we picked up the Redis rate-limit application which is a simple application made by redis lab for learning and demonstration purposes.
 
 ### Build an application
 Run a build job to create a redis client application container image. Copy the `build` command from the terraform output and run it:
 ```
-aws codebuild start-build --region ap-northeast-2 --output text --project-name arn:aws:codebuild:ap-northeast-2:111122223333:project/fis-az-knuae
+bash -e .terraform/modules/ci/modules/codebuild/script/start-build.sh -r ap-northeast-2 -n arn:aws:codebuild:ap-northeast-2:111122223333:project/fis-az-cxblf
 ```
 
 ### Deploy application
@@ -76,14 +76,15 @@ Click `Preview` and `Preview Running Application`. This opens up a preview tab a
 🎉 Congrats, you’ve deployed the sample application on your cluster.
 
 ## Run Fault Injection Experiments
-This module creates fault injection simulator experiment templates when creating. Move to the AWS FIS service page on the AWS Management Conosol and select Experiment templates menu on the left. Then users will see the created experiment templates for chaos engineering. To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
+This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Console and select Experiment templates menu on the left. Then you will see the created experiment templates for chaos engineering. To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
+
 ![aws-fis-experiment-templates](../../images/ec2/aws-fis-experiment-templates.png)
 
 ### AZ Outage
 This test will inject network outage to a target availability zone (AZ).
 
 #### Define Steady State
-First of all, we need to define steady state of the service. This means the service is healthy and working well. Let’s go ahead and explore Redis RateLimit application. Try out to select one of the requests-per-second (RPS) options and run it.
+First of all, we need to define steady state of the service. This means the service is healthy and working well. Let’s go ahead and explore Redis-rate-limit application. Try out to select one of the requests-per-second (RPS) options and run it.
 
 **Steady State Hypothesis Example**
 
