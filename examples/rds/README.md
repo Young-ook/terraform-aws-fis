@@ -80,14 +80,43 @@ AWS FIS allows you to test resilience of Aurora DB cluster.
 #### Define Steady State
 Before we begin a failure experiment, we need to validate the user experience and revise the dashboard and metrics to understand that the systems are working under normal state, in other words, steady state.
 
+![aws-rds-aurora-cluster-normal-state.png](../../images/rds/aws-fis-aurora-cluster-normal-state.png)
+
+**Steady State Hypothesis Example**
+
++ Title: Services are all available and healthy
++ Type: What are your assumptions?
+   - [ ] No Impact
+   - [ ] Degraded Performance
+   - [ ] Service Outage
+   - [ ] Impproved Performance
++ Probes:
+   - Type: CloudWatch Metric
+   - Status: `p90`
++ Stop condition (Abort condition):
+   - Type: CloudWatch Alarm
+   - Status: `p90`
++ Results:
+   - What did you see?
++ Conclusions:
+   - [ ] Everything is as expected
+   - [ ] Detected something
+   - [ ] Handleable error has occurred
+   - [ ] Need to automate
+   - [ ] Need to dig deeper
+
+#### Stop Condition
 #### Run Experiment
-Go to the AWS FIS service page and select `FailoverDBCluster` from the list of experiment templates. Then use the on-screen `Actions` button to start the experiment.
+Go to the AWS FIS service page and select `FailoverDBCluster` from the list of experiment templates. Then use the on-screen `Actions` button to start the experiment. After the experiment successfully started, move to the application and refresh the web page several times to check the application is working. At some point, the application will not work.
 
 ![aws-fis-rds-lamp-broken](../../images/rds/aws-fis-rds-lamp-broken.png)
 
-![aws-rds-aurora-cluster-normal-state.png](../../images/rds/aws-fis-aurora-cluster-normal-state.png)
-
 ![aws-rds-aurora-cluster-failover-state](../../images/rds/aws-fis-aurora-cluster-failover-state.png)
+
+#### Improvements
+
+### Reboot DB Instance
+AWS FIS allows you to test resilience of Aurora DB cluster.
 
 ## Clean up
 Run terraform:
