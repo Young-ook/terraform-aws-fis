@@ -39,7 +39,7 @@ For this lab, we picked up the Redis rate-limit application. Redis-rate-limiting
 ### Build an application
 Run a build job to create a redis client application container image. Copy the `build` command from the terraform output and run it:
 ```
-aws codebuild start-build --region ap-northeast-2 --output text --project-name arn:aws:codebuild:ap-northeast-2:111122223333:project/fis-az-knuae
+bash -e .terraform/modules/ci/modules/codebuild/script/start-build.sh -r ap-northeast-2 -n arn:aws:codebuild:ap-northeast-2:111122223333:project/fis-az-cxblf
 ```
 
 ### Deploy application
