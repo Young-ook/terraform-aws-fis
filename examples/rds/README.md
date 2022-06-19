@@ -31,13 +31,13 @@ bash -e .terraform/modules/eks/script/update-kubeconfig.sh -r ap-northeast-2 -n 
 export KUBECONFIG=kubeconfig
 ```
 
-## Docker LAMP
-In this lab, we use docker example with Apache, PHP, and Amazon Aurora (Linux, Apache, MySQL, PHP) as an user application.
+## Application
+In this lab, we use docker example with Apache, PHP, and Amazon Aurora (LAMP: Linux, Apache, MySQL, PHP) as an user application.
 
 ### Build an application
 Run a build job to create a php-apache application container image. Copy the `build` command from the terraform output and run it:
 ```
-aws codebuild start-build --region ap-northeast-2 --output text --project-name arn:aws:codebuild:ap-northeast-2:111122223333:project/fis-rds-hnuee
+bash -e .terraform/modules/ci/modules/codebuild/script/start-build.sh -r ap-northeast-2 -n arn:aws:codebuild:ap-northeast-2:111122223333:project/fis-rds-cxblf
 ```
 
 ### Deploy LAMP stack
