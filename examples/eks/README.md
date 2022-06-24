@@ -161,10 +161,12 @@ Watch the logs to verify cluster autoscaler is installed properly. If everything
 kubectl -n kube-system logs -f deployment/cluster-autoscaler
 ```
 
-Scale out pods for high availability.
+Scale out pods and apply pod-anti-affinity policy for high availability.
 ```
 kubectl apply -f manifests/sockshop-demo-ha.yaml
 ```
+
+![aws-fis-eks-pod-anti-affinity](../../images/eks/aws-fis-eks-pod-anti-affinity.png)
 
 #### Rerun Experiment
 Back to the AWS FIS service page, and rerun the terminate eks nodes experiment against the target to ensure that the microservices application is working in the previously assumed steady state.
