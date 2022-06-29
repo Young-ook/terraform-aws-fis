@@ -47,3 +47,5 @@ spec:
           value: ${redis_endpoint}
         - name: REDIS_PASSWORD
           value: '${redis_password}'
+        - name: ALLOWED_HOSTS
+          value: "['*']"
