@@ -44,12 +44,12 @@ module "logs" {
       }
     },
   ] : l.type => l }
-  name      = join("-", [var.name, each.key])
+  name      = join("-", [each.key])
   log_group = each.value.log_group
 }
 
 # platform/fis
-module "fis" {
+module "awsfis" {
   source = "../../"
   name   = var.name
   tags   = var.tags
@@ -60,8 +60,8 @@ module "fis" {
       params = {
         region = var.aws_region
         alarm  = module.stop.alarm.arn
-        role    = module.awsfis.role["fis"].arn
-        logs    = format("%s:*", module.logs["fis"].log_group.arn)
+        role   = module.awsfis.role["fis"].arn
+        logs   = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
   ]

@@ -1,3 +1,3 @@
 output "fis" {
-  value = module.fis
+  value = module.awsfis
 }
