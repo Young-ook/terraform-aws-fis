@@ -140,6 +140,12 @@ locals {
       document_type   = "Command"
       content         = file("${path.module}/templates/disk-stress.yaml")
     },
+    {
+      name            = "FIS-Run-DynamoDB-BlackHole-Stress"
+      document_format = "YAML"
+      document_type   = "Command"
+      content         = file("${path.module}/templates/dynamodb-blackhole-stress.yaml")
+    },
   ]
 }
 

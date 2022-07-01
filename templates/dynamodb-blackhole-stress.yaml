@@ -1,0 +1,38 @@
+---
+description: |
+  ### Document name - FIS-Run-DynamoDB-BlackHole-Stress
+
+  ## What does this document do?
+  It block access to dynamo on an instance
+
+  ## Input Parameters
+  * DurationSeconds: (Required) The duration - in minutes - of the dynamodb blocking stress.
+
+  ## Output Parameters
+  None.
+
+schemaVersion: '2.2'
+parameters:
+  DurationSeconds:
+    type: String
+    description: "(Required) The duration - in minutes - of the dynamodb blocking stress"
+    default: "1"
+    allowedPattern: "^[0-9]+$"
+mainSteps:
+  - action: aws:runShellScript
+    name: RevertCommandScheduling
+    inputs:
+      runCommand:
+        - "echo 'sudo cp /etc/hosts.back /etc/hosts' | at now + {{ duration }} minutes"
+  - action: aws:runShellScript
+    name: AlterHostsFile
+    inputs:
+      runCommand:
+        # make copy of /etc/hosts to /etc/host.back
+        - "sudo cp /etc/hosts /etc/hosts.back"
+        - "echo '127.0.0.1 dynamodb.us-east-1.amazonaws.com' >> /etc/hosts"
+        - "echo '127.0.0.1 dynamodb.us-east-2.amazonaws.com' >> /etc/hosts"
+        - "echo '127.0.0.1 dynamodb.us-west-1.amazonaws.com' >> /etc/hosts"
+        - "echo '127.0.0.1 dynamodb.us-west-2.amazonaws.com' >> /etc/hosts"
+        - "echo '127.0.0.1 dynamodb.eu-west-1.amazonaws.com' >> /etc/hosts"
+        - "echo '127.0.0.1 dynamodb.eu-north-1.amazonaws.com' >> /etc/hosts"
