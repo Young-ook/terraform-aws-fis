@@ -14,10 +14,10 @@ module "awsfis" {
       name     = "cpu-stress"
       template = "${path.cwd}/templates/cpu-stress.tpl"
       params = {
-        region = var.aws_region
-        alarm  = aws_cloudwatch_metric_alarm.cpu.arn
-        role   = module.awsfis.role["fis"].arn
-        logs   = format("%s:*", module.logs["fis"].log_group.arn)
+        eks   = module.eks.cluster["control_plane"].arn
+        alarm = aws_cloudwatch_metric_alarm.cpu.arn
+        role  = module.awsfis.role["fis"].arn
+        logs  = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
     {

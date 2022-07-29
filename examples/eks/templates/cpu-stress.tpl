@@ -1,31 +1,27 @@
 {
-    "description": "Run a CPU fault injection on the specified instance",
+    "description": "Run a CPU fault injection on the specified pod",
     "targets": {
-        "ec2-instances": {
-            "resourceType": "aws:ec2:instance",
-            "resourceTags": {
-                "env": "prod"
-            },
-            "filters": [
-                {
-                    "path": "State.Name",
-                    "values": ["running"]
-                }
+        "eks-cluster": {
+            "resourceType": "aws:eks:cluster",
+            "resourceArns": [
+                "${eks}"
             ],
-            "selectionMode": "PERCENT(50)"
+            "selectionMode": "ALL"
         }
     },
     "actions": {
         "CPUStress": {
-            "actionId": "aws:ssm:send-command",
-            "description": "run cpu stress using ssm",
+            "actionId": "aws:eks:inject-kubernetes-custom-resource",
+            "description": "run pod cpu stress using chaos-mesh",
             "parameters": {
-                "duration": "PT5M",
-                "documentArn": "arn:aws:ssm:${region}::document/AWSFIS-Run-CPU-Stress",
-                "documentParameters": "{\"DurationSeconds\": \"300\", \"InstallDependencies\": \"True\", \"CPU\": \"0\"}"
+                "maxDuration": "PT5M",
+                "kubernetesApiVersion": "chaos-mesh.org/v1alpha1",
+                "kubernetesKind": "StressChaos",
+                "kubernetesNamespace": "default",
+                "kubernetesSpec": "{\"selector\":{\"namespaces\":[\"default\"],\"labelSelectors\":{\"run\":\"nginx\"}},\"mode\":\"all\",\"stressors\": {\"cpu\":{\"workers\":1,\"load\":50}},\"duration\":\"1m\"}"
             },
             "targets": {
-                "Instances": "ec2-instances"
+                "Cluster": "eks-cluster"
             }
         }
     },
