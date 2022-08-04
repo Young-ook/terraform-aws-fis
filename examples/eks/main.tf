@@ -63,12 +63,20 @@ module "container-insights" {
 
 module "cluster-autoscaler" {
   source       = "Young-ook/eks/aws//modules/cluster-autoscaler"
+  version      = "1.7.5"
   cluster_name = module.eks.cluster.name
   oidc         = module.eks.oidc
 }
 
 module "metrics-server" {
   source       = "Young-ook/eks/aws//modules/metrics-server"
+  version      = "1.7.5"
   cluster_name = module.eks.cluster.name
   oidc         = module.eks.oidc
+}
+
+module "chaos-mesh" {
+  source  = "Young-ook/eks/aws//modules/chaos-mesh"
+  version = "1.7.7"
+  oidc    = module.eks.oidc
 }
