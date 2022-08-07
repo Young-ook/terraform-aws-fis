@@ -63,7 +63,8 @@ tfenv use <version>
 - [Amazon EC2](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/ec2)
 - [Amazon EKS](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/eks)
 - [Amazon RDS](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/rds)
-- [Amazon Redis](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/redis)
+- [Amazon ElastiCache for Redis](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/redis)
+- [Application Modernization with Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker/tree/main/examples/aws-modernization-with-spinnaker)
 
 # Known Issues
 ## Unknown parameter
