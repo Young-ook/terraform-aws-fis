@@ -112,7 +112,7 @@ resource "aws_lb_target_group" "http" {
 # application/script
 locals {
   loadgen = join("\n", [
-    "#!/bin/bash",
+    "#!/bin/bash -x",
     "while true; do",
     "  curl -I http://${aws_lb.alb.dns_name}",
     "  echo",
