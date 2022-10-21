@@ -30,7 +30,7 @@ resource "aws_security_group" "alb" {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = [var.cidr]
+    cidr_blocks = [module.vpc.vpc.cidr_block]
   }
 
   egress {
