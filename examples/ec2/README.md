@@ -32,8 +32,8 @@ This module automatically creates fault injection simulator experiment templates
 ![aws-fis-experiment-templates](../../images/ec2/aws-fis-experiment-templates.png)
 
 ### Run Load Generator
-Terraform configuration also creates a load generator autoscaling group for your application instances. When running, this load generator instance runs a virtual client script that repeatedly sends http requests to the application load balancer. After running the terraform apply command, you can find the details of the script in the terraform output. It should look similar to the example below.
-```
+Terraform configuration also creates a load generator autoscaling group for your application instances. When running, this load generator instance runs a load generator script that repeatedly sends http requests to the application load balancer. After running the terraform apply command, you will see the terraform output as below. That is an example of `loadgen` script created by terraform.
+sh```
 #!/bin/bash
 while true; do
   curl -I http://my-loadbalancer-1234567890.us-west-2.elb.amazonaws.com
@@ -41,7 +41,15 @@ while true; do
   sleep .5
 done
 ```
-The all cloudwatch alarms will be chaged to *OK* status from *Insufficient data* in minutes after the load generator script running.
+
+Before you begin the first chaos engineering experiment, must run the load generator script. Select the whole `loadgen` terraform output andcopy it, then access the load generator ec2 instance via systems manager (session manager). And save the copied text as a new bash script to `loadgen.sh` on the load generator instance. Run the script:
+sh```
+./loadgen.sh
+```
+
+If you don't know how to access a ec2 instance through session manager, please refer to [this guide](https://github.com/Young-ook/terraform-aws-ssm/blob/main/README.md#connect)
+
+This step is very important because it warms up the instances for cloudwatch metrics. After few minutes, all cloudwatch alarms will be chaged to *OK* status from *Insufficient data* in minutes after the load generator script running.
 
 ### Network Latency
 This test will inject network latency to target instances. A response from the instance will be delayed in specified milisecond defined in the experiment template. To run this example, follow belows.

@@ -10,5 +10,5 @@ output "role" {
 
 output "experiment" {
   description = "Systems manager documents for experiments "
-  value = aws_ssm_document.doc
+  value       = aws_ssm_document.doc
 }
