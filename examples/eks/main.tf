@@ -9,7 +9,7 @@ provider "aws" {
 # network/vpc
 module "vpc" {
   source  = "Young-ook/vpc/aws"
-  version = "1.0.1"
+  version = "1.0.2"
   name    = var.name
   tags    = var.tags
   vpc_config = var.use_default_vpc ? null : {
@@ -23,6 +23,7 @@ module "vpc" {
 # application/eks
 module "eks" {
   source             = "Young-ook/eks/aws"
+  version            = "1.7.10"
   name               = var.name
   tags               = var.tags
   subnets            = values(module.vpc.subnets["private"])
@@ -55,20 +56,20 @@ provider "helm" {
 
 module "container-insights" {
   source       = "Young-ook/eks/aws//modules/container-insights"
-  version      = "1.7.5"
-  features     = { enable_metrics = true }
+  version      = "1.7.10"
   cluster_name = module.eks.cluster.name
+  features     = { enable_metrics = true }
   oidc         = module.eks.oidc
 }
 
 module "cluster-autoscaler" {
-  source       = "Young-ook/eks/aws//modules/cluster-autoscaler"
-  cluster_name = module.eks.cluster.name
-  oidc         = module.eks.oidc
+  source  = "Young-ook/eks/aws//modules/cluster-autoscaler"
+  version = "1.7.10"
+  oidc    = module.eks.oidc
 }
 
 module "metrics-server" {
-  source       = "Young-ook/eks/aws//modules/metrics-server"
-  cluster_name = module.eks.cluster.name
-  oidc         = module.eks.oidc
+  source  = "Young-ook/eks/aws//modules/metrics-server"
+  version = "1.7.10"
+  oidc    = module.eks.oidc
 }
