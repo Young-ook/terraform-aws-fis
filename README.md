@@ -63,7 +63,8 @@ tfenv use <version>
 - [Amazon EC2](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/ec2)
 - [Amazon EKS](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/eks)
 - [Amazon RDS](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/rds)
-- [Amazon Redis](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/redis)
+- [Amazon ElastiCache for Redis](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/redis)
+- [Application Modernization with Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker/tree/main/examples/aws-modernization-with-spinnaker)
 
 # Known Issues
 ## Unknown parameter
@@ -78,3 +79,4 @@ module.awsfis.null_resource.awsfis-init (local-exec): Unknown parameter in input
 - [Terraform module: Amazon EKS](https://github.com/Young-ook/terraform-aws-eks)
 - [Terraform module: AWS Systems Manager](https://github.com/Young-ook/terraform-aws-ssm)
 - [Terraform module: Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker)
+- [AWS Fault Injection Simulator - Use controlled experiments to boost resilience](https://aws.amazon.com/blogs/aws/aws-fault-injection-simulator-use-controlled-experiments-to-boost-resilience/)
