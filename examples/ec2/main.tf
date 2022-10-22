@@ -21,9 +21,10 @@ module "vpc" {
 }
 
 module "api" {
+  for_each   = toset(["a", "b"])
   depends_on = [aws_ssm_association.cwagent, module.random-az]
   source     = "./api"
-  name       = var.name
+  name       = join("-", [var.name, each.key])
   tags       = merge(local.default-tags, var.tags)
   vpc        = module.vpc.vpc.id
   cidr       = module.vpc.vpc.cidr_block
@@ -37,4 +38,26 @@ module "api" {
   ### Block the 'az' variable to switch to the multi-az deployment.
 
   az = module.random-az.index
+}
+
+
+# loadgen/ec2
+module "loadgen" {
+  depends_on = [module.api]
+  source     = "Young-ook/ssm/aws"
+  version    = "1.0.2"
+  name       = join("-", [var.name, "loadgen"])
+  tags       = merge(local.default-tags, var.tags)
+  subnets    = values(module.vpc.subnets["public"])
+  node_groups = [
+    {
+      name            = "loadgen"
+      min_size        = 1
+      max_size        = 1
+      desired_size    = 1
+      instance_type   = "t3.small"
+      security_groups = [module.api["a"].security_group.id, module.api["b"].security_group.id]
+      policy_arns     = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
+    }
+  ]
 }

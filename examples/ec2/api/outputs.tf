@@ -10,6 +10,11 @@ output "role" {
   value       = module.ec2.role.node_groups
 }
 
+output "security_group" {
+  description = "Security group for application server group"
+  value       = aws_security_group.alb_aware
+}
+
 output "alarms" {
   description = "Application alarms"
   value = {
