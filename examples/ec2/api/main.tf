@@ -139,15 +139,6 @@ module "ec2" {
       policy_arns       = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
       user_data         = local.server
     },
-    {
-      name            = "loadgen"
-      min_size        = 1
-      max_size        = 1
-      desired_size    = 1
-      instance_type   = "t3.small"
-      security_groups = [aws_security_group.alb_aware.id]
-      policy_arns     = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-    }
   ]
 }
 
