@@ -18,8 +18,8 @@ module "awsfis" {
       template = "${path.cwd}/templates/cpu-stress.tpl"
       params = {
         region = var.aws_region
-        asg    = module.api.server_group.canary.name
-        alarm  = module.api.alarms.cpu.arn
+        asg    = module.api["a"].server_group.canary.name
+        alarm  = module.api["a"].alarms.cpu.arn
         role   = module.awsfis.role["fis"].arn
         logs   = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -30,8 +30,8 @@ module "awsfis" {
       params = {
         doc_arn = module.awsfis.experiment["FIS-Run-Disk-Stress"].arn
         region  = var.aws_region
-        asg     = module.api.server_group.canary.name
-        alarm   = module.api.alarms.cpu.arn
+        asg     = module.api["a"].server_group.canary.name
+        alarm   = module.api["a"].alarms.cpu.arn
         role    = module.awsfis.role["fis"].arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -41,8 +41,8 @@ module "awsfis" {
       template = "${path.cwd}/templates/network-latency.tpl"
       params = {
         region = var.aws_region
-        asg    = module.api.server_group.canary.name
-        alarm  = module.api.alarms.cpu.arn
+        asg    = module.api["a"].server_group.canary.name
+        alarm  = module.api["a"].alarms.cpu.arn
         role   = module.awsfis.role["fis"].arn
         logs   = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -51,10 +51,10 @@ module "awsfis" {
       name     = "terminate-instances"
       template = "${path.cwd}/templates/terminate-instances.tpl"
       params = {
-        asg   = module.api.server_group.baseline.name
+        asg   = module.api["a"].server_group.baseline.name
         az    = module.random-az.az
         vpc   = module.vpc.vpc.id
-        alarm = module.api.alarms.cpu.arn
+        alarm = module.api["a"].alarms.cpu.arn
         role  = module.awsfis.role["fis"].arn
         logs  = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -63,8 +63,8 @@ module "awsfis" {
       name     = "throttle-ec2-api"
       template = "${path.cwd}/templates/throttle-ec2-api.tpl"
       params = {
-        asg_role = module.api.role.canary.arn
-        alarm    = module.api.alarms.cpu.arn
+        asg_role = module.api["a"].role.canary.arn
+        alarm    = module.api["a"].alarms.cpu.arn
         role     = module.awsfis.role["fis"].arn
         logs     = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -74,10 +74,10 @@ module "awsfis" {
       template = "${path.cwd}/templates/kill-process.tpl"
       params = {
         region  = var.aws_region
-        asg     = module.api.server_group.baseline.name
+        asg     = module.api["a"].server_group.baseline.name
         az      = module.random-az.az
         process = "httpd"
-        alarm   = module.api.alarms.cpu.arn
+        alarm   = module.api["a"].alarms.cpu.arn
         role    = module.awsfis.role["fis"].arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -93,7 +93,7 @@ module "awsfis" {
         duration = "PT1M"
         ssm_role = module.awsfis.role["ssm"].arn
         fis_role = module.awsfis.role["fis"].arn
-        alarm    = module.api.alarms.cpu.arn
+        alarm    = module.api["a"].alarms.cpu.arn
         logs     = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },

@@ -21,9 +21,10 @@ module "vpc" {
 }
 
 module "api" {
+  for_each   = toset(["a", "b"])
   depends_on = [aws_ssm_association.cwagent, module.random-az]
   source     = "./api"
-  name       = var.name
+  name       = join("-", [var.name, each.key])
   tags       = merge(local.default-tags, var.tags)
   vpc        = module.vpc.vpc.id
   cidr       = module.vpc.vpc.cidr_block
@@ -55,7 +56,7 @@ module "loadgen" {
       max_size        = 1
       desired_size    = 1
       instance_type   = "t3.small"
-      security_groups = [module.api.security_group.id]
+      security_groups = [module.api["a"].security_group.id, module.api["b"].security_group.id]
       policy_arns     = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
     }
   ]
