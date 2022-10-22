@@ -33,7 +33,8 @@ This module automatically creates fault injection simulator experiment templates
 
 ### Run Load Generator
 Terraform configuration also creates a load generator autoscaling group for your application instances. When running, this load generator instance runs a load generator script that repeatedly sends http requests to the application load balancer. After running the terraform apply command, you will see the terraform output as below. That is an example of `loadgen` script created by terraform.
-sh```
+
+```
 #!/bin/bash
 while true; do
   curl -I http://my-loadbalancer-1234567890.us-west-2.elb.amazonaws.com
@@ -43,7 +44,7 @@ done
 ```
 
 Before you begin the first chaos engineering experiment, must run the load generator script. Select the whole `loadgen` terraform output andcopy it, then access the load generator ec2 instance via systems manager (session manager). And save the copied text as a new bash script to `loadgen.sh` on the load generator instance. Run the script:
-sh```
+```
 ./loadgen.sh
 ```
 
