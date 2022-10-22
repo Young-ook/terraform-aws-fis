@@ -73,3 +73,9 @@ module "metrics-server" {
   version = "1.7.10"
   oidc    = module.eks.oidc
 }
+
+module "chaos-mesh" {
+  source  = "Young-ook/eks/aws//modules/chaos-mesh"
+  version = "1.7.7"
+  oidc    = module.eks.oidc
+}

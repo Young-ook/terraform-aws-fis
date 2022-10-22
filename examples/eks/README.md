@@ -54,14 +54,14 @@ front-end-7b8bcd59cb-wd527   1/1     Running   0          9s
 ```
 
 #### Local Workspace
-In your local workspace, connect through a proxy to access your application's endpoint.
+In your local workspace, connect through a proxy to access your application's endpoint:
 ```
 kubectl -n sockshop port-forward svc/front-end 8080:80
 ```
 Open `http://localhost:8080` on your web browser. This shows the Sock Shop main page.
 
 #### Cloud9
-In your Cloud9 IDE, run the application.
+In your Cloud9 IDE, run the application:
 ```
 kubectl -n sockshop port-forward svc/front-end 8080:80
 ```
@@ -77,10 +77,33 @@ Run load generator inside kubernetes
 kubectl apply -f manifests/sockshop-loadtest.yaml
 ```
 
-## Run Fault Injection Experiments
-This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Console and select Experiment templates menu on the left. Then you will see the created experiment templates for chaos engineering. To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it. And follow the instructions.
+### Chaos Mesh
+[Chaos Mesh](https://chaos-mesh.org/docs/) is an open source cloud-native Chaos Engineering platform. It offers various types of fault simulation and has an enormous capability to orchestrate fault scenarios. Using Chaos Mesh, you can conveniently simulate various abnormalities that might occur in reality during the development, testing, and production environments and find potential problems in the system. To lower the threshold for a Chaos Engineering project, Chaos Mesh provides you with a visualization operation. You can easily design your Chaos scenarios on the Web UI and monitor the status of Chaos experiments.
+
+#### Local Workspace
+In your local workspace, connect chaos-mesh dashboard through a proxy:
+```
+kubectl -n chaos-mesh port-forward svc/dashboard 2333:2333
+```
+Open `http://localhost:2333` on your web browser. This shows chaos mesh dashboard login page.
+
+#### Cloud9
+In your Cloud9 IDE, run chaos-mesh dashboard:
+```
+kubectl -n chaos-mesh port-forward svc/dashboard 8080:2333
+```
+Click `Preview` and `Preview Running Application`. This opens up a new preview tab ans shows chaos mesh dashboard login page.
+
+#### Dashboard
+If it is your first time to access chaos mesh dashbiard, you have to create user accounts and bind permissions. Follow the [Manage User Permissions](https://chaos-mesh.org/docs/manage-user-permissions/) instructions to create a new user and generate access token.
+
+### AWS Fault Injection Simulator
+This module automatically creates fault injection simulator experiment templates on your AWS account. Move to the AWS FIS service page on the AWS Management Console and select Experiment templates menu on the left. Then you will see the created experiment templates for chaos engineering. To test your environment, select a experiment template that you want to run and click the `Actions` button on the right top on the screen. You will see `Start experiment` in the middle of poped up menu and select it.
 
 ![aws-fis-experiment-templates](../../images/eks/aws-fis-experiment-templates.png)
+
+## Run Fault Injection Experiments
+Let's start chaos engineering experiments with AWS Fault Injection Simulator.
 
 ### Terminate EKS Nodes
 AWS FIS allows you to test resiliency of EKS cluster node groups. See what happens if you shut down some ec2 nodes for kubernetes pods or services within a certain percentage. This test verifies that the EKS managed node group launches new instances to meet the defined desired capacity and ensures that the application containers continues to run well. Also, this test will help you understand what happens to your application when you upgrade your cluster. At this time, in order to satisfy both resiliency and ease of cluster upgrade, the container should be designed so that it can be moved easily. This makes it easy to move containers running on the failed node to another node to continue working. This is an important part of a cloud-native architecture.
@@ -175,6 +198,12 @@ Back to the AWS FIS service page, and rerun the terminate eks nodes experiment a
 
 ### CPU Stress
 AWS FIS allows you to test resiliency of EKS cluster node groups. See what happens on your application when your EKS nodes (ec2 instances) has very high CPU utilization. This test verifies that the application on the EKS managed node group works properly even with increased CPU utilization.
+
+#### Define Steady State
+Before we begin a failure experiment, we need to validate the user experience and business operations, system status are working under normal state, in other words, steady state. The goal of this experiment is to verify that the system automatically react to increas computing resources when requests increases.
+
+#### Hypothesis
+The experiment we’ll run is to verify and fine-tune our application reliability when compute nodes becomes busy.
 
 #### Run Experiment
 Make sure that all your EKS node group instances are running. Go to the AWS FIS service page and select `CPUStress` from the list of experiment templates. Then use the on-screen `Actions` button to start the experiment. In this experiment, AWS FIS increases CPU utilization for half of the ec2 instances with the env=prod tag. You can change the target percentage of an experiment in the experiment template. To change the number of EKS nodes to which the CPU stress experiment will be applied, edit the filter or tag values in the target selection mode configuration in the template. After starting the experiment, you can see the CPU utilization increase on the EC2 service page or the CloudWatch service page.
