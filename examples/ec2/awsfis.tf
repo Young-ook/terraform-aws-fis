@@ -1,24 +1,25 @@
 ### fault injection simulator experiment templates
 
 # drawing lots for choosing a subnet
-resource "random_integer" "az" {
-  min = 0
-  max = length(var.azs) - 1
+module "random-az" {
+  source = "./az"
+  azs    = var.azs
 }
 
 module "awsfis" {
-  source  = "Young-ook/fis/aws"
-  version = "1.0.2"
-  name    = var.name
-  tags    = var.tags
+  depends_on = [module.api]
+  source     = "Young-ook/fis/aws"
+  version    = "1.0.2"
+  name       = var.name
+  tags       = var.tags
   experiments = [
     {
       name     = "cpu-stress"
       template = "${path.cwd}/templates/cpu-stress.tpl"
       params = {
         region = var.aws_region
-        asg    = module.ec2.cluster.data_plane.node_groups.canary.name
-        alarm  = aws_cloudwatch_metric_alarm.cpu.arn
+        asg    = module.api.server_group.canary.name
+        alarm  = module.api.alarms.cpu.arn
         role   = module.awsfis.role["fis"].arn
         logs   = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -29,8 +30,8 @@ module "awsfis" {
       params = {
         doc_arn = module.awsfis.experiment["FIS-Run-Disk-Stress"].arn
         region  = var.aws_region
-        asg     = module.ec2.cluster.data_plane.node_groups.canary.name
-        alarm   = aws_cloudwatch_metric_alarm.cpu.arn
+        asg     = module.api.server_group.canary.name
+        alarm   = module.api.alarms.cpu.arn
         role    = module.awsfis.role["fis"].arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -40,8 +41,8 @@ module "awsfis" {
       template = "${path.cwd}/templates/network-latency.tpl"
       params = {
         region = var.aws_region
-        asg    = module.ec2.cluster.data_plane.node_groups.canary.name
-        alarm  = aws_cloudwatch_metric_alarm.cpu.arn
+        asg    = module.api.server_group.canary.name
+        alarm  = module.api.alarms.cpu.arn
         role   = module.awsfis.role["fis"].arn
         logs   = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -50,10 +51,10 @@ module "awsfis" {
       name     = "terminate-instances"
       template = "${path.cwd}/templates/terminate-instances.tpl"
       params = {
-        asg   = module.ec2.cluster.data_plane.node_groups.baseline.name
-        az    = var.azs[random_integer.az.result]
+        asg   = module.api.server_group.baseline.name
+        az    = module.random-az.az
         vpc   = module.vpc.vpc.id
-        alarm = aws_cloudwatch_metric_alarm.cpu.arn
+        alarm = module.api.alarms.cpu.arn
         role  = module.awsfis.role["fis"].arn
         logs  = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -62,8 +63,8 @@ module "awsfis" {
       name     = "throttle-ec2-api"
       template = "${path.cwd}/templates/throttle-ec2-api.tpl"
       params = {
-        asg_role = module.ec2.role.node_groups.canary.arn
-        alarm    = aws_cloudwatch_metric_alarm.cpu.arn
+        asg_role = module.api.role.canary.arn
+        alarm    = module.api.alarms.cpu.arn
         role     = module.awsfis.role["fis"].arn
         logs     = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -73,10 +74,10 @@ module "awsfis" {
       template = "${path.cwd}/templates/kill-process.tpl"
       params = {
         region  = var.aws_region
-        asg     = module.ec2.cluster.data_plane.node_groups.baseline.name
-        az      = var.azs[random_integer.az.result]
+        asg     = module.api.server_group.baseline.name
+        az      = module.random-az.az
         process = "httpd"
-        alarm   = aws_cloudwatch_metric_alarm.cpu.arn
+        alarm   = module.api.alarms.cpu.arn
         role    = module.awsfis.role["fis"].arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -87,12 +88,12 @@ module "awsfis" {
       params = {
         ssm_doc  = module.awsfis.experiment["FIS-Run-AZ-Outage"].arn
         region   = var.aws_region
-        az       = var.azs[random_integer.az.result]
+        az       = module.random-az.az
         vpc      = module.vpc["vpc"].id
         duration = "PT1M"
         ssm_role = module.awsfis.role["ssm"].arn
         fis_role = module.awsfis.role["fis"].arn
-        alarm    = aws_cloudwatch_metric_alarm.cpu.arn
+        alarm    = module.api.alarms.cpu.arn
         logs     = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
