@@ -44,7 +44,7 @@ module "api" {
 module "loadgen" {
   depends_on = [module.api]
   source     = "Young-ook/ssm/aws"
-  version    = "1.0.2"
+  version    = "1.0.3"
   name       = join("-", [var.name, "loadgen"])
   tags       = merge(local.default-tags, var.tags)
   subnets    = values(module.vpc.subnets["public"])

@@ -101,7 +101,7 @@ locals {
 # application/ec2
 module "ec2" {
   source  = "Young-ook/ssm/aws"
-  version = "1.0.2"
+  version = "1.0.3"
   name    = var.name
   tags    = var.tags
   subnets = (var.az == -1 ? var.subnets : [var.subnets[var.az]])
