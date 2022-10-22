@@ -89,15 +89,6 @@ resource "aws_lb_target_group" "http" {
 
 # application/script
 locals {
-  loadgen = join("\n", [
-    "#!/bin/bash -x",
-    "while true; do",
-    "  curl -I http://${aws_lb.alb.dns_name}",
-    "  echo",
-    "  sleep 1",
-    "done",
-    ]
-  )
   server = join("\n", [
     "sudo yum update -y",
     "sudo yum install -y httpd",

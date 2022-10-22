@@ -40,7 +40,6 @@ module "api" {
   az = module.random-az.index
 }
 
-
 # loadgen/ec2
 module "loadgen" {
   depends_on = [module.api]
@@ -60,4 +59,17 @@ module "loadgen" {
       policy_arns     = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
     }
   ]
+}
+
+# application/script
+locals {
+  loadgen = join("\n", [
+    "#!/bin/bash -x",
+    "while true; do",
+    "  curl -I http://${module.api["a"].load_balancer}",
+    "  echo",
+    "  sleep 1",
+    "done",
+    ]
+  )
 }
