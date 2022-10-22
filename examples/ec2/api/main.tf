@@ -89,15 +89,6 @@ resource "aws_lb_target_group" "http" {
 
 # application/script
 locals {
-  loadgen = join("\n", [
-    "#!/bin/bash -x",
-    "while true; do",
-    "  curl -I http://${aws_lb.alb.dns_name}",
-    "  echo",
-    "  sleep 1",
-    "done",
-    ]
-  )
   server = join("\n", [
     "sudo yum update -y",
     "sudo yum install -y httpd",
@@ -110,7 +101,7 @@ locals {
 # application/ec2
 module "ec2" {
   source  = "Young-ook/ssm/aws"
-  version = "1.0.2"
+  version = "1.0.3"
   name    = var.name
   tags    = var.tags
   subnets = (var.az == -1 ? var.subnets : [var.subnets[var.az]])

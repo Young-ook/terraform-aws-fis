@@ -40,13 +40,12 @@ module "api" {
   az = module.random-az.index
 }
 
-
 # loadgen/ec2
 module "loadgen" {
   depends_on = [module.api]
   source     = "Young-ook/ssm/aws"
-  version    = "1.0.2"
-  name       = join("-", [var.name, "loadgen"])
+  version    = "1.0.3"
+  name       = var.name
   tags       = merge(local.default-tags, var.tags)
   subnets    = values(module.vpc.subnets["public"])
   node_groups = [
@@ -60,4 +59,17 @@ module "loadgen" {
       policy_arns     = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
     }
   ]
+}
+
+# application/script
+locals {
+  loadgen = join("\n", [
+    "#!/bin/bash -x",
+    "while true; do",
+    "  curl -I http://${module.api["a"].load_balancer}",
+    "  echo",
+    "  sleep 1",
+    "done",
+    ]
+  )
 }
