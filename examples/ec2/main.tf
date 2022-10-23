@@ -20,12 +20,23 @@ module "vpc" {
   }
 }
 
+# network/dns
+resource "aws_route53_zone" "dns" {
+  name = "corp.internal"
+  tags = merge(local.default-tags, var.tags)
+  vpc {
+    vpc_id = module.vpc.vpc.id
+  }
+}
+
+# application/api
 module "api" {
   for_each   = toset(["a", "b"])
   depends_on = [aws_ssm_association.cwagent, module.random-az]
   source     = "./api"
   name       = join("-", [var.name, each.key])
   tags       = merge(local.default-tags, var.tags)
+  dns        = aws_route53_zone.dns.zone_id
   vpc        = module.vpc.vpc.id
   cidr       = module.vpc.vpc.cidr_block
   subnets    = values(module.vpc.subnets["public"])
@@ -40,7 +51,7 @@ module "api" {
   az = module.random-az.index
 }
 
-# loadgen/ec2
+# application/loadgen
 module "loadgen" {
   depends_on = [module.api]
   source     = "Young-ook/ssm/aws"

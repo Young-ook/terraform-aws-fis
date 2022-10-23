@@ -198,3 +198,15 @@ resource "aws_cloudwatch_metric_alarm" "api-avg" {
     LoadBalancer = aws_lb.alb.arn_suffix
   }
 }
+
+### dns records
+resource "aws_route53_record" "lb" {
+  name    = var.name
+  zone_id = var.dns
+  type    = "A"
+  alias {
+    name                   = aws_lb.alb.dns_name
+    zone_id                = aws_lb.alb.zone_id
+    evaluate_target_health = true
+  }
+}
