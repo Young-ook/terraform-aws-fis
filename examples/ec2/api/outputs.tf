@@ -2,7 +2,7 @@
 
 output "load_balancer" {
   description = "API load balancer dns name"
-  value       = aws_lb.alb.dns_name
+  value       = aws_route53_record.lb.fqdn
 }
 
 output "server_group" {

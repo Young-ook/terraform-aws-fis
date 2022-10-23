@@ -20,6 +20,11 @@ variable "az" {
   default     = -1
 }
 
+variable "dns" {
+  description = "A private dns hosted zone"
+  type        = string
+}
+
 ### description
 variable "name" {
   description = "The logical name"
