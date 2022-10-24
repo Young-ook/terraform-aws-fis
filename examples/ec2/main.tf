@@ -1,12 +1,15 @@
 terraform {
   required_version = "~> 1.0"
+  required_providers {
+    aws = "> 2.3"
+  }
 }
 
 provider "aws" {
   region = var.aws_region
 }
 
-# network/vpc
+### network/vpc
 module "vpc" {
   source  = "Young-ook/vpc/aws"
   version = "1.0.2"
@@ -20,7 +23,7 @@ module "vpc" {
   }
 }
 
-# network/dns
+### network/dns
 resource "aws_route53_zone" "dns" {
   name = "corp.internal"
   tags = merge(local.default-tags, var.tags)
@@ -29,7 +32,16 @@ resource "aws_route53_zone" "dns" {
   }
 }
 
-# application/api
+### network/mesh
+module "mesh" {
+  depends_on = [module.api, module.loadgen]
+  source     = "./mesh"
+  name       = var.name
+  tags       = merge(local.default-tags, var.tags)
+  app        = module.api
+}
+
+### application/api
 module "api" {
   for_each   = toset(["a", "b"])
   depends_on = [aws_ssm_association.cwagent, module.random-az]
@@ -51,7 +63,7 @@ module "api" {
   az = module.random-az.index
 }
 
-# application/loadgen
+### application/loadgen
 module "loadgen" {
   depends_on = [module.api]
   source     = "Young-ook/ssm/aws"
@@ -72,7 +84,7 @@ module "loadgen" {
   ]
 }
 
-# application/script
+### application/script
 locals {
   loadgen = join("\n", [
     "#!/bin/bash -x",
