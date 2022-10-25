@@ -14,7 +14,7 @@ resource "aws_ssm_association" "cwagent" {
 # application/logs
 module "logs" {
   source  = "Young-ook/lambda/aws//modules/logs"
-  version = "0.2.1"
+  version = "0.2.6"
   for_each = { for l in [
     {
       type = "fis"

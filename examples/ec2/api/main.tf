@@ -1,4 +1,4 @@
-# security/firewall
+### security/firewall
 resource "aws_security_group" "alb" {
   name   = join("-", [var.name, "alb"])
   tags   = var.tags
@@ -46,7 +46,7 @@ resource "aws_security_group" "alb_aware" {
   }
 }
 
-# application/loadbalancer
+### application/loadbalancer
 resource "aws_lb" "alb" {
   name                       = join("-", [var.name, "alb"])
   tags                       = var.tags
@@ -87,7 +87,7 @@ resource "aws_lb_target_group" "http" {
   }
 }
 
-# application/script
+### application/script
 locals {
   server = join("\n", [
     "sudo yum update -y",
@@ -147,7 +147,7 @@ resource "aws_autoscaling_policy" "target-tracking" {
   }
 }
 
-### monitoring/alarm
+### monitor/alarm
 resource "aws_cloudwatch_metric_alarm" "cpu" {
   alarm_name                = join("-", [var.name, "cpu", "alarm"])
   alarm_description         = "This metric monitors ec2 cpu utilization"
@@ -199,7 +199,7 @@ resource "aws_cloudwatch_metric_alarm" "api-avg" {
   }
 }
 
-### dns records
+### network/dns
 resource "aws_route53_record" "lb" {
   name    = var.name
   zone_id = var.dns
