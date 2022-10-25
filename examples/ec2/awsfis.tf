@@ -2,7 +2,7 @@
 
 # drawing lots for choosing a subnet
 module "random-az" {
-  source = "./az"
+  source = "./modules/az"
   azs    = var.azs
 }
 

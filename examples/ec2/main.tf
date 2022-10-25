@@ -35,7 +35,7 @@ resource "aws_route53_zone" "dns" {
 ### network/mesh
 module "mesh" {
   depends_on = [module.api, module.loadgen]
-  source     = "./mesh"
+  source     = "./modules/mesh"
   name       = var.name
   tags       = merge(local.default-tags, var.tags)
   app        = module.api
@@ -45,7 +45,7 @@ module "mesh" {
 module "api" {
   for_each   = toset(["a", "b"])
   depends_on = [aws_ssm_association.cwagent, module.random-az]
-  source     = "./api"
+  source     = "./modules/api"
   name       = join("-", [var.name, each.key])
   tags       = merge(local.default-tags, var.tags)
   dns        = aws_route53_zone.dns.zone_id
