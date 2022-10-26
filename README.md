@@ -80,3 +80,4 @@ module.awsfis.null_resource.awsfis-init (local-exec): Unknown parameter in input
 - [Terraform module: AWS Systems Manager](https://github.com/Young-ook/terraform-aws-ssm)
 - [Terraform module: Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker)
 - [AWS Fault Injection Simulator - Use controlled experiments to boost resilience](https://aws.amazon.com/blogs/aws/aws-fault-injection-simulator-use-controlled-experiments-to-boost-resilience/)
+- [How to use Resilience Hub’s Fault Injection Experiments to test application’s resilience](https://aws.amazon.com/blogs/mt/how-to-use-resiliency-hubs-fault-injection-experiments-to-test-applications-resilience/)
