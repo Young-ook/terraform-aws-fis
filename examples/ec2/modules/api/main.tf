@@ -93,6 +93,7 @@ locals {
     "sudo yum update -y",
     "sudo yum install -y httpd",
     "sudo rm /etc/httpd/conf.d/welcome.conf",
+    "sudo sed -i -e '$aProxyPass \"/carts\" \"http://fis-ec2-b.corp.internal\"' /etc/httpd/conf/httpd.conf",
     "sudo systemctl start httpd",
     ]
   )
