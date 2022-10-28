@@ -86,12 +86,9 @@ module "awsfis" {
       name     = "az-outage"
       template = "${path.cwd}/templates/az-outage.tpl"
       params = {
-        ssm_doc  = module.awsfis.experiment["FIS-Run-AZ-Outage"].arn
-        region   = var.aws_region
         az       = module.random-az.az
         vpc      = module.vpc.vpc.id
         duration = "PT1M"
-        ssm_role = module.awsfis.role["ssm"].arn
         fis_role = module.awsfis.role["fis"].arn
         alarm    = module.api["a"].alarms.cpu.arn
         logs     = format("%s:*", module.logs["fis"].log_group.arn)
