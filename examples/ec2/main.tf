@@ -90,8 +90,9 @@ locals {
     "#!/bin/bash -x",
     "while true; do",
     "  curl -I http://${module.api["a"].load_balancer}",
-    "  echo",
-    "  sleep 1",
+    "  sleep .5",
+    "  curl -I http://${module.api["a"].load_balancer}/carts",
+    "  sleep .5",
     "done",
     ]
   )
