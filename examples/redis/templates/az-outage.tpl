@@ -15,7 +15,7 @@
             "actionId": "aws:network:disrupt-connectivity",
             "description": "Run an az network outage",
             "parameters": {
-                "duration": "${duration}"
+                "duration": "${duration}",
                 "scope": "availability-zone"
             },
             "targets": {
