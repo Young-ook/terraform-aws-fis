@@ -9,7 +9,7 @@ provider "aws" {
 # network/vpc
 module "vpc" {
   source  = "Young-ook/vpc/aws"
-  version = "1.0.1"
+  version = "1.0.2"
   name    = var.name
   tags    = var.tags
   vpc_config = var.use_default_vpc ? null : {
@@ -42,7 +42,7 @@ resource "aws_security_group" "redis" {
 resource "random_password" "password" {
   length           = 16
   special          = true
-  override_special = "!#$%&*()-_=+[]{}<>?^"
+  override_special = "%*()_=+[]{}<>?"
 }
 
 # application/redis
@@ -72,7 +72,7 @@ resource "aws_elasticache_replication_group" "redis" {
 # application/eks
 module "eks" {
   source             = "Young-ook/eks/aws"
-  version            = "1.7.5"
+  version            = "1.7.10"
   name               = var.name
   tags               = var.tags
   subnets            = values(module.vpc.subnets[var.use_default_vpc ? "public" : "private"])
