@@ -89,7 +89,7 @@ module "awsfis" {
         ssm_doc  = module.awsfis.experiment["FIS-Run-AZ-Outage"].arn
         region   = var.aws_region
         az       = module.random-az.az
-        vpc      = module.vpc["vpc"].id
+        vpc      = module.vpc.vpc.id
         duration = "PT1M"
         ssm_role = module.awsfis.role["ssm"].arn
         fis_role = module.awsfis.role["fis"].arn

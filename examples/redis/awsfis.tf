@@ -18,7 +18,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/az-outage.tpl"
       params = {
         az       = var.azs[random_integer.az.result]
-        vpc      = module.vpc["vpc"].id
+        vpc      = module.vpc.vpc.id
         duration = "PT1M"
         fis_role = module.awsfis.role["fis"].arn
         alarm    = aws_cloudwatch_metric_alarm.cpu.arn
