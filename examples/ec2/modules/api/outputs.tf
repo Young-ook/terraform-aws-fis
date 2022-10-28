@@ -23,6 +23,7 @@ output "security_group" {
 output "alarms" {
   description = "Application alarms"
   value = {
-    cpu = aws_cloudwatch_metric_alarm.cpu
+    cpu = aws_cloudwatch_metric_alarm.cpu,
+    api-p90 = aws_cloudwatch_metric_alarm.api-p90
   }
 }
