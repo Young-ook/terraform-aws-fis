@@ -11,7 +11,7 @@ resource "aws_ssm_association" "cwagent" {
   }
 }
 
-# application/logs
+### application/logs
 module "logs" {
   source  = "Young-ook/lambda/aws//modules/logs"
   version = "0.2.6"

@@ -1,3 +1,9 @@
+### network
+variable "aws_region" {
+  description = "The aws region"
+  type        = string
+}
+
 ### application
 variable "app" {
   description = "The information of microservice API applications"
