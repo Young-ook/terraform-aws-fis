@@ -1,16 +1,26 @@
 {
     "description": "Run an AZ Outage fault injection on the specified availability zone",
-    "targets": {},
+    "targets": {
+        "az": {
+            "resourceType": "aws:ec2:subnet",
+            "parameters": {
+                "availabilityZoneIdentifier": "${az}",
+                "vpc": "${vpc}"
+            },
+            "selectionMode": "ALL"
+        }
+    },
     "actions": {
         "AZOutage": {
-            "actionId": "aws:ssm:start-automation-execution",
-            "description": "Run an az network outage using ssm",
+            "actionId": "aws:network:disrupt-connectivity",
+            "description": "Run an az network outage",
             "parameters": {
-                "documentArn": "${ssm_doc}",
-                "documentParameters": "{\"Region\": \"${region}\", \"AvailabilityZone\": \"${az}\", \"VPCId\": \"${vpc}\", \"Duration\": \"${duration}\", \"AutomationAssumeRole\": \"${ssm_role}\"}",
-                "maxDuration": "PT30M"
+                "duration": "${duration}",
+                "scope": "availability-zone"
             },
-            "targets": {}
+            "targets": {
+                "Subnets": "az"
+            }
         }
     },
     "stopConditions": [
