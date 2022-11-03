@@ -84,3 +84,30 @@ resource "aws_appmesh_route" "route" {
     }
   }
 }
+
+resource "aws_ssm_document" "envoy" {
+  name            = "Install-EnvoyProxy"
+  document_format = "YAML"
+  document_type   = "Command"
+  content         = file(join("/", [path.module, "templates", "envoy.yaml"]))
+}
+
+resource "aws_ssm_association" "envoy" {
+  for_each         = var.app
+  name             = aws_ssm_document.envoy.name
+  association_name = join("-", [var.name, each.key, "envoy"])
+  parameters = {
+    region       = var.aws_region
+    mesh         = var.name
+    vnode        = join("-", [var.name, each.key])
+    envoyVersion = "v1.23.1.0"
+    appPort      = "80"
+  }
+  targets {
+    key = "tag:Name"
+    values = [
+      join("-", [var.name, each.key, "baseline"]),
+      join("-", [var.name, each.key, "canary"]),
+    ]
+  }
+}

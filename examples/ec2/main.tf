@@ -38,6 +38,7 @@ module "mesh" {
   source     = "./modules/mesh"
   name       = var.name
   tags       = merge(local.default-tags, var.tags)
+  aws_region = var.aws_region
   app        = module.api
 }
 

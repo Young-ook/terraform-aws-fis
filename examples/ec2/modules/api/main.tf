@@ -87,19 +87,7 @@ resource "aws_lb_target_group" "http" {
   }
 }
 
-### application/script
-locals {
-  server = join("\n", [
-    "sudo yum update -y",
-    "sudo yum install -y httpd",
-    "sudo rm /etc/httpd/conf.d/welcome.conf",
-    "sudo sed -i -e '$aProxyPass \"/carts\" \"http://fis-ec2-b.corp.internal\"' /etc/httpd/conf/httpd.conf",
-    "sudo systemctl start httpd",
-    ]
-  )
-}
-
-# application/ec2
+### application/ec2
 module "ec2" {
   source  = "Young-ook/ssm/aws"
   version = "1.0.3"
@@ -116,8 +104,11 @@ module "ec2" {
       security_groups   = [aws_security_group.alb_aware.id]
       target_group_arns = [aws_lb_target_group.http.arn]
       tags              = { release = "baseline" }
-      policy_arns       = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-      user_data         = local.server
+      user_data         = templatefile("${path.module}/templates/server.tpl", {})
+      policy_arns = [
+        "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+      ]
     },
     {
       name              = "canary"
@@ -128,8 +119,11 @@ module "ec2" {
       security_groups   = [aws_security_group.alb_aware.id]
       target_group_arns = [aws_lb_target_group.http.arn]
       tags              = { release = "canary" }
-      policy_arns       = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-      user_data         = local.server
+      user_data         = templatefile("${path.module}/templates/server.tpl", {})
+      policy_arns = [
+        "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
+        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+      ]
     },
   ]
 }
