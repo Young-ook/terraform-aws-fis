@@ -90,7 +90,7 @@ resource "aws_lb_target_group" "http" {
 ### application/ec2
 module "ec2" {
   source  = "Young-ook/ssm/aws"
-  version = "1.0.3"
+  version = "1.0.4"
   name    = var.name
   tags    = var.tags
   subnets = (var.az == -1 ? var.subnets : [var.subnets[var.az]])

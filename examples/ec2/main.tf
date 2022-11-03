@@ -45,7 +45,7 @@ module "mesh" {
 ### application/api
 module "api" {
   for_each   = toset(["a", "b"])
-  depends_on = [aws_ssm_association.cwagent, module.random-az]
+  depends_on = [module.random-az]
   source     = "./modules/api"
   name       = join("-", [var.name, each.key])
   tags       = merge(local.default-tags, var.tags)
