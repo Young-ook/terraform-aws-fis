@@ -27,3 +27,8 @@ output "alarms" {
     api-p90 = aws_cloudwatch_metric_alarm.api-p90
   }
 }
+
+output "vpc_zone_identifier" {
+  description = "VPC subnets where ec2 instance are deployed"
+  value       = (var.az == -1 ? var.subnets : [var.subnets[var.az]])
+}
