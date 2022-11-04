@@ -11,6 +11,5 @@ module "logs" {
       }
     },
   ] : l.type => l }
-  name      = join("-", [var.name, each.key])
   log_group = each.value.log_group
 }
