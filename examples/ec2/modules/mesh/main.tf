@@ -29,6 +29,13 @@ resource "aws_appmesh_virtual_node" "vnode" {
         virtual_service_name = aws_appmesh_virtual_service.vservice[each.key == "a" ? "b" : "a"].name
       }
     }
+    logging {
+      access_log {
+        file {
+          path = "/dev/stdout"
+        }
+      }
+    }
   }
 }
 
