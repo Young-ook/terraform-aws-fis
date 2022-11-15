@@ -74,7 +74,7 @@ mainSteps:
     runCommand:
       - |
         #!/bin/bash -ex
-        #APPMESH_START_ENABLED="0"
+        APPMESH_START_ENABLED="1"
         APPMESH_IGNORE_UID={{ignoredUID}}
         APPMESH_APP_PORTS={{appPort}}
         APPMESH_ENVOY_EGRESS_PORT={{envoyEgressPort}}

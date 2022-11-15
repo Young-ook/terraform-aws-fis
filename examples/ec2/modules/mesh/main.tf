@@ -93,7 +93,7 @@ resource "aws_appmesh_route" "route" {
 }
 
 resource "aws_ssm_document" "envoy" {
-  name            = "Install-EnvoyProxy"
+  name            = "InstallEnvoyProxy"
   document_format = "YAML"
   document_type   = "Command"
   content         = file(join("/", [path.module, "templates", "envoy.yaml"]))
