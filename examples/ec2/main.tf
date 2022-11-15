@@ -25,7 +25,7 @@ module "vpc" {
 
 ### network/dns
 resource "aws_route53_zone" "dns" {
-  name = "corp.internal"
+  name = local.namespace
   tags = merge(local.default-tags, var.tags)
   vpc {
     vpc_id = module.vpc.vpc.id
@@ -40,6 +40,7 @@ module "mesh" {
   tags       = merge(local.default-tags, var.tags)
   aws_region = var.aws_region
   app        = module.api
+  namespace  = local.namespace
 }
 
 ### application/api

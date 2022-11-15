@@ -4,6 +4,11 @@ variable "aws_region" {
   type        = string
 }
 
+variable "namespace" {
+  description = "Namespace for service discovery"
+  type        = string
+}
+
 ### application
 variable "app" {
   description = "The information of microservice API applications"

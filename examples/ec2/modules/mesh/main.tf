@@ -41,7 +41,7 @@ resource "aws_appmesh_virtual_node" "vnode" {
 
 resource "aws_appmesh_virtual_service" "vservice" {
   for_each  = var.app
-  name      = join("-", [var.name, each.key])
+  name      = join(".", [join("-", [var.name, each.key]), var.namespace])
   mesh_name = aws_appmesh_mesh.mesh.name
   tags      = var.tags
 
@@ -85,7 +85,7 @@ resource "aws_appmesh_route" "route" {
       action {
         weighted_target {
           virtual_node = aws_appmesh_virtual_node.vnode[each.key].name
-          weight       = 1
+          weight       = 100
         }
       }
     }
