@@ -29,12 +29,19 @@ resource "aws_appmesh_virtual_node" "vnode" {
         virtual_service_name = aws_appmesh_virtual_service.vservice[each.key == "a" ? "b" : "a"].name
       }
     }
+    logging {
+      access_log {
+        file {
+          path = "/dev/stdout"
+        }
+      }
+    }
   }
 }
 
 resource "aws_appmesh_virtual_service" "vservice" {
   for_each  = var.app
-  name      = join("-", [var.name, each.key])
+  name      = join(".", [join("-", [var.name, each.key]), var.namespace])
   mesh_name = aws_appmesh_mesh.mesh.name
   tags      = var.tags
 
@@ -78,7 +85,7 @@ resource "aws_appmesh_route" "route" {
       action {
         weighted_target {
           virtual_node = aws_appmesh_virtual_node.vnode[each.key].name
-          weight       = 1
+          weight       = 100
         }
       }
     }
@@ -86,7 +93,7 @@ resource "aws_appmesh_route" "route" {
 }
 
 resource "aws_ssm_document" "envoy" {
-  name            = "Install-EnvoyProxy"
+  name            = "InstallEnvoyProxy"
   document_format = "YAML"
   document_type   = "Command"
   content         = file(join("/", [path.module, "templates", "envoy.yaml"]))

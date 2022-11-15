@@ -62,6 +62,7 @@ mainSteps:
 
         sudo docker run -u $USERID --detach --network host \
             --env APPMESH_RESOURCE_ARN=mesh/$MESH/virtualNode/$VNODE \
+            --env ENVOY_LOG_LEVEL=debug \
             840364872350.dkr.ecr.$REGION.amazonaws.com/aws-appmesh-envoy:$ENVOY_VER-prod
 - action: aws:runShellScript
   name: EnableRouting

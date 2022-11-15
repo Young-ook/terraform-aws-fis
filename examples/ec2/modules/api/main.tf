@@ -107,7 +107,8 @@ module "ec2" {
       user_data         = templatefile("${path.module}/templates/server.tpl", {})
       policy_arns = [
         "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
-        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+        "arn:aws:iam::aws:policy/AWSAppMeshEnvoyAccess"
       ]
     },
     {
@@ -122,7 +123,8 @@ module "ec2" {
       user_data         = templatefile("${path.module}/templates/server.tpl", {})
       policy_arns = [
         "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
-        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly"
+        "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+        "arn:aws:iam::aws:policy/AWSAppMeshEnvoyAccess"
       ]
     },
   ]
@@ -138,7 +140,7 @@ resource "aws_autoscaling_policy" "target-tracking" {
     predefined_metric_specification {
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
-    target_value = 10.0
+    target_value = 60.0
   }
 }
 
