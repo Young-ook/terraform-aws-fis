@@ -86,6 +86,9 @@ This test will inject network outage to a target availability zone (AZ).
 #### Define Steady State
 First of all, we need to define steady state of the service. This means the service is healthy and working well. Let’s go ahead and explore Redis-rate-limit application. Try out to select one of the requests-per-second (RPS) options and run it.
 
+#### Hypothesis
+Through this experiment, we will verify that the Redis cluster is only partially affected by single Availability Zone failure. The application we will use is a simple web application that applies throttling when it communications with a Redis cluster.  In order for chaos engineering to follow the scientific method, we need to start by making hypotheses. To help with this, you can use an experiment chart (see below) in your experiment design. We encourage you to take at least 5 minutes to write your experiment plan.
+
 **Steady State Hypothesis Example**
 
 + Title: Services are all available and healthy
@@ -111,9 +114,16 @@ First of all, we need to define steady state of the service. This means the serv
 
 #### Stop Condition
 #### Run Experiment
+Make sure that your Redis application is running on your EKS cluster. Go to the AWS FIS service page and select `AZOutage` from the list of experiment templates. Then use the *Actions* button to start the experiment. AWS FIS will start to block network traffics from and to a (randomly) selected availability zone soon. After then move to the Redis application and test. What did you see? Is your application working well? or broken?
 
+#### Improvements
+
+### Cluster Failover
+#### Define Steady State
+#### Hypothesis
+#### Stop Condition
+#### Run Experiment
 ![aws-fis-redis-cluster-failover-start](../../images/redis/aws-fis-redis-cluster-failover-start.png)
-
 #### Improvements
 
 ## Clean up
