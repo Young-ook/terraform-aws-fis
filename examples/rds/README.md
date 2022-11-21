@@ -62,7 +62,7 @@ mysql -h {amazon-aurora-endpoint} -u myuser -p mydb < mydb.sql
 ### Access an application
 After installation and configuration is complete, start port-forwarding through the kubernetes proxy.
 ```
-kubectl -n lamp port-forward svc/apache 8080:80
+kubectl -n lamp port-forward svc/www 8080:80
 ```
 
 Open `http://localhost:8080` on a web browser to look at a simple php example. Or if your are running this example in Cloud9, click `Preview` and `Preview Running Application`. This opens up a preview tab and shows the spinnaker application.
