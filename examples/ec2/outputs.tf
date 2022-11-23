@@ -2,7 +2,7 @@
 
 output "loadgen" {
   description = "Script to call APIs as a virtual client"
-  value       = local.loadgen
+  value       = module.loadgen.script
 }
 
 output "random_az" {

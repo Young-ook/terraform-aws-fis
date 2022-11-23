@@ -67,35 +67,11 @@ module "api" {
 
 ### application/loadgen
 module "loadgen" {
-  depends_on = [module.api]
-  source     = "Young-ook/ssm/aws"
-  version    = "1.0.5"
-  name       = var.name
-  tags       = merge(local.default-tags, var.tags)
-  subnets    = values(module.vpc.subnets["public"])
-  node_groups = [
-    {
-      name            = "loadgen"
-      min_size        = 1
-      max_size        = 1
-      desired_size    = 1
-      instance_type   = "t3.small"
-      security_groups = [module.api["a"].security_group.id, module.api["b"].security_group.id]
-      policy_arns     = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-    }
-  ]
-}
-
-### application/script
-locals {
-  loadgen = join("\n", [
-    "#!/bin/bash -x",
-    "while true; do",
-    "  curl -I http://${module.api["a"].load_balancer}",
-    "  sleep .5",
-    "  curl -I http://${module.api["a"].load_balancer}/carts",
-    "  sleep .5",
-    "done",
-    ]
-  )
+  depends_on      = [module.api]
+  source          = "./modules/loadgen"
+  name            = var.name
+  tags            = merge(local.default-tags, var.tags)
+  subnets         = values(module.vpc.subnets["public"])
+  security_groups = [module.api["a"].security_group.id, module.api["b"].security_group.id]
+  target          = format("http://%s", module.api["a"].load_balancer)
 }
