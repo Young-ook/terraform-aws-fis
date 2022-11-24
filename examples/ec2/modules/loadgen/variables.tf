@@ -10,8 +10,13 @@ variable "security_groups" {
 }
 
 ### testing
-variable "target" {
-  description = "An URL to target service"
+variable "config" {
+  description = "The Test configuration"
+  type        = string
+}
+
+variable "task" {
+  description = "The test case python script"
   type        = string
 }
 

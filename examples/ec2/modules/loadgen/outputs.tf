@@ -1,10 +1,5 @@
 ### output variables
 
-output "script" {
-  description = "Script to call APIs as a virtual client"
-  value       = local.loadgen
-}
-
 output "server_group" {
   description = "Application server group"
   value       = module.ec2.cluster.data_plane.node_groups

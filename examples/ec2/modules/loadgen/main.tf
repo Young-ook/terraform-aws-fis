@@ -13,15 +13,11 @@ module "ec2" {
       desired_size    = 1
       instance_type   = "t3.small"
       security_groups = var.security_groups
-      user_data = templatefile("${path.module}/templates/loadgen.tpl", {
-        target = var.target
+      user_data = templatefile("${path.module}/templates/taurus.tpl", {
+        config = var.config
+        task   = var.task
       })
       policy_arns = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
     }
   ]
-}
-
-### application/script
-locals {
-  loadgen = "python3 -m bzt /tmp/loadgen.yaml"
 }

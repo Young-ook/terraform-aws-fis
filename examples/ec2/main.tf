@@ -73,5 +73,6 @@ module "loadgen" {
   tags            = merge(local.default-tags, var.tags)
   subnets         = values(module.vpc.subnets["public"])
   security_groups = [module.api["a"].security_group.id, module.api["b"].security_group.id]
-  target          = format("http://%s", module.api["a"].load_balancer)
+  config          = templatefile("${path.module}/test.yaml", { target = format("http://%s", module.api["a"].load_balancer) })
+  task            = templatefile("${path.module}/test.py", {})
 }
