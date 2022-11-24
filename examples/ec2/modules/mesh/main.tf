@@ -16,6 +16,12 @@ resource "aws_appmesh_virtual_node" "vnode" {
         port     = 80
         protocol = "http"
       }
+      connection_pool {
+        http {
+          max_connections      = 1
+          max_pending_requests = 1
+        }
+      }
     }
     service_discovery {
       # service discovery to which the virtual node is expected to send inbound traffic.

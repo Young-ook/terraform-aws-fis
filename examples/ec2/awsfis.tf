@@ -41,7 +41,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/network-latency.tpl"
       params = {
         region = var.aws_region
-        asg    = module.api["b"].server_group.canary.name
+        asg    = module.api["b"].server_group.baseline.name
         alarm  = module.api["a"].alarms.api-p90.arn
         role   = module.awsfis.role["fis"].arn
         logs   = format("%s:*", module.logs["fis"].log_group.arn)
