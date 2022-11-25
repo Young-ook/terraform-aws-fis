@@ -68,7 +68,8 @@ module "api" {
 ### application/loadgen
 module "loadgen" {
   depends_on      = [module.api]
-  source          = "./modules/loadgen"
+  source          = "Young-ook/fis/aws//modules/bzt"
+  version         = "1.0.3"
   name            = var.name
   tags            = merge(local.default-tags, var.tags)
   subnets         = values(module.vpc.subnets["public"])
