@@ -66,3 +66,27 @@ module "chaos-mesh" {
   version = "1.7.7"
   oidc    = module.eks.oidc
 }
+
+module "app-mesh" {
+  source  = "Young-ook/eks/aws//modules/app-mesh"
+  version = "1.7.10"
+  oidc    = module.eks.oidc
+  helm = {
+    version = "1.2.0"
+  }
+}
+
+module "lb-controller" {
+  source  = "Young-ook/eks/aws//modules/lb-controller"
+  version = "1.7.10"
+  oidc         = module.eks.oidc
+  tags         = var.tags
+  helm = {
+    vars = module.eks.features.fargate_enabled ? {
+      vpcId       = module.vpc.vpc.id
+      clusterName = module.eks.cluster.name
+      } : {
+      clusterName = module.eks.cluster.name
+    }
+  }
+}
