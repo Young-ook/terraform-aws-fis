@@ -27,6 +27,16 @@ variable "kubernetes_version" {
   type        = string
 }
 
+variable "managed_node_groups" {
+  description = "Amazon managed node groups definition"
+  default     = []
+}
+
+variable "fargate_profiles" {
+  description = "Amazon Fargate profiles"
+  default     = []
+}
+
 ### description
 variable "name" {
   description = "The logical name of the module instance"

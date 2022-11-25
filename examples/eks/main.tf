@@ -22,28 +22,15 @@ module "vpc" {
 
 # application/eks
 module "eks" {
-  source             = "Young-ook/eks/aws"
-  version            = "1.7.10"
-  name               = var.name
-  tags               = var.tags
-  subnets            = values(module.vpc.subnets["private"])
-  kubernetes_version = var.kubernetes_version
-  enable_ssm         = true
-  fargate_profiles = [
-    {
-      name      = "loadtest"
-      namespace = "loadtest"
-    },
-  ]
-  managed_node_groups = [
-    {
-      name          = "sockshop"
-      desired_size  = 3
-      min_size      = 3
-      max_size      = 9
-      instance_type = "t3.small"
-    }
-  ]
+  source              = "Young-ook/eks/aws"
+  version             = "1.7.10"
+  name                = var.name
+  tags                = var.tags
+  subnets             = values(module.vpc.subnets["private"])
+  kubernetes_version  = var.kubernetes_version
+  enable_ssm          = true
+  fargate_profiles    = var.fargate_profiles
+  managed_node_groups = var.managed_node_groups
 }
 
 provider "helm" {
