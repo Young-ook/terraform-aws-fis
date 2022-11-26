@@ -13,7 +13,7 @@ fargate_profiles = [
 ]
 managed_node_groups = [
   {
-    name          = "sockshop"
+    name          = "app"
     desired_size  = 1
     min_size      = 1
     max_size      = 4

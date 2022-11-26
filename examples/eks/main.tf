@@ -79,8 +79,8 @@ module "app-mesh" {
 module "lb-controller" {
   source  = "Young-ook/eks/aws//modules/lb-controller"
   version = "1.7.10"
-  oidc         = module.eks.oidc
-  tags         = var.tags
+  oidc    = module.eks.oidc
+  tags    = var.tags
   helm = {
     vars = module.eks.features.fargate_enabled ? {
       vpcId       = module.vpc.vpc.id
