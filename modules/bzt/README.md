@@ -43,12 +43,60 @@ class WebsiteUser(HttpUser):
 ```
 
 Then create a new terraform file, (e.g., main.tf) and write code as below to use blaze meter module.
+
 main.tf
 ```
 module "bzt" {
   source  = "Young-ook/fis/aws//modules/bzt"
   config  = templatefile("${path.module}/test.yaml", { target = format("http://app.cluster.local" })
   task    = file("${path.module}/test.py")
+}
+```
+
+Or, you can define test scenarios without external python script because LocustIO executor partially supports building scenario from requests. Supported features:
+ - request methods GET/POST
+ - headers and body for requests
+ - set timeout/think-time on both scenario/request levels
+ - assertions (for body and http-code)
+
+test.yaml
+```
+---
+execution:
+- executor: locust
+  concurrency: 10
+  ramp-up: 1m
+  iterations: 1000
+  scenario: hellotest
+
+scenarios:
+  request_example:
+    timeout: 10  #  global scenario timeout for connecting, receiving results, 30 seconds by default
+    think-time: 1s500ms  # global scenario delay between each request
+    default-address: ${target}  # specify a base address, so you can use short urls in requests
+    keepalive: true  # flag to use HTTP keep-alive for connections, default is true
+    requests:
+    - url: /  
+      method: get
+      headers:
+        var1: val1
+      body: 'body content'
+      assert:
+      - contains:
+        - body  # list of search patterns
+        - content
+        subject: body # subject for check
+        regexp: false  # treat string as regular expression, true by default
+        not: false  # inverse assertion condition
+```
+
+In this case, you don't need to set *task* variable in the bzt module.
+
+main.tf
+```
+module "bzt" {
+  source  = "Young-ook/fis/aws//modules/bzt"
+  config  = templatefile("${path.module}/test.yaml", { target = format("http://app.cluster.local" })
 }
 ```
 
