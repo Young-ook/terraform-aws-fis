@@ -25,7 +25,7 @@ module "eks" {
   depends_on         = [module.vpc]
   source             = "Young-ook/eks/aws"
   version            = "1.7.11"
-  name               = var.name
+  name               = join("-", [var.name, "kuberentes"])
   tags               = var.tags
   subnets            = values(module.vpc.subnets["private"])
   kubernetes_version = "1.21"
@@ -104,13 +104,13 @@ resource "random_password" "password" {
 
 resource "aws_elasticache_subnet_group" "redis" {
   depends_on = [module.vpc]
-  name       = var.name
+  name       = join("-", [var.name, "redis"])
   subnet_ids = values(module.vpc.subnets["private"])
 }
 
 resource "aws_elasticache_replication_group" "redis" {
   depends_on                 = [module.vpc]
-  replication_group_id       = var.name
+  replication_group_id       = join("-", [var.name, "redis"])
   description                = "Cluster mode enabled ElastiCache for Redis"
   engine                     = "redis"
   engine_version             = "6.x"
@@ -139,7 +139,7 @@ module "mysql" {
   depends_on = [module.vpc]
   source     = "Young-ook/aurora/aws"
   version    = "2.1.2"
-  name       = var.name
+  name       = join("-", [var.name, "mysql"])
   tags       = var.tags
   vpc        = module.vpc.vpc.id
   subnets    = values(module.vpc.subnets["private"])
