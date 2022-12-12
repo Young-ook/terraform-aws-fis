@@ -13,7 +13,7 @@ output "kubeconfig" {
   value       = module.eks.kubeconfig
 }
 
-output "build" {
-  description = "Bash script to start build"
-  value       = module.ci.build
+output "codebuild" {
+  description = "Bash script to run the build projects using CodeBuild"
+  value       = [for proj in values(module.ci) : proj.build]
 }
