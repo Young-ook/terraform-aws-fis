@@ -22,7 +22,6 @@ module "vpc" {
 
 ### application/kubernetes
 module "eks" {
-  depends_on         = [module.vpc]
   source             = "Young-ook/eks/aws"
   version            = "1.7.11"
   name               = join("-", [var.name, "kuberentes"])
