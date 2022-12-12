@@ -22,6 +22,7 @@ module "vpc" {
 
 ### application/kubernetes
 module "eks" {
+  depends_on         = [module.vpc]
   source             = "Young-ook/eks/aws"
   version            = "1.7.11"
   name               = var.name
@@ -81,18 +82,15 @@ module "lb-controller" {
 }
 
 ### cache/redis
-locals {
-  redis_port = 6379
-}
-
 resource "aws_security_group" "redis" {
-  name   = join("-", [var.name, "redis"])
-  tags   = merge(local.default-tags, var.tags)
-  vpc_id = module.vpc.vpc.id
+  depends_on = [module.vpc]
+  name       = join("-", [var.name, "redis"])
+  tags       = merge(local.default-tags, var.tags)
+  vpc_id     = module.vpc.vpc.id
 
   ingress {
-    from_port   = local.redis_port
-    to_port     = local.redis_port
+    from_port   = "6379"
+    to_port     = "6379"
     protocol    = "tcp"
     cidr_blocks = [module.vpc.vpc.cidr_block]
   }
@@ -105,16 +103,18 @@ resource "random_password" "password" {
 }
 
 resource "aws_elasticache_subnet_group" "redis" {
+  depends_on = [module.vpc]
   name       = var.name
   subnet_ids = values(module.vpc.subnets["private"])
 }
 
 resource "aws_elasticache_replication_group" "redis" {
+  depends_on                 = [module.vpc]
   replication_group_id       = var.name
   description                = "Cluster mode enabled ElastiCache for Redis"
   engine                     = "redis"
   engine_version             = "6.x"
-  port                       = local.redis_port
+  port                       = "6379"
   node_type                  = "cache.t2.micro"
   security_group_ids         = [aws_security_group.redis.id]
   subnet_group_name          = aws_elasticache_subnet_group.redis.name
@@ -136,13 +136,14 @@ resource "aws_elasticache_replication_group" "redis" {
 
 ### database/aurora
 module "mysql" {
-  source  = "Young-ook/aurora/aws"
-  version = "2.1.2"
-  name    = var.name
-  tags    = var.tags
-  vpc     = module.vpc.vpc.id
-  subnets = values(module.vpc.subnets["private"])
-  cidrs   = [var.cidr]
+  depends_on = [module.vpc]
+  source     = "Young-ook/aurora/aws"
+  version    = "2.1.2"
+  name       = var.name
+  tags       = var.tags
+  vpc        = module.vpc.vpc.id
+  subnets    = values(module.vpc.subnets["private"])
+  cidrs      = [var.cidr]
   aurora_cluster = {
     engine            = "aurora-mysql"
     version           = "5.7.mysql_aurora.2.07.1"
@@ -186,17 +187,3 @@ module "proxy" {
     user_password = module.mysql.user.password
   }
 }
-
-/*
-### application/loadgen
-module "loadgen" {
-  depends_on = [module.eks, module.mysql]
-  source     = "Young-ook/fis/aws//modules/bzt"
-  version    = "1.0.3"
-  name       = var.name
-  tags       = merge(local.default-tags, var.tags)
-  subnets    = values(module.vpc.subnets["private"])
-  config     = templatefile("${path.module}/test.yaml", { target = format("http://%s", module.api["a"].load_balancer) })
-  task       = templatefile("${path.module}/test.py", {})
-}
-*/
