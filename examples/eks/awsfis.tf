@@ -47,7 +47,7 @@ module "awsfis" {
       params = {
         az        = var.azs[random_integer.az.result]
         vpc       = module.vpc.vpc.id
-        nodegroup = module.eks.cluster.data_plane.managed_node_groups.sockshop.arn
+        nodegroup = module.eks.cluster.data_plane.managed_node_groups.app.arn
         role      = module.awsfis.role["fis"].arn
         logs      = format("%s:*", module.logs["fis"].log_group.arn)
         alarm = jsonencode([
