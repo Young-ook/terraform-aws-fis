@@ -6,14 +6,6 @@
             "resourceArns": [
                 "${db}"
             ],
-            "filters": [
-                {
-                    "path": "State.Name",
-                    "values": [
-                        "running"
-                    ]
-                }
-            ],
             "selectionMode": "ALL"
         }
     },
