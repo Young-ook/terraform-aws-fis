@@ -16,7 +16,7 @@ variable "azs" {
 variable "cidr" {
   description = "The vpc CIDR (e.g. 10.0.0.0/16)"
   type        = string
-  default     = "10.0.0.0/16"
+  default     = "10.2.0.0/16"
 }
 
 ### description
