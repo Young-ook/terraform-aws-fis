@@ -104,14 +104,20 @@ resource "random_password" "password" {
   override_special = "%*()_=+[]{}<>?"
 }
 
+resource "aws_elasticache_subnet_group" "redis" {
+  name       = var.name
+  subnet_ids = values(module.vpc.subnets["private"])
+}
+
 resource "aws_elasticache_replication_group" "redis" {
   replication_group_id       = var.name
   description                = "Cluster mode enabled ElastiCache for Redis"
   engine                     = "redis"
   engine_version             = "6.x"
   port                       = local.redis_port
-  security_group_ids         = [aws_security_group.redis.id]
   node_type                  = "cache.t2.micro"
+  security_group_ids         = [aws_security_group.redis.id]
+  subnet_group_name          = aws_elasticache_subnet_group.redis.name
   parameter_group_name       = "default.redis6.x.cluster.on"
   num_node_groups            = 3
   replicas_per_node_group    = 2
