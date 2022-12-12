@@ -19,8 +19,8 @@ resource "aws_cloudwatch_metric_alarm" "cpu" {
 
 # application/logs
 module "logs" {
-  source  = "Young-ook/lambda/aws//modules/logs"
-  version = "0.2.1"
+  source  = "Young-ook/eventbridge/aws//modules/logs"
+  version = "0.0.6"
   for_each = { for l in [
     {
       type = "codebuild"
