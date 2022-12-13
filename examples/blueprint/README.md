@@ -17,16 +17,17 @@ All things are ready, apply terraform:
 terraform init
 terraform apply
 ```
-Also you can use the `-var-file` option for customized paramters when you run the terraform plan/apply command.
+Also you can use the *-var-file* option for customized paramters when you run the terraform plan/apply command.
 ```
 terraform plan -var-file fixture.tc1.tfvars
 terraform apply -var-file fixture.tc1.tfvars
 ```
 
 ### Update kubeconfig
-We need to get kubernetes config file for access the cluster that we've made using terraform. After terraform apply, you will see the bash command on the outputs. The terraform output should look similar to the one below. To update kubeconfig, simply, copy the bash command from the terraform output and run it on your workspace. Then export the downloaded file to *KUBECONFIG* environment variable. For more details, please refer to the [user guide](https://github.com/Young-ook/terraform-aws-eks#generate-kubernetes-config).
+We need to get kubernetes config file for access the cluster that we've made using terraform. After terraform apply, you will see the bash command on the outputs. The terraform output should look similar to the one below. To update kubeconfig, simply, copy the bash command from the terraform output and run it on your workspace. Then export the downloaded file to **KUBECONFIG** environment variable. For more details, please refer to the [user guide](https://github.com/Young-ook/terraform-aws-eks#generate-kubernetes-config).
 ```
-kubeconfig = "bash -e .terraform/modules/eks/script/update-kubeconfig.sh -r ap-northeast-2 -n fis-blueprint -k kubeconfig"
+bash -e .terraform/modules/eks/script/update-kubeconfig.sh -r ap-northeast-2 -n fis-blueprint -k kubeconfig
+export KUBECONFIG=kubeconfig
 ```
 
 ## Applications
@@ -40,7 +41,7 @@ Run terraform:
 ```
 terraform destroy
 ```
-Don't forget you have to use the `-var-file` option when you run terraform destroy command to delete the aws resources created with extra variable files.
+**[DON'T FORGET]** You have to use the *-var-file* option when you run terraform destroy command to delete the aws resources created with extra variable files.
 ```
 terraform destroy -var-file fixture.tc1.tfvars
 ```
