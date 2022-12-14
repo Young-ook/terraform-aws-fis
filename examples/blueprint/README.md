@@ -45,3 +45,10 @@ terraform destroy
 ```
 terraform destroy -var-file fixture.tc1.tfvars
 ```
+
+# Additional Resources
+## Terraform Modules
+- [Terraform module: Amazon Aurora](https://github.com/Young-ook/terraform-aws-aurora)
+- [Terraform module: Amazon EKS](https://github.com/Young-ook/terraform-aws-eks)
+- [Terraform module: AWS Systems Manager](https://github.com/Young-ook/terraform-aws-ssm)
+- [Terraform module: Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker)
