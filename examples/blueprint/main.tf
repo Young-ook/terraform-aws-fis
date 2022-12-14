@@ -134,11 +134,11 @@ resource "aws_elasticache_replication_group" "redis" {
 
 
 ### database/aurora
-module "mysql" {
+module "rds" {
   depends_on = [module.vpc]
   source     = "Young-ook/aurora/aws"
   version    = "2.1.2"
-  name       = join("-", [var.name, "mysql"])
+  name       = join("-", [var.name, "rds"])
   tags       = var.tags
   vpc        = module.vpc.vpc.id
   subnets    = values(module.vpc.subnets["private"])
@@ -168,7 +168,7 @@ module "mysql" {
 }
 
 resource "time_sleep" "wait" {
-  depends_on      = [module.vpc, module.mysql]
+  depends_on      = [module.vpc, module.rds]
   create_duration = "60s"
 }
 
@@ -179,10 +179,10 @@ module "proxy" {
   tags       = var.tags
   subnets    = values(module.vpc.subnets["private"])
   proxy_config = {
-    cluster_id = module.mysql.cluster.id
+    cluster_id = module.rds.cluster.id
   }
   auth_config = {
-    user_name     = module.mysql.user.name
-    user_password = module.mysql.user.password
+    user_name     = module.rds.user.name
+    user_password = module.rds.user.password
   }
 }

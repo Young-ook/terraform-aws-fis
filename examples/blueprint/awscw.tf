@@ -22,7 +22,7 @@ module "alarm" {
               namespace   = "AWS/RDS"
               stat        = "Average"
               period      = 60
-              dimensions  = { DBClusterIdentifier = module.mysql.cluster.id }
+              dimensions  = { DBClusterIdentifier = module.rds.cluster.id }
             },
           ]
         },

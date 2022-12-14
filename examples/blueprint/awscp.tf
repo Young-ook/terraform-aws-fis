@@ -65,10 +65,10 @@ resource "local_file" "lamp" {
   content = templatefile(join("/", [path.module, "apps", "lamp", "lamp.yaml.tpl"]),
     {
       ecr_url    = module.ecr["lamp"].url
-      mysql_host = module.mysql.endpoint.writer
-      mysql_user = module.mysql.user.name
-      mysql_pw   = module.mysql.user.password
-      mysql_db   = module.mysql.user.database
+      mysql_host = module.rds.endpoint.writer
+      mysql_user = module.rds.user.name
+      mysql_pw   = module.rds.user.password
+      mysql_db   = module.rds.user.database
     }
   )
   filename        = join("/", [path.module, "apps", "lamp", "lamp.yaml"])

@@ -87,7 +87,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/reboot-db-instances.tpl"
       params = {
         region = var.aws_region
-        db     = module.mysql.instances.0.arn
+        db     = module.rds.instances.0.arn
         alarm  = module.alarm["cpu"].alarm.arn
         logs   = format("%s:*", module.logs["fis"].log_group.arn)
         role   = module.awsfis.role["fis"].arn
@@ -98,7 +98,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/failover-db-cluster.tpl"
       params = {
         region  = var.aws_region
-        cluster = module.mysql.cluster.arn
+        cluster = module.rds.cluster.arn
         alarm   = module.alarm["cpu"].alarm.arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
         role    = module.awsfis.role["fis"].arn
