@@ -30,6 +30,22 @@ bash -e .terraform/modules/eks/script/update-kubeconfig.sh -r ap-northeast-2 -n 
 export KUBECONFIG=kubeconfig
 ```
 
+### Access Chaos Mesh
+[Chaos Mesh](https://chaos-mesh.org/docs/) is an open source cloud-native Chaos Engineering platform. It offers various types of fault simulation and has an enormous capability to orchestrate fault scenarios. Using Chaos Mesh, you can conveniently simulate various abnormalities that might occur in reality during the development, testing, and production environments and find potential problems in the system. AWS FIS supports ChaosMesh and Litmus experiments for containerized applications running on Amazon Elastic Kubernetes Service (EKS). Using the new Kubernetes custom resource action for AWS FIS, you can control ChaosMesh and Litmus chaos experiments from within an AWS FIS experiment, enabling you to coordinate fault injection workflows among multiple tools. For example, you can run a stress test on a pod’s CPU using ChaosMesh or Litmus faults while terminating a randomly selected percentage of cluster nodes using AWS FIS fault actions.
+
+In your local workspace, run kubernetes command to connect to your chaos-mesh dashboard through a proxy:
+```
+kubectl -n chaos-mesh port-forward svc/chaos-dashboard 2333:2333
+```
+If you are run this example in your Cloud9 IDE, you have to change the local port to 8080 instead of 2333.
+```
+kubectl -n chaos-mesh port-forward svc/chaos-dashboard 8080:2333
+```
+Open `http://localhost:2333` on your web browser. If you are in your Cloud9 IDE, click *Preview* and *Preview Running Application*. This shows chaos mesh dashboard login page.
+
+When you access your chaos mesh dashboard, first, you have to create user accounts and bind permissions. Follow the [Manage User Permissions](https://chaos-mesh.org/docs/manage-user-permissions/) instructions to create a new user and generate access token.
+![cm-dashboard-login](../../images/cm-dashboard-login.png)
+
 ## Applications
 - [LAMP](./apps/README.md#lamp)
 - [Redispy](./apps/README.md#redispy)
