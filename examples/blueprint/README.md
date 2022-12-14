@@ -31,10 +31,10 @@ export KUBECONFIG=kubeconfig
 ```
 
 ## Applications
-- [Yelb](./apps/README.md#yelb)
 - [LAMP](./apps/README.md#lamp)
 - [Redispy](./apps/README.md#redispy)
 - [SockShop](./apps/README.md#sockshop)
+- [Yelb](./apps/README.md#yelb)
 
 ## Clean up
 Run terraform:
