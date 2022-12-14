@@ -86,3 +86,5 @@ module.awsfis.null_resource.awsfis-init (local-exec): Unknown parameter in input
 - [Using AWS Resilience Hub with Microservices](https://youtu.be/oWCzzYLGLoY)
 ## Chaos Engineering
 - [Chaos Engineering (카오스 엔지니어링)](https://youngookkim.tistory.com/48)
+## Disaster Recovery
+- [Disaster Recovery of Workloads on AWS](https://youtu.be/cJZw5mrxryA)
