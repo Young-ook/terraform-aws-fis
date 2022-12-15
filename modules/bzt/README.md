@@ -42,7 +42,7 @@ class WebsiteUser(HttpUser):
     wait_time = between(0.100, 1.500)
 ```
 
-Then create a new terraform file, (e.g., main.tf) and write code as below to use blaze meter module.
+Then create a new terraform file, (e.g., main.tf) and write code as below to use your blazemeter module.
 
 main.tf
 ```
