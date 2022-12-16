@@ -92,3 +92,5 @@ module.awsfis.null_resource.awsfis-init (local-exec): Unknown parameter in input
 
 ## Disaster Recovery
 - [Disaster Recovery of Workloads on AWS](https://youtu.be/cJZw5mrxryA)
+- [Disaster Recovery of Workloads on AWS: Recovery in the Cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html)
+- [Disaster Recovery of On-Premises Application to AWS](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-of-on-premises-applications-to-aws/abstract-and-introduction.html)
