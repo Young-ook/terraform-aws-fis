@@ -47,6 +47,9 @@ terraform destroy -var-file fixture.tc1.tfvars
 ```
 
 # Additional Resources
+## AWS Fault Injection Simulator
+- [Chaos Testing with AWS Fault Injection Simulator and AWS CodePipeline](https://aws.amazon.com/blogs/architecture/chaos-testing-with-aws-fault-injection-simulator-and-aws-codepipeline/)
+
 ## Chaos Mesh
 - [Simulate Kubernetes Resource Stress Test](https://chaos-mesh.org/docs/simulate-heavy-stress-on-kubernetes/) 
 - [Simulate AWS Faults](https://chaos-mesh.org/docs/simulate-aws-chaos/)
