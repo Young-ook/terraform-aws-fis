@@ -78,13 +78,17 @@ module.awsfis.null_resource.awsfis-init (local-exec): Unknown parameter in input
 # Additional Resources
 ## AWS Fault Injection Simulator
 - [AWS Fault Injection Simulator - Use controlled experiments to boost resilience](https://aws.amazon.com/blogs/aws/aws-fault-injection-simulator-use-controlled-experiments-to-boost-resilience/)
+
 ## AWS Resilience Hyb
 - [How to use Resilience Hub’s Fault Injection Experiments to test application’s resilience](https://aws.amazon.com/blogs/mt/how-to-use-resiliency-hubs-fault-injection-experiments-to-test-applications-resilience/)
 - [Manage Application Resilience with AWS Resilience Hub, Part 1](https://youtu.be/Hp9waMg2258)
 - [Manage Application Resilience with AWS Resilience Hub, Part 2](https://youtu.be/NTvtkWlosjo)
 - [Manage Cross-Account Resources in AWS Resilience Hub](https://youtu.be/HU26PSkcIr4)
 - [Using AWS Resilience Hub with Microservices](https://youtu.be/oWCzzYLGLoY)
+
 ## Chaos Engineering
 - [Chaos Engineering (카오스 엔지니어링)](https://youngookkim.tistory.com/48)
+- [Yahoo Japan Chaos Engineering Practices in Production Environments](https://speakerdeck.com/techverse_2022/yahoo-japan-practices-chaos-engineering-in-production-environments)
+
 ## Disaster Recovery
 - [Disaster Recovery of Workloads on AWS](https://youtu.be/cJZw5mrxryA)
