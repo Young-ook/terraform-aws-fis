@@ -25,7 +25,7 @@ In your Cloud9 IDE, run the application.
 kubectl -n yelb port-forward svc/yelb-ui 8080:80
 ```
 
-Click **Preview** and **Preview Running Application**. This opens up a preview tab and shows the application main page.
+Click **Preview** > **Preview Running Application**. This opens up a preview tab and shows the application main page.
 ![aws-am-yelb-screenshot](../../../images/aws-am-yelb-screenshot.png)
 
 ### Delete the application
@@ -92,7 +92,7 @@ After installation and configuration is complete, start port-forwarding through 
 kubectl -n lamp port-forward svc/www 8080:80
 ```
 
-Open `http://localhost:8080` on a web browser to look at a simple php example. Or if your are running this example in Cloud9, click `Preview` and `Preview Running Application`. This opens up a preview tab and shows the spinnaker application.
+Open `http://localhost:8080` on a web browser to look at a simple php example. Or if your are running this example in Cloud9, click **Preview** and **Preview Running Application**. This opens up a preview tab and shows the spinnaker application.
 
 ![aws-fis-rds-lamp](../../../images/rds/aws-fis-rds-lamp.png)
 
@@ -323,7 +323,7 @@ In your Cloud9 IDE, run the application.
 ```
 kubectl -n redispy port-forward svc/www 8080:8080
 ```
-Click `Preview` and `Preview Running Application`. This opens up a preview tab and shows the redis-rate-limit main page.
+Click **Preview** > **Preview Running Application**. This opens up a preview tab and shows the redis-rate-limit main page.
 
 ![aws-fis-redis-rate-limit](../../../images/redis/aws-fis-redis-rate-limit.png)
 
@@ -364,7 +364,7 @@ In your Cloud9 IDE, run the application:
 ```
 kubectl -n sockshop port-forward svc/front-end 8080:80
 ```
-Click `Preview` and `Preview Running Application`. This opens up a preview tab and shows the Sock Shop main page.
+Click **Preview** > **Preview Running Application**. This opens up a preview tab and shows the Sock Shop main page.
 
 ![weaveworks-sockshop-frontend](../../../images/eks/weaveworks-sockshop-frontend.png)
 

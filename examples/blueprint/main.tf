@@ -24,7 +24,7 @@ module "vpc" {
 module "eks" {
   source             = "Young-ook/eks/aws"
   version            = "1.7.11"
-  name               = join("-", [var.name, "kuberentes"])
+  name               = join("-", [var.name, "kubernetes"])
   tags               = var.tags
   subnets            = values(module.vpc.subnets["private"])
   kubernetes_version = "1.21"
@@ -78,6 +78,12 @@ module "lb-controller" {
       clusterName = module.eks.cluster.name
     }
   }
+}
+
+module "chaos-mesh" {
+  source  = "Young-ook/eks/aws//modules/chaos-mesh"
+  version = "1.7.11"
+  oidc    = module.eks.oidc
 }
 
 ### cache/redis
