@@ -1,8 +1,9 @@
 # reliability/fis
 module "awsfis" {
-  source = "Young-ook/fis/aws"
-  name   = var.name
-  tags   = var.tags
+  source  = "Young-ook/fis/aws"
+  version = "1.0.2"
+  name    = var.name
+  tags    = var.tags
   experiments = [
     {
       name     = "reboot-db-instances"

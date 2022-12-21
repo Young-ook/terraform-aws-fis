@@ -6,9 +6,10 @@ resource "random_integer" "az" {
 }
 
 module "awsfis" {
-  source = "Young-ook/fis/aws"
-  name   = var.name
-  tags   = var.tags
+  source  = "Young-ook/fis/aws"
+  version = "1.0.2"
+  name    = var.name
+  tags    = var.tags
   experiments = [
     {
       name     = "az-outage"
