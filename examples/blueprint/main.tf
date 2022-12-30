@@ -1,5 +1,11 @@
 terraform {
   required_version = "~> 1.0"
+  required_providers {
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0"
+    }
+  }
 }
 
 provider "aws" {
@@ -126,6 +132,27 @@ resource "aws_iam_policy" "cas" {
   tags        = merge({ "terraform.io" = "managed" }, var.tags)
   description = format("Allow cluster-autoscaler to manage AWS resources")
   policy      = file("${path.module}/policy.cluster-autoscaler.json")
+}
+
+provider "kubernetes" {
+  alias                  = "aws-auth"
+  host                   = module.eks.kubeauth.host
+  token                  = module.eks.kubeauth.token
+  cluster_ca_certificate = module.eks.kubeauth.ca
+}
+
+### security/policy
+module "aws-auth" {
+  depends_on = [module.eks]
+  providers  = { kubernetes = kubernetes.aws-auth }
+  source     = "Young-ook/eks/aws//modules/aws-auth"
+  version    = "2.0.2"
+  aws_auth_roles = [
+    {
+      rolearn = module.awsfis.role["fis"].arn
+      groups  = ["system:masters", "chaos-mesh-manager-role"]
+    },
+  ]
 }
 
 ### cache/redis
