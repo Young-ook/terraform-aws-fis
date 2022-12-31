@@ -34,6 +34,12 @@ module "eks" {
       name          = "apps"
       instance_type = "m5.large"
     },
+    {
+      name          = "spot"
+      capacity_type = "SPOT"
+      instance_type = "m5.large"
+      tags          = { "chaos" = "ready" }
+    },
   ]
 }
 
