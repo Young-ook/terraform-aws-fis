@@ -41,9 +41,7 @@ If you are run this example in your Cloud9 IDE, you have to change the local por
 ```
 kubectl -n chaos-mesh port-forward svc/chaos-dashboard 8080:2333
 ```
-Open `http://localhost:2333` on your web browser. If you are in your Cloud9 IDE, click *Preview* and *Preview Running Application*. This shows chaos mesh dashboard login page.
-
-When you access your chaos mesh dashboard, first, you have to create user accounts and bind permissions. Follow the [Manage User Permissions](https://chaos-mesh.org/docs/manage-user-permissions/) instructions to create a new user and generate access token.
+Open `http://localhost:2333` on your web browser. If you are in your Cloud9 IDE, click *Preview* and *Preview Running Application*. This shows chaos mesh dashboard login page. When you access your chaos mesh dashboard, first, you have to create user accounts and bind permissions. Follow the [Manage User Permissions](https://chaos-mesh.org/docs/manage-user-permissions/) instructions to create a new user and generate access token.
 ![cm-dashboard-login](../../images/cm-dashboard-login.png)
 
 ## Applications
