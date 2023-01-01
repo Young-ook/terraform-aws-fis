@@ -1,5 +1,11 @@
 terraform {
   required_version = "~> 1.0"
+  required_providers {
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.0"
+    }
+  }
 }
 
 provider "aws" {
@@ -23,11 +29,11 @@ module "vpc" {
 ### application/kubernetes
 module "eks" {
   source             = "Young-ook/eks/aws"
-  version            = "1.7.11"
+  version            = "2.0.0"
   name               = join("-", [var.name, "kubernetes"])
   tags               = var.tags
   subnets            = values(module.vpc.subnets["private"])
-  kubernetes_version = "1.21"
+  kubernetes_version = "1.24"
   enable_ssm         = true
   managed_node_groups = [
     {
@@ -45,51 +51,108 @@ module "eks" {
 
 provider "helm" {
   kubernetes {
-    host                   = module.eks.helmconfig.host
-    token                  = module.eks.helmconfig.token
-    cluster_ca_certificate = base64decode(module.eks.helmconfig.ca)
+    host                   = module.eks.kubeauth.host
+    token                  = module.eks.kubeauth.token
+    cluster_ca_certificate = module.eks.kubeauth.ca
   }
 }
 
-module "container-insights" {
-  source       = "Young-ook/eks/aws//modules/container-insights"
-  version      = "1.7.11"
-  cluster_name = module.eks.cluster.name
-  features     = { enable_metrics = true }
-  oidc         = module.eks.oidc
+### helm-addons
+module "helm-addons" {
+  depends_on = [module.eks]
+  source     = "Young-ook/eks/aws//modules/helm-addons"
+  version    = "2.0.0"
+  tags       = var.tags
+  addons = [
+    {
+      repository     = "https://aws.github.io/eks-charts"
+      name           = "aws-cloudwatch-metrics"
+      chart_name     = "aws-cloudwatch-metrics"
+      namespace      = "kube-system"
+      serviceaccount = "aws-cloudwatch-metrics"
+      values = {
+        "clusterName" = module.eks.cluster.name
+      }
+      oidc        = module.eks.oidc
+      policy_arns = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
+    },
+    {
+      repository     = "https://aws.github.io/eks-charts"
+      name           = "aws-for-fluent-bit"
+      chart_name     = "aws-for-fluent-bit"
+      namespace      = "kube-system"
+      serviceaccount = "aws-for-fluent-bit"
+      values = {
+        "cloudWatch.enabled"      = true
+        "cloudWatch.region"       = var.aws_region
+        "cloudWatch.logGroupName" = format("/aws/containerinsights/%s/application", module.eks.cluster.name)
+        "firehose.enabled"        = false
+        "kinesis.enabled"         = false
+        "elasticsearch.enabled"   = false
+      }
+      oidc        = module.eks.oidc
+      policy_arns = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
+    },
+    {
+      repository     = "${path.module}/charts/"
+      name           = "cluster-autoscaler"
+      chart_name     = "cluster-autoscaler"
+      namespace      = "kube-system"
+      serviceaccount = "cluster-autoscaler"
+      values = {
+        "awsRegion"                 = var.aws_region
+        "autoDiscovery.clusterName" = module.eks.cluster.name
+      }
+      oidc        = module.eks.oidc
+      policy_arns = [aws_iam_policy.cas.arn]
+    },
+    {
+      repository     = "https://kubernetes-sigs.github.io/metrics-server/"
+      name           = "metrics-server"
+      chart_name     = "metrics-server"
+      namespace      = "kube-system"
+      serviceaccount = "metrics-server"
+      values = {
+        "args[0]" = "--kubelet-preferred-address-types=InternalIP"
+      }
+    },
+    {
+      repository     = "https://charts.chaos-mesh.org"
+      name           = "chaos-mesh"
+      chart_name     = "chaos-mesh"
+      namespace      = "chaos-mesh"
+      serviceaccount = "chaos-mesh-controller"
+    },
+  ]
 }
 
-module "cluster-autoscaler" {
-  source  = "Young-ook/eks/aws//modules/cluster-autoscaler"
-  version = "1.7.11"
-  oidc    = module.eks.oidc
+### security/policy
+resource "aws_iam_policy" "cas" {
+  name        = "cluster-autoscaler"
+  tags        = merge({ "terraform.io" = "managed" }, var.tags)
+  description = format("Allow cluster-autoscaler to manage AWS resources")
+  policy      = file("${path.module}/policy.cluster-autoscaler.json")
 }
 
-module "metrics-server" {
-  source  = "Young-ook/eks/aws//modules/metrics-server"
-  version = "1.7.11"
-  oidc    = module.eks.oidc
+provider "kubernetes" {
+  alias                  = "aws-auth"
+  host                   = module.eks.kubeauth.host
+  token                  = module.eks.kubeauth.token
+  cluster_ca_certificate = module.eks.kubeauth.ca
 }
 
-module "lb-controller" {
-  source  = "Young-ook/eks/aws//modules/lb-controller"
-  version = "1.7.11"
-  oidc    = module.eks.oidc
-  tags    = var.tags
-  helm = {
-    vars = module.eks.features.fargate_enabled ? {
-      vpcId       = module.vpc.vpc.id
-      clusterName = module.eks.cluster.name
-      } : {
-      clusterName = module.eks.cluster.name
-    }
-  }
-}
-
-module "chaos-mesh" {
-  source  = "Young-ook/eks/aws//modules/chaos-mesh"
-  version = "1.7.11"
-  oidc    = module.eks.oidc
+### security/policy
+module "aws-auth" {
+  depends_on = [module.eks]
+  providers  = { kubernetes = kubernetes.aws-auth }
+  source     = "Young-ook/eks/aws//modules/aws-auth"
+  version    = "2.0.2"
+  aws_auth_roles = [
+    {
+      rolearn = module.awsfis.role["fis"].arn
+      groups  = ["system:masters", "chaos-mesh-manager-role"]
+    },
+  ]
 }
 
 ### cache/redis
@@ -107,10 +170,10 @@ resource "aws_security_group" "redis" {
   }
 }
 
-resource "random_password" "password" {
+resource "random_password" "redis" {
   length           = 16
   special          = true
-  override_special = "%*()_=+[]{}<>?"
+  override_special = "!&#$^<>-"
 }
 
 resource "aws_elasticache_subnet_group" "redis" {
@@ -135,7 +198,7 @@ resource "aws_elasticache_replication_group" "redis" {
   automatic_failover_enabled = true
   multi_az_enabled           = true
   transit_encryption_enabled = true
-  auth_token                 = random_password.password.result
+  auth_token                 = random_password.redis.result
   log_delivery_configuration {
     destination      = module.logs["redis"].log_group.name
     destination_type = "cloudwatch-logs"
@@ -143,7 +206,6 @@ resource "aws_elasticache_replication_group" "redis" {
     log_type         = "slow-log"
   }
 }
-
 
 ### database/aurora
 module "mysql" {

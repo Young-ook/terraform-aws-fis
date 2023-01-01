@@ -44,6 +44,50 @@ kubectl -n chaos-mesh port-forward svc/chaos-dashboard 8080:2333
 Open `http://localhost:2333` on your web browser. If you are in your Cloud9 IDE, click *Preview* and *Preview Running Application*. This shows chaos mesh dashboard login page. When you access your chaos mesh dashboard, first, you have to create user accounts and bind permissions. Follow the [Manage User Permissions](https://chaos-mesh.org/docs/manage-user-permissions/) instructions to create a new user and generate access token.
 ![cm-dashboard-login](../../images/cm-dashboard-login.png)
 
+### Allow AWS FIS to call chaos mesh manager
+First, to use AWS FIS as a centralized fault injection manager that leverages chaos mesh to inject faults into kubernetes resources, you need to create the chaos-mesh-manager RBAC role in your Kubernetes cluster. Next, you need to integrate using the aws-auth config map in the kube-system namespace.
+
+This is kubernetes command to create chaos-mesh-manageer role:
+```
+kubectl apply -f cm-manager.yaml
+```
+
+Then, check the aws-auth configmap:
+```
+kubectl -n kube-system describe cm aws-auth
+```
+
+The chaos mesh manager Kubernetes RBAC Role and the AWS FIS IAM Role must be integrated as shown below.
+```
+auth
+Name:         aws-auth
+Namespace:    kube-system
+Labels:       <none>
+Annotations:  <none>
+
+Data
+====
+mapAccounts:
+----
+[]
+
+mapRoles:
+----
+- "groups":
+  - "system:bootstrappers"
+  - "system:nodes"
+  "rolearn": "arn:aws:iam::111100001234:role/fis-blueprint-kubernetes-ng"
+  "username": "system:node:{{EC2PrivateDNSName}}"
+- "groups":
+  - "system:masters"
+  - "chaos-mesh-manager-role"
+  "rolearn": "arn:aws:iam::111100001234:role/fis-blueprint-fis-run"
+```
+
+![aws-fis-eks-pod-kill-description](../../images/eks/aws-fis-eks-pod-kill-description.png)
+![aws-fis-eks-pod-kill-stop-condition](../../images/eks/aws-fis-eks-pod-kill-stop-condition.png)
+![aws-fis-eks-pod-kill-watch](../../images/eks/aws-fis-eks-pod-kill-watch.png)
+
 ## Applications
 - [LAMP](./apps/README.md#lamp)
 - [Redispy](./apps/README.md#redispy)
