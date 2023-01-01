@@ -84,6 +84,10 @@ mapRoles:
   "rolearn": "arn:aws:iam::111100001234:role/fis-blueprint-fis-run"
 ```
 
+![aws-fis-eks-pod-kill-description](../../images/eks/aws-fis-eks-pod-kill-description.png)
+![aws-fis-eks-pod-kill-stop-condition](../../images/eks/aws-fis-eks-pod-kill-stop-condition.png)
+![aws-fis-eks-pod-kill-watch](../../images/eks/aws-fis-eks-pod-kill-watch.png)
+
 ## Applications
 - [LAMP](./apps/README.md#lamp)
 - [Redispy](./apps/README.md#redispy)
