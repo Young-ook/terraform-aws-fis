@@ -15,7 +15,7 @@
                 "kubernetesApiVersion": "chaos-mesh.org/v1alpha1",
                 "kubernetesKind": "PodChaos",
                 "kubernetesNamespace": "chaos-mesh",
-                "kubernetesSpec": "{\"selector\":{\"namespaces\":[\"sockshop\"],\"labelSelectors\":{\"name\":\"carts\"}},\"mode\":\"one\",\"action\": \"pod-kill\",\"gracePeriod\":\"0\"}"
+                "kubernetesSpec": "{\"selector\":{\"namespaces\":[\"sockshop\"],\"labelSelectors\":{\"name\":\"carts\"}},\"mode\":\"one\",\"action\": \"pod-kill\",\"gracePeriod\":0}"
             },
             "targets": {"Cluster": "eks-cluster"}
         }
