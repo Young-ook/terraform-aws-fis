@@ -170,10 +170,10 @@ resource "aws_security_group" "redis" {
   }
 }
 
-resource "random_password" "password" {
+resource "random_password" "redis" {
   length           = 16
   special          = true
-  override_special = "%*()_=+[]{}<>?"
+  override_special = "!&#$^<>-"
 }
 
 resource "aws_elasticache_subnet_group" "redis" {
@@ -198,7 +198,7 @@ resource "aws_elasticache_replication_group" "redis" {
   automatic_failover_enabled = true
   multi_az_enabled           = true
   transit_encryption_enabled = true
-  auth_token                 = random_password.password.result
+  auth_token                 = random_password.redis.result
   log_delivery_configuration {
     destination      = module.logs["redis"].log_group.name
     destination_type = "cloudwatch-logs"

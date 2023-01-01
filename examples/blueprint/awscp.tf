@@ -81,7 +81,7 @@ resource "local_file" "redispy" {
     {
       ecr_url        = module.ecr["redispy"].url
       redis_endpoint = aws_elasticache_replication_group.redis.configuration_endpoint_address
-      redis_password = random_password.password.result
+      redis_password = random_password.redis.result
     }
   )
   filename        = join("/", [path.module, "apps", "redispy", "redispy.yaml"])
