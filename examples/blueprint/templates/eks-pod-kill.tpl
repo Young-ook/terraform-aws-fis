@@ -1,5 +1,5 @@
 {
-    "description": "Terminate kubernetes pods",
+    "description": "Simulate an acidental pod termination",
     "targets": {
         "eks-cluster": {
             "resourceType": "aws:eks:cluster",
@@ -8,7 +8,7 @@
         }
     },
     "actions": {
-        "eks-kill-pod": {
+        "eks-pod-kill": {
             "actionId": "aws:eks:inject-kubernetes-custom-resource",
             "parameters": {
                 "maxDuration": "PT5M",
@@ -33,5 +33,5 @@
             "logGroupArn": "${logs}"
         }
     },
-    "tags": {"Name": "Inject pod failure using chaos mesh"}
+    "tags": {"Name": "PodKill"}
 }

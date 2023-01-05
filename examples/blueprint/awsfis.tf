@@ -34,7 +34,7 @@ module "awsfis" {
       }
     },
     {
-      name     = "eks-kill-pod"
+      name     = "eks-pod-kill"
       template = "${path.cwd}/templates/eks-pod-kill.tpl"
       params = {
         eks   = module.eks.cluster["control_plane"].arn
