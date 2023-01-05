@@ -24,8 +24,8 @@ module "awsfis" {
       }
     },
     {
-      name     = "eks-cpu-stress"
-      template = "${path.cwd}/templates/cpu-stress.tpl"
+      name     = "eks-pod-cpu"
+      template = "${path.cwd}/templates/eks-pod-cpu.tpl"
       params = {
         eks   = module.eks.cluster["control_plane"].arn
         alarm = aws_cloudwatch_metric_alarm.cpu.arn

@@ -1,5 +1,5 @@
 {
-    "description": "Run a CPU fault injection on the specified pod",
+    "description": "Simulate cpu stress on kubernetes pods",
     "targets": {
         "eks-cluster": {
             "resourceType": "aws:eks:cluster",
@@ -10,7 +10,7 @@
         }
     },
     "actions": {
-        "CPUStress": {
+        "eks-pod-cpu": {
             "actionId": "aws:eks:inject-kubernetes-custom-resource",
             "description": "run pod cpu stress using chaos-mesh",
             "parameters": {
@@ -38,7 +38,5 @@
             "logGroupArn": "${logs}"
         }
     },
-    "tags": {
-        "Name": "CPUStress"
-    }
+    "tags": {"Name": "StressPodCpu"}
 }
