@@ -44,6 +44,16 @@ module "awsfis" {
       }
     },
     {
+      name     = "eks-pod-mem"
+      template = "${path.cwd}/templates/eks-pod-mem.tpl"
+      params = {
+        eks   = module.eks.cluster["control_plane"].arn
+        alarm = aws_cloudwatch_metric_alarm.cpu.arn
+        role  = module.awsfis.role["fis"].arn
+        logs  = format("%s:*", module.logs["fis"].log_group.arn)
+      }
+    },
+    {
       name     = "network-latency"
       template = "${path.cwd}/templates/network-latency.tpl"
       params = {
