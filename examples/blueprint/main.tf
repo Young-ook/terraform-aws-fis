@@ -248,6 +248,7 @@ resource "time_sleep" "wait" {
 
 module "proxy" {
   depends_on = [time_sleep.wait]
+  for_each   = toset(local.rdsproxy_enabled ? ["enabled"] : [])
   source     = "Young-ook/aurora/aws//modules/proxy"
   version    = "2.1.3"
   tags       = var.tags

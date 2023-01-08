@@ -4,7 +4,7 @@ output "endpoint" {
   description = "The enpoints of Aurora cluster"
   value = {
     aurora = module.rds.endpoint
-    proxy  = module.proxy.proxy.endpoint
+    proxy  = local.rdsproxy_enabled ? module.proxy["enabled"].proxy.endpoint : null
   }
 }
 
