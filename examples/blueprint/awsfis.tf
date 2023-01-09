@@ -107,14 +107,15 @@ module "awsfis" {
       name     = "interrupt-spot-instances"
       template = "${path.cwd}/templates/interrupt-spot-instances.tpl"
       params = {
-        targets = jsonencode([
-          {
-            "chaos" = "ready"
-          },
-        ])
-        alarm = aws_cloudwatch_metric_alarm.cpu.arn
-        role  = module.awsfis.role["fis"].arn
-        logs  = format("%s:*", module.logs["fis"].log_group.arn)
+        targets = jsonencode({
+          "chaos" = "ready"
+        })
+        alarm = jsonencode([{
+          "source" : "aws:cloudwatch:alarm",
+          "value" : aws_cloudwatch_metric_alarm.cpu.arn
+        }])
+        role = module.awsfis.role["fis"].arn
+        logs = format("%s:*", module.logs["fis"].log_group.arn)
       }
     },
     {
