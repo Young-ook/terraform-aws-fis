@@ -35,7 +35,5 @@
             "logGroupArn": "${logs}"
         }
     },
-    "tags": {
-        "Name": "Interrupt Spot Instances"
-    }
+    "tags": {"Name": "InterruptSpotEC2"}
 }
