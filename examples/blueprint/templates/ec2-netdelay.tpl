@@ -1,5 +1,5 @@
 {
-    "description": "Run a Network latency fault injection on the specified instance",
+    "description": "Simulate network delay on ec2 instances",
     "targets": {
         "ec2-instances": {
             "resourceType": "aws:ec2:instance",
@@ -18,7 +18,6 @@
     "actions": {
         "NetworkLatency": {
             "actionId": "aws:ssm:send-command",
-            "description": "run network latency using ssm",
             "parameters": {
                 "duration": "PT5M",
                 "documentArn": "arn:aws:ssm:${region}::document/AWSFIS-Run-Network-Latency",
@@ -42,7 +41,5 @@
             "logGroupArn": "${logs}"
         }
     },
-    "tags": {
-        "Name": "NetworkLatency"
-    }
+    "tags": {"Name": "EC2NetworkDelay"}
 }

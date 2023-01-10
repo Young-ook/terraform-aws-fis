@@ -67,8 +67,8 @@ module "awsfis" {
       }
     },
     {
-      name     = "network-latency"
-      template = "${path.cwd}/templates/network-latency.tpl"
+      name     = "ec2-netdelay"
+      template = "${path.cwd}/templates/ec2-netdelay.tpl"
       params = {
         region = var.aws_region
         alarm  = aws_cloudwatch_metric_alarm.svc-health.arn
