@@ -54,8 +54,21 @@ module "awsfis" {
       }
     },
     {
-      name     = "network-latency"
-      template = "${path.cwd}/templates/network-latency.tpl"
+      name     = "eks-pod-netdelay"
+      template = "${path.cwd}/templates/eks-pod-netdelay.tpl"
+      params = {
+        eks = module.eks.cluster["control_plane"].arn
+        alarm = jsonencode([{
+          source = "aws:cloudwatch:alarm"
+          value  = aws_cloudwatch_metric_alarm.svc-health.arn
+        }])
+        role = module.awsfis.role["fis"].arn
+        logs = format("%s:*", module.logs["fis"].log_group.arn)
+      }
+    },
+    {
+      name     = "ec2-netdelay"
+      template = "${path.cwd}/templates/ec2-netdelay.tpl"
       params = {
         region = var.aws_region
         alarm  = aws_cloudwatch_metric_alarm.svc-health.arn
