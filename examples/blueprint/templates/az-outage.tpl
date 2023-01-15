@@ -1,5 +1,5 @@
 {
-    "description": "Run an AZ Outage fault injection on the specified availability zone",
+    "description": "Siulate an AZ outage",
     "targets": {
         "az": {
             "resourceType": "aws:ec2:subnet",
@@ -8,12 +8,17 @@
                 "vpc": "${vpc}"
             },
             "selectionMode": "ALL"
+        },
+        "rds-cluster": {
+            "resourceType": "aws:rds:cluster",
+            "resourceArns": ${rds},
+            "selectionMode": "ALL"
         }
     },
     "actions": {
         "AZOutage": {
             "actionId": "aws:network:disrupt-connectivity",
-            "description": "Run an az network outage",
+            "description": "Block all EC2 traffics from and to the subnets",
             "parameters": {
                 "duration": "${duration}",
                 "scope": "availability-zone"
@@ -21,15 +26,18 @@
             "targets": {
                 "Subnets": "az"
             }
+        },
+        "FailOverCluster": {
+            "actionId": "aws:rds:failover-db-cluster",
+            "description": "Failover Aurora cluster",
+            "parameters": {},
+            "targets": {
+                "Clusters": "rds-cluster"
+            }
         }
     },
-    "stopConditions": [
-        {
-            "source": "aws:cloudwatch:alarm",
-            "value": "${alarm}"
-        }
-    ],
-    "roleArn": "${fis_role}",
+    "stopConditions": ${alarm},
+    "roleArn": "${role}",
     "logConfiguration": {
         "logSchemaVersion": 1,
         "cloudWatchLogsConfiguration": {

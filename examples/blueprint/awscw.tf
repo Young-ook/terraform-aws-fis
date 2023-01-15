@@ -4,7 +4,7 @@ module "alarm" {
   version = "0.0.6"
   for_each = { for a in [
     {
-      name        = "cpu"
+      name        = "rds-cpu"
       description = "This metric monitors rds cpu utilization"
       alarm_metric = {
         comparison_operator = "GreaterThanOrEqualToThreshold"

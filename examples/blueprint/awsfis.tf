@@ -17,10 +17,20 @@ module "awsfis" {
       params = {
         az       = var.azs[random_integer.az.result]
         vpc      = module.vpc.vpc.id
-        duration = "PT1M"
-        fis_role = module.awsfis.role["fis"].arn
-        alarm    = aws_cloudwatch_metric_alarm.cpu.arn
+        rds      = jsonencode([module.rds.cluster.arn])
+        duration = "PT5M"
         logs     = format("%s:*", module.logs["fis"].log_group.arn)
+        role     = module.awsfis.role["fis"].arn
+        alarm = jsonencode([
+          {
+            "source" : "aws:cloudwatch:alarm",
+            "value" : aws_cloudwatch_metric_alarm.cpu.arn
+          },
+          {
+            "source" : "aws:cloudwatch:alarm",
+            "value" : module.alarm["rds-cpu"].alarm.arn
+          }
+        ])
       }
     },
     {
@@ -137,7 +147,7 @@ module "awsfis" {
       params = {
         region = var.aws_region
         db     = module.rds.instances.0.arn
-        alarm  = module.alarm["cpu"].alarm.arn
+        alarm  = module.alarm["rds-cpu"].alarm.arn
         logs   = format("%s:*", module.logs["fis"].log_group.arn)
         role   = module.awsfis.role["fis"].arn
       }
@@ -148,7 +158,7 @@ module "awsfis" {
       params = {
         region  = var.aws_region
         cluster = module.rds.cluster.arn
-        alarm   = module.alarm["cpu"].alarm.arn
+        alarm   = module.alarm["rds-cpu"].alarm.arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
         role    = module.awsfis.role["fis"].arn
       }
