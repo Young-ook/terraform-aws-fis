@@ -1,8 +1,8 @@
 ### fault injection simulator experiment templates
 
-resource "random_integer" "az" {
-  min = 0
-  max = length(var.azs) - 1
+module "random-az" {
+  source = "../../modules/roulette"
+  items  = var.azs
 }
 
 module "awsfis" {
@@ -15,7 +15,7 @@ module "awsfis" {
       name     = "az-outage"
       template = "${path.cwd}/templates/az-outage.tpl"
       params = {
-        az       = var.azs[random_integer.az.result]
+        az       = module.random-az.item
         vpc      = module.vpc.vpc.id
         duration = "PT1M"
         fis_role = module.awsfis.role["fis"].arn
@@ -90,7 +90,7 @@ module "awsfis" {
       name     = "terminate-eks-nodes"
       template = "${path.cwd}/templates/terminate-eks-nodes.tpl"
       params = {
-        az        = var.azs[random_integer.az.result]
+        az        = module.random-az.item
         vpc       = module.vpc.vpc.id
         nodegroup = module.eks.cluster.data_plane.managed_node_groups.apps.arn
         role      = module.awsfis.role["fis"].arn
