@@ -37,7 +37,7 @@ module "awsfis" {
           }
         })
         targets = jsonencode({
-          module.random-az.item = {
+          var.azs[module.random-az.index] = {
             "resourceType" = "aws:ec2:subnet"
             "parameters" = {
               "availabilityZoneIdentifier" = module.random-az.item
@@ -53,12 +53,12 @@ module "awsfis" {
         })
         alarms = jsonencode([
           {
-            "source" : "aws:cloudwatch:alarm",
-            "value" : aws_cloudwatch_metric_alarm.cpu.arn
+            "source" = "aws:cloudwatch:alarm",
+            "value"  = aws_cloudwatch_metric_alarm.cpu.arn
           },
           {
-            "source" : "aws:cloudwatch:alarm",
-            "value" : module.alarm["rds-cpu"].alarm.arn
+            "source" = "aws:cloudwatch:alarm",
+            "value"  = module.alarm["rds-cpu"].alarm.arn
           }
         ])
         logs = format("%s:*", module.logs["fis"].log_group.arn)
