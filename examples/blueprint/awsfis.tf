@@ -15,13 +15,43 @@ module "awsfis" {
       name     = "az-outage"
       template = "${path.cwd}/templates/az-outage.tpl"
       params = {
-        az       = var.azs[random_integer.az.result]
-        vpc      = module.vpc.vpc.id
-        rds      = jsonencode([module.rds.cluster.arn])
-        duration = "PT5M"
-        logs     = format("%s:*", module.logs["fis"].log_group.arn)
-        role     = module.awsfis.role["fis"].arn
-        alarm = jsonencode([
+        actions = jsonencode({
+          "AZOutage" = {
+            "actionId"    = "aws:network:disrupt-connectivity"
+            "description" = "Block all EC2 traffics from and to the subnets"
+            "parameters" = {
+              "duration" = "PT5M"
+              "scope"    = "availability-zone"
+            },
+            "targets" = {
+              "Subnets" = var.azs[random_integer.az.result]
+            }
+          }
+          "FailOverCluster" = {
+            "actionId"    = "aws:rds:failover-db-cluster"
+            "description" = "Failover Aurora cluster"
+            "parameters"  = {}
+            "targets" = {
+              "Clusters" = "rds-cluster"
+            }
+          }
+        })
+        targets = jsonencode({
+          var.azs[random_integer.az.result] = {
+            "resourceType" = "aws:ec2:subnet"
+            "parameters" = {
+              "availabilityZoneIdentifier" = var.azs[random_integer.az.result]
+              "vpc"                        = module.vpc.vpc.id
+            }
+            "selectionMode" = "ALL"
+          }
+          "rds-cluster" = {
+            "resourceType"  = "aws:rds:cluster"
+            "resourceArns"  = [module.rds.cluster.arn]
+            "selectionMode" = "ALL"
+          }
+        })
+        alarms = jsonencode([
           {
             "source" : "aws:cloudwatch:alarm",
             "value" : aws_cloudwatch_metric_alarm.cpu.arn
@@ -31,6 +61,8 @@ module "awsfis" {
             "value" : module.alarm["rds-cpu"].alarm.arn
           }
         ])
+        logs = format("%s:*", module.logs["fis"].log_group.arn)
+        role = module.awsfis.role["fis"].arn
       }
     },
     {
