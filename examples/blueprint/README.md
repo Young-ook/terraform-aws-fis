@@ -45,9 +45,9 @@ Open `http://localhost:2333` on your web browser. If you are in your Cloud9 IDE,
 ![cm-dashboard-login](../../images/cm-dashboard-login.png)
 
 ### Allow AWS FIS to call chaos mesh manager
-First, to use AWS FIS as a centralized fault injection manager that leverages chaos mesh to inject faults into kubernetes resources, you need to create the chaos-mesh-manager RBAC role in your Kubernetes cluster. Next, you need to integrate using the aws-auth config map in the kube-system namespace.
+First, to use AWS FIS as a centralized fault injection manager that leverages chaos mesh to inject faults into kubernetes resources, you have to create a chaos-mesh-manager RBAC role in your Kubernetes cluster. Next, you need to integrate using the aws-auth config map in the kube-system namespace.
 
-This is kubernetes command to create chaos-mesh-manageer role:
+This is kubernetes command to create chaos-mesh-manager role:
 ```
 kubectl apply -f cm-manager.yaml
 ```
@@ -84,15 +84,18 @@ mapRoles:
   "rolearn": "arn:aws:iam::111100001234:role/fis-blueprint-fis-run"
 ```
 
-![aws-fis-eks-pod-kill-description](../../images/eks/aws-fis-eks-pod-kill-description.png)
-![aws-fis-eks-pod-kill-stop-condition](../../images/eks/aws-fis-eks-pod-kill-stop-condition.png)
-![aws-fis-eks-pod-kill-watch](../../images/eks/aws-fis-eks-pod-kill-watch.png)
-
 ## Applications
 - [LAMP](./apps/README.md#lamp)
 - [Redispy](./apps/README.md#redispy)
 - [SockShop](./apps/README.md#sockshop)
 - [Yelb](./apps/README.md#yelb)
+
+## Expreiments
+### Terminate Kubernetes Pod
+
+![aws-fis-eks-pod-kill-description](../../images/eks/aws-fis-eks-pod-kill-description.png)
+![aws-fis-eks-pod-kill-stop-condition](../../images/eks/aws-fis-eks-pod-kill-stop-condition.png)
+![aws-fis-eks-pod-kill-watch](../../images/eks/aws-fis-eks-pod-kill-watch.png)
 
 ## Clean up
 Run terraform:
