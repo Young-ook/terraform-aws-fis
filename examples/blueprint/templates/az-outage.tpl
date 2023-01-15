@@ -1,5 +1,5 @@
 {
-    "description": "Siulate an AZ outage",
+    "description": "Simulate an AZ outage",
     "targets": ${targets},
     "actions": ${actions},
     "stopConditions": ${alarms},
