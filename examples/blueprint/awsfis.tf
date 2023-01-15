@@ -1,8 +1,8 @@
 ### fault injection simulator experiment templates
 
-resource "random_integer" "az" {
-  min = 0
-  max = length(var.azs) - 1
+module "random-az" {
+  source = "../../modules/roulette"
+  items  = var.azs
 }
 
 module "awsfis" {
@@ -24,7 +24,7 @@ module "awsfis" {
               "scope"    = "availability-zone"
             },
             "targets" = {
-              "Subnets" = var.azs[random_integer.az.result]
+              "Subnets" = module.random-az.item
             }
           }
           "FailOverCluster" = {
@@ -37,10 +37,10 @@ module "awsfis" {
           }
         })
         targets = jsonencode({
-          var.azs[random_integer.az.result] = {
+          module.random-az.item = {
             "resourceType" = "aws:ec2:subnet"
             "parameters" = {
-              "availabilityZoneIdentifier" = var.azs[random_integer.az.result]
+              "availabilityZoneIdentifier" = module.random-az.item
               "vpc"                        = module.vpc.vpc.id
             }
             "selectionMode" = "ALL"
@@ -132,7 +132,7 @@ module "awsfis" {
       name     = "terminate-eks-nodes"
       template = "${path.cwd}/templates/terminate-eks-nodes.tpl"
       params = {
-        az        = var.azs[random_integer.az.result]
+        az        = module.random-az.item
         vpc       = module.vpc.vpc.id
         nodegroup = module.eks.cluster.data_plane.managed_node_groups.apps.arn
         role      = module.awsfis.role["fis"].arn
