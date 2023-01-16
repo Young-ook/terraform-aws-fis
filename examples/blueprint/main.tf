@@ -159,7 +159,7 @@ module "aws-auth" {
 resource "aws_security_group" "redis" {
   depends_on = [module.vpc]
   name       = join("-", [var.name, "redis"])
-  tags       = merge(local.default-tags, var.tags)
+  tags       = merge(var.tags, local.default-tags)
   vpc_id     = module.vpc.vpc.id
 
   ingress {
@@ -186,6 +186,7 @@ resource "aws_elasticache_replication_group" "redis" {
   depends_on                 = [module.vpc]
   replication_group_id       = join("-", [var.name, "redis"])
   description                = "Cluster mode enabled ElastiCache for Redis"
+  tags                       = merge(var.tags, local.default-tags)
   engine                     = "redis"
   engine_version             = "6.x"
   port                       = "6379"
@@ -213,7 +214,7 @@ module "rds" {
   source     = "Young-ook/aurora/aws"
   version    = "2.1.2"
   name       = join("-", [var.name, "rds"])
-  tags       = var.tags
+  tags       = merge(var.tags, local.default-tags)
   vpc        = module.vpc.vpc.id
   subnets    = values(module.vpc.subnets["private"])
   cidrs      = [var.cidr]
@@ -251,7 +252,7 @@ module "proxy" {
   for_each   = toset(local.rdsproxy_enabled ? ["enabled"] : [])
   source     = "Young-ook/aurora/aws//modules/proxy"
   version    = "2.1.3"
-  tags       = var.tags
+  tags       = merge(var.tags, local.default-tags)
   subnets    = values(module.vpc.subnets["private"])
   proxy_config = {
     cluster_id = module.rds.cluster.id
@@ -260,4 +261,35 @@ module "proxy" {
     user_name     = module.rds.user.name
     user_password = module.rds.user.password
   }
+}
+
+### network/dns
+resource "aws_route53_zone" "dns" {
+  name = local.namespace
+  tags = merge(var.tags, local.default-tags)
+  vpc {
+    vpc_id = module.vpc.vpc.id
+  }
+}
+
+### application/ec2
+module "api" {
+  for_each   = toset(["a", "b"])
+  depends_on = [module.random-az]
+  source     = "./modules/api"
+  name       = join("-", [var.name, "ec2", each.key])
+  tags       = merge(var.tags, local.default-tags)
+  dns        = aws_route53_zone.dns.zone_id
+  vpc        = module.vpc.vpc.id
+  cidr       = module.vpc.vpc.cidr_block
+  subnets    = values(module.vpc.subnets["public"])
+
+  ### Initially, this module places all ec2 instances in a specific Availability Zone (AZ).
+  ### This configuration is not fault tolerant when Single AZ goes down.
+  ### After our first attempt at experimenting with 'terminte ec2 instances'
+  ### We will scale the autoscaling-group cross-AZ for high availability.
+  ###
+  ### Block the 'az' variable to switch to the multi-az deployment.
+
+  az = module.random-az.index
 }
