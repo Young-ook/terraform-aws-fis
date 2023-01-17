@@ -7,17 +7,17 @@ output "load_balancer" {
 
 output "server_group" {
   description = "Application server group"
-  value       = module.ec2.cluster.data_plane.node_groups
+  value       = module.vm.cluster.data_plane.node_groups
 }
 
 output "role" {
   description = "Application role"
-  value       = module.ec2.role.node_groups
+  value       = module.vm.role.node_groups
 }
 
 output "security_group" {
   description = "Security group for application server group"
-  value       = aws_security_group.alb_aware
+  value       = aws_security_group.lb_aware
 }
 
 output "alarms" {
