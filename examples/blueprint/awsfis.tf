@@ -15,12 +15,54 @@ module "awsfis" {
       name     = "az-outage"
       template = "${path.cwd}/templates/az-outage.tpl"
       params = {
-        az       = module.random-az.item
-        vpc      = module.vpc.vpc.id
-        duration = "PT1M"
-        fis_role = module.awsfis.role["fis"].arn
-        alarm    = aws_cloudwatch_metric_alarm.cpu.arn
-        logs     = format("%s:*", module.logs["fis"].log_group.arn)
+        actions = jsonencode({
+          "AZOutage" = {
+            "actionId"    = "aws:network:disrupt-connectivity"
+            "description" = "Block all EC2 traffics from and to the subnets"
+            "parameters" = {
+              "duration" = "PT5M"
+              "scope"    = "availability-zone"
+            },
+            "targets" = {
+              "Subnets" = module.random-az.item
+            }
+          }
+          "FailOverCluster" = {
+            "actionId"    = "aws:rds:failover-db-cluster"
+            "description" = "Failover Aurora cluster"
+            "parameters"  = {}
+            "targets" = {
+              "Clusters" = "rds-cluster"
+            }
+          }
+        })
+        targets = jsonencode({
+          var.azs[module.random-az.index] = {
+            "resourceType" = "aws:ec2:subnet"
+            "parameters" = {
+              "availabilityZoneIdentifier" = module.random-az.item
+              "vpc"                        = module.vpc.vpc.id
+            }
+            "selectionMode" = "ALL"
+          }
+          "rds-cluster" = {
+            "resourceType"  = "aws:rds:cluster"
+            "resourceArns"  = [module.rds.cluster.arn]
+            "selectionMode" = "ALL"
+          }
+        })
+        alarms = jsonencode([
+          {
+            "source" = "aws:cloudwatch:alarm",
+            "value"  = aws_cloudwatch_metric_alarm.cpu.arn
+          },
+          {
+            "source" = "aws:cloudwatch:alarm",
+            "value"  = module.alarm["rds-cpu"].alarm.arn
+          }
+        ])
+        logs = format("%s:*", module.logs["fis"].log_group.arn)
+        role = module.awsfis.role["fis"].arn
       }
     },
     {
@@ -137,7 +179,7 @@ module "awsfis" {
       params = {
         region = var.aws_region
         db     = module.rds.instances.0.arn
-        alarm  = module.alarm["cpu"].alarm.arn
+        alarm  = module.alarm["rds-cpu"].alarm.arn
         logs   = format("%s:*", module.logs["fis"].log_group.arn)
         role   = module.awsfis.role["fis"].arn
       }
@@ -148,7 +190,7 @@ module "awsfis" {
       params = {
         region  = var.aws_region
         cluster = module.rds.cluster.arn
-        alarm   = module.alarm["cpu"].alarm.arn
+        alarm   = module.alarm["rds-cpu"].alarm.arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
         role    = module.awsfis.role["fis"].arn
       }
