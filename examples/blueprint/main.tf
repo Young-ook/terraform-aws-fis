@@ -273,7 +273,7 @@ resource "aws_route53_zone" "dns" {
 }
 
 ### application/ec2
-module "api" {
+module "ec2" {
   for_each   = toset(["a", "b"])
   depends_on = [module.random-az]
   source     = "./modules/api"
@@ -289,7 +289,18 @@ module "api" {
   ### After our first attempt at experimenting with 'terminte ec2 instances'
   ### We will scale the autoscaling-group cross-AZ for high availability.
   ###
-  ### Block the 'az' variable to switch to the multi-az deployment.
+  ### Change the 'single_az' variable to 'false' in the toggle.tf file to switch to the multi-az deployment.
 
-  az = module.random-az.index
+  az = local.single_az ? module.random-az.index : -1
+}
+
+### network/mesh
+module "mesh" {
+  depends_on = [module.ec2]
+  source     = "./modules/mesh"
+  name       = join("-", [var.name, "ec2"])
+  tags       = merge(var.tags, local.default-tags)
+  aws_region = var.aws_region
+  app        = module.ec2
+  namespace  = local.namespace
 }

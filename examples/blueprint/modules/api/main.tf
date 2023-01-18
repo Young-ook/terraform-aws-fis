@@ -1,6 +1,6 @@
 ### security/firewall
-resource "aws_security_group" "alb" {
-  name   = join("-", [var.name, "alb"])
+resource "aws_security_group" "lb" {
+  name   = join("-", [var.name, "lb"])
   tags   = var.tags
   vpc_id = var.vpc
 
@@ -19,8 +19,8 @@ resource "aws_security_group" "alb" {
   }
 }
 
-resource "aws_security_group" "alb_aware" {
-  name   = join("-", [var.name, "alb", "aware"])
+resource "aws_security_group" "lb_aware" {
+  name   = join("-", [var.name, "lb", "aware"])
   tags   = var.tags
   vpc_id = var.vpc
 
@@ -28,7 +28,7 @@ resource "aws_security_group" "alb_aware" {
     from_port       = 80
     to_port         = 80
     protocol        = "tcp"
-    security_groups = [aws_security_group.alb.id]
+    security_groups = [aws_security_group.lb.id]
   }
 
   ingress {
@@ -47,18 +47,18 @@ resource "aws_security_group" "alb_aware" {
 }
 
 ### application/loadbalancer
-resource "aws_lb" "alb" {
-  name                       = join("-", [var.name, "alb"])
+resource "aws_lb" "lb" {
+  name                       = join("-", [var.name, "lb"])
   tags                       = var.tags
   internal                   = true
   load_balancer_type         = "application"
-  security_groups            = [aws_security_group.alb.id]
+  security_groups            = [aws_security_group.lb.id]
   subnets                    = var.subnets
   enable_deletion_protection = false
 }
 
 resource "aws_lb_listener" "http" {
-  load_balancer_arn = aws_lb.alb.arn
+  load_balancer_arn = aws_lb.lb.arn
   port              = 80
   protocol          = "HTTP"
   default_action {
@@ -68,7 +68,7 @@ resource "aws_lb_listener" "http" {
 }
 
 resource "aws_lb_target_group" "http" {
-  depends_on                    = [aws_lb.alb]
+  depends_on                    = [aws_lb.lb]
   name                          = join("-", [var.name, "alb", "http"])
   tags                          = var.tags
   vpc_id                        = var.vpc
@@ -88,7 +88,7 @@ resource "aws_lb_target_group" "http" {
 }
 
 ### application/ec2
-module "ec2" {
+module "vm" {
   source  = "Young-ook/ssm/aws"
   version = "1.0.5"
   name    = var.name
@@ -101,7 +101,7 @@ module "ec2" {
       max_size          = 6
       desired_size      = 1
       instance_type     = "t3.small"
-      security_groups   = [aws_security_group.alb_aware.id]
+      security_groups   = [aws_security_group.lb_aware.id]
       target_group_arns = [aws_lb_target_group.http.arn]
       tags              = { release = "baseline" }
       user_data         = templatefile("${path.module}/templates/server.tpl", {})
@@ -117,7 +117,7 @@ module "ec2" {
       max_size          = 1
       desired_size      = 1
       instance_type     = "t3.small"
-      security_groups   = [aws_security_group.alb_aware.id]
+      security_groups   = [aws_security_group.lb_aware.id]
       target_group_arns = [aws_lb_target_group.http.arn]
       tags              = { release = "canary" }
       user_data         = templatefile("${path.module}/templates/server.tpl", {})
@@ -132,7 +132,7 @@ module "ec2" {
 
 resource "aws_autoscaling_policy" "target-tracking" {
   name                   = join("-", [var.name, "target-tracking", "policy"])
-  autoscaling_group_name = module.ec2.cluster.data_plane.node_groups.baseline.name
+  autoscaling_group_name = module.vm.cluster.data_plane.node_groups.baseline.name
   adjustment_type        = "ChangeInCapacity"
 
   policy_type = "TargetTrackingScaling"
@@ -158,7 +158,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu" {
   threshold                 = 60
   insufficient_data_actions = []
   dimensions = {
-    AutoScalingGroupName = module.ec2.cluster.data_plane.node_groups.baseline.name
+    AutoScalingGroupName = module.vm.cluster.data_plane.node_groups.baseline.name
   }
 }
 
@@ -175,7 +175,7 @@ resource "aws_cloudwatch_metric_alarm" "api-p90" {
   threshold           = 0.1
   extended_statistic  = "p90"
   dimensions = {
-    LoadBalancer = aws_lb.alb.arn_suffix
+    LoadBalancer = aws_lb.lb.arn_suffix
   }
 }
 
@@ -192,7 +192,7 @@ resource "aws_cloudwatch_metric_alarm" "api-avg" {
   statistic           = "Average"
   threshold           = 0.1
   dimensions = {
-    LoadBalancer = aws_lb.alb.arn_suffix
+    LoadBalancer = aws_lb.lb.arn_suffix
   }
 }
 
@@ -202,8 +202,8 @@ resource "aws_route53_record" "lb" {
   zone_id = var.dns
   type    = "A"
   alias {
-    name                   = aws_lb.alb.dns_name
-    zone_id                = aws_lb.alb.zone_id
+    name                   = aws_lb.lb.dns_name
+    zone_id                = aws_lb.lb.zone_id
     evaluate_target_health = true
   }
 }

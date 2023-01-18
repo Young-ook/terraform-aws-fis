@@ -17,3 +17,11 @@ output "codebuild" {
   description = "Bash script to run the build projects using CodeBuild"
   value       = [for proj in values(module.ci) : proj.build]
 }
+
+output "random_az" {
+  value = module.random-az.item
+}
+
+output "vpc_zone_identifier" {
+  value = module.ec2["a"].vpc_zone_identifier
+}
