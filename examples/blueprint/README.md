@@ -4,7 +4,7 @@
 This is FIS (AWS Fault Injection Simulator) Blueprint example helps you compose complete FIS experiments that are fully bootstrapped with the operational software that is needed to deploy and operate chaos engineering. Chaos engineering is the discipline of experimenting on a distributed system in order to build confidence in the system's capability to withstand turbulent and unexpected conditions in production. If you want know why and how to do chaos engineering, please refer to [this page](https://github.com/Young-ook/terraform-aws-fis/tree/main/README.md). With this FIS Blueprint example, you describe the configuration for the desired state of your fault-tolerant AWS environment and resilience testing tools, such as the control plane, computing nodes, databases, storage, network and fault injection simulator, as an Infrastructure as Code (IaC) template/blueprint. Once a blueprint is configured, you can use it to stamp out consistent environments across multiple AWS accounts and Regions using your automation workflow tool, such as Jenkins, CodePipeline. Also, you can use FIS Blueprint to easily bootstrap a reliable cloud-native application stack with confidence. FIS Blueprints also helps you implement relevant security controls needed to operate workloads from multiple teams.
 
 ## Setup
-## Download
+### Download
 Download this example on your workspace
 ```
 git clone https://github.com/Young-ook/terraform-aws-fis
@@ -91,11 +91,66 @@ mapRoles:
 - [Yelb](./apps/README.md#yelb)
 
 ## Expreiments
-### Terminate Kubernetes Pod
+### Elastic Kubernetes Service (EKS)
+#### Terminate Kubernetes Pod(s)
 
 ![aws-fis-eks-pod-kill-description](../../images/eks/aws-fis-eks-pod-kill-description.png)
 ![aws-fis-eks-pod-kill-stop-condition](../../images/eks/aws-fis-eks-pod-kill-stop-condition.png)
 ![aws-fis-eks-pod-kill-watch](../../images/eks/aws-fis-eks-pod-kill-watch.png)
+
+### Elastic Cloud Compute (EC2)
+#### Run Load Generator
+Terraform configuration also creates a load generator for your application instances. This load generator instance runs a load generator script that repeatedly sends http requests to the application load balancer. Before you begin the first chaos engineering experiment, you must run the load generator script. 1) Access your load generator (blazemeter ec2 instance) via session manager of aws systems manager service. If you don't know how to access a ec2 instance through session manager, please refer to [this guide](https://github.com/Young-ook/terraform-aws-ssm/blob/main/README.md#connect) 2) Create a *loadgen.sh* file with bash script example shown as below into home direcotry of *ssm-user* after terraform apply.
+```
+#!/bin/bash
+while true; do
+  curl -I http://fis-blueprint-ec2-a.corp.internal
+  sleep .5
+done
+```
+
+This step is very important because it warms up the instances for cloudwatch metrics. After few minutes, all cloudwatch alarms will be chaged to *OK* status from *Insufficient data* in minutes after the load generator script running. Run the script for load test:
+```
+./loadgen.sh
+```
+
+#### Terminate EC2 Instance(s)
+AWS FIS allows you to test resilience based on ec2 autoscaling group. See what happens when you terminate some ec2 instances in a specific availability zone. This test will check if the autoscaling group launches new instances to meet the desired capacity defined. Use this test to verify that the autoscaling group overcomes the single availability zone failure.
+
+##### Define Steady State
+First of all, we need to define steady state of the service. This means the service is healthy and working well. We use ‘p90’ to refer to the 90th percentile data; that is, 90% of the observations fall below this value. Percentiles for p90, p95, p99, p99.9, p99.99 or any other percentile from 0.1 to 100 in increments of 0.1% (including p100) of request metric can now be visualized in near real time. We will use this alarm for stop condition of fault injection experiment.
+
+**Steady State Hypothesis Example**
+
++ Title: Services are all available and healthy
++ Type: What are your assumptions?
+   - [ ] No Impact
+   - [ ] Degraded Performance
+   - [ ] Service Outage
+   - [ ] Impproved Performance
++ Probes:
+   - Type: CloudWatch Metric
+   - Status: `p90`
++ Stop condition (Abort condition):
+   - Type: CloudWatch Alarm
+   - Status: `p90`
++ Results:
+   - What did you see?
++ Conclusions:
+   - [ ] Everything is as expected
+   - [ ] Detected something
+   - [ ] Handleable error has occurred
+   - [ ] Need to automate
+   - [ ] Need to dig deeper
+
+##### Stop Condition
+This is a very important feature for reducing customer impact during chaotic engineering of production systems. Some experiments have a lot of impact on customers during fault injection. If the application goes wrong, the experiment must be stopped autumatically.
+
+##### Run Experiment
+This scenario will simulate an accidental ec2 instance termination.
+
+##### Improvement
+What did you see?
 
 ## Clean up
 Run terraform:
