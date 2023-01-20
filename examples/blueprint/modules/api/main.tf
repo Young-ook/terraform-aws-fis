@@ -124,6 +124,7 @@ module "vm" {
       policy_arns = [
         "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy",
         "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryReadOnly",
+        "arn:aws:iam::aws:policy/AmazonEC2ReadOnlyAccess",
         "arn:aws:iam::aws:policy/AWSAppMeshEnvoyAccess"
       ]
     },
