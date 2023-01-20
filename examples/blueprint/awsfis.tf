@@ -54,7 +54,7 @@ module "awsfis" {
         alarms = jsonencode([
           {
             "source" = "aws:cloudwatch:alarm",
-            "value"  = aws_cloudwatch_metric_alarm.cpu.arn
+            "value"  = aws_cloudwatch_metric_alarm.eks-cpu.arn
           },
           {
             "source" = "aws:cloudwatch:alarm",
@@ -70,7 +70,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/eks-pod-cpu.tpl"
       params = {
         eks   = module.eks.cluster["control_plane"].arn
-        alarm = aws_cloudwatch_metric_alarm.cpu.arn
+        alarm = aws_cloudwatch_metric_alarm.eks-cpu.arn
         role  = module.awsfis.role["fis"].arn
         logs  = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -80,7 +80,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/eks-pod-kill.tpl"
       params = {
         eks   = module.eks.cluster["control_plane"].arn
-        alarm = aws_cloudwatch_metric_alarm.cpu.arn
+        alarm = aws_cloudwatch_metric_alarm.eks-cpu.arn
         role  = module.awsfis.role["fis"].arn
         logs  = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -90,7 +90,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/eks-pod-mem.tpl"
       params = {
         eks   = module.eks.cluster["control_plane"].arn
-        alarm = aws_cloudwatch_metric_alarm.cpu.arn
+        alarm = aws_cloudwatch_metric_alarm.eks-cpu.arn
         role  = module.awsfis.role["fis"].arn
         logs  = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -130,7 +130,7 @@ module "awsfis" {
         alarm = jsonencode([
           {
             source = "aws:cloudwatch:alarm"
-            value  = aws_cloudwatch_metric_alarm.cpu.arn
+            value  = aws_cloudwatch_metric_alarm.eks-cpu.arn
           },
           {
             source = "aws:cloudwatch:alarm"
@@ -143,7 +143,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/disk-stress.tpl"
       params = {
         doc_arn = module.awsfis.experiment["FIS-Run-Disk-Stress"].arn
-        alarm   = aws_cloudwatch_metric_alarm.disk.arn
+        alarm   = aws_cloudwatch_metric_alarm.eks-disk.arn
         role    = module.awsfis.role["fis"].arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -157,7 +157,7 @@ module "awsfis" {
         })
         alarm = jsonencode([{
           "source" : "aws:cloudwatch:alarm",
-          "value" : aws_cloudwatch_metric_alarm.cpu.arn
+          "value" : aws_cloudwatch_metric_alarm.eks-cpu.arn
         }])
         role = module.awsfis.role["fis"].arn
         logs = format("%s:*", module.logs["fis"].log_group.arn)
