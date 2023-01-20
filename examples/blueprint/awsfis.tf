@@ -119,16 +119,6 @@ module "awsfis" {
       }
     },
     {
-      name     = "throttle-ec2-api"
-      template = "${path.cwd}/templates/throttle-ec2-api.tpl"
-      params = {
-        asg_role = module.eks.role.managed_node_groups.arn
-        alarm    = aws_cloudwatch_metric_alarm.cpu.arn
-        role     = module.awsfis.role["fis"].arn
-        logs     = format("%s:*", module.logs["fis"].log_group.arn)
-      }
-    },
-    {
       name     = "terminate-eks-nodes"
       template = "${path.cwd}/templates/terminate-eks-nodes.tpl"
       params = {
@@ -193,6 +183,40 @@ module "awsfis" {
         alarm   = module.alarm["rds-cpu"].alarm.arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
         role    = module.awsfis.role["fis"].arn
+      }
+    },
+    {
+      name     = "ec2-api-throttle"
+      template = "${path.cwd}/templates/ec2-api-throttle.tpl"
+      params = {
+        actions = jsonencode({
+          "ThrottleAPI" = {
+            "actionId"    = "aws:fis:inject-api-throttle-error",
+            "description" = "Throttle AWS APIs for describing EC2 instances",
+            "targets"     = { "Roles" : "ec2" }
+            "parameters" = {
+              "service"    = "ec2",
+              "operations" = "DescribeInstances,DescribeVolumes",
+              "percentage" = "90",
+              "duration"   = "PT2M"
+            },
+          }
+        })
+        targets = jsonencode({
+          "ec2" = {
+            "resourceType"  = "aws:iam:role",
+            "resourceArns"  = [module.ec2["a"].role.canary.arn]
+            "selectionMode" = "ALL"
+          }
+        })
+        alarms = jsonencode([
+          {
+            "source" = "aws:cloudwatch:alarm",
+            "value"  = module.ec2["a"].alarms.cpu.arn
+          },
+        ])
+        logs = format("%s:*", module.logs["fis"].log_group.arn)
+        role = module.awsfis.role["fis"].arn
       }
     },
   ]
