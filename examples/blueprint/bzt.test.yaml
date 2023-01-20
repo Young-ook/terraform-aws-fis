@@ -1,0 +1,12 @@
+---
+execution:
+- executor: locust
+  concurrency: 10
+  ramp-up: 1m
+  iterations: 1000
+  scenario: loadgen
+
+scenarios:
+  loadgen:
+    default-address: ${target}
+    script: test.py
