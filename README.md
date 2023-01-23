@@ -1,5 +1,5 @@
 # Reliability
-In statistics and psychometrics, reliability is the overall consistency of a measure.[1] A measure is said to have a high reliability if it produces similar results under consistent conditions.
+In statistics and psychometrics, reliability is the overall consistency of a measure. A measure is said to have a high reliability if it produces similar results under consistent conditions.
 
 # Chaos Engineering
 ## Why Chaos Engineering
