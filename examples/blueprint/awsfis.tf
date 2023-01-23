@@ -54,7 +54,7 @@ module "awsfis" {
         alarms = jsonencode([
           {
             "source" = "aws:cloudwatch:alarm",
-            "value"  = aws_cloudwatch_metric_alarm.cpu.arn
+            "value"  = aws_cloudwatch_metric_alarm.eks-cpu.arn
           },
           {
             "source" = "aws:cloudwatch:alarm",
@@ -70,7 +70,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/eks-pod-cpu.tpl"
       params = {
         eks   = module.eks.cluster["control_plane"].arn
-        alarm = aws_cloudwatch_metric_alarm.cpu.arn
+        alarm = aws_cloudwatch_metric_alarm.eks-cpu.arn
         role  = module.awsfis.role["fis"].arn
         logs  = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -80,7 +80,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/eks-pod-kill.tpl"
       params = {
         eks   = module.eks.cluster["control_plane"].arn
-        alarm = aws_cloudwatch_metric_alarm.cpu.arn
+        alarm = aws_cloudwatch_metric_alarm.eks-cpu.arn
         role  = module.awsfis.role["fis"].arn
         logs  = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -90,7 +90,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/eks-pod-mem.tpl"
       params = {
         eks   = module.eks.cluster["control_plane"].arn
-        alarm = aws_cloudwatch_metric_alarm.cpu.arn
+        alarm = aws_cloudwatch_metric_alarm.eks-cpu.arn
         role  = module.awsfis.role["fis"].arn
         logs  = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -119,16 +119,6 @@ module "awsfis" {
       }
     },
     {
-      name     = "throttle-ec2-api"
-      template = "${path.cwd}/templates/throttle-ec2-api.tpl"
-      params = {
-        asg_role = module.eks.role.managed_node_groups.arn
-        alarm    = aws_cloudwatch_metric_alarm.cpu.arn
-        role     = module.awsfis.role["fis"].arn
-        logs     = format("%s:*", module.logs["fis"].log_group.arn)
-      }
-    },
-    {
       name     = "terminate-eks-nodes"
       template = "${path.cwd}/templates/terminate-eks-nodes.tpl"
       params = {
@@ -140,7 +130,7 @@ module "awsfis" {
         alarm = jsonencode([
           {
             source = "aws:cloudwatch:alarm"
-            value  = aws_cloudwatch_metric_alarm.cpu.arn
+            value  = aws_cloudwatch_metric_alarm.eks-cpu.arn
           },
           {
             source = "aws:cloudwatch:alarm"
@@ -153,7 +143,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/disk-stress.tpl"
       params = {
         doc_arn = module.awsfis.experiment["FIS-Run-Disk-Stress"].arn
-        alarm   = aws_cloudwatch_metric_alarm.disk.arn
+        alarm   = aws_cloudwatch_metric_alarm.eks-disk.arn
         role    = module.awsfis.role["fis"].arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
       }
@@ -167,7 +157,7 @@ module "awsfis" {
         })
         alarm = jsonencode([{
           "source" : "aws:cloudwatch:alarm",
-          "value" : aws_cloudwatch_metric_alarm.cpu.arn
+          "value" : aws_cloudwatch_metric_alarm.eks-cpu.arn
         }])
         role = module.awsfis.role["fis"].arn
         logs = format("%s:*", module.logs["fis"].log_group.arn)
@@ -193,6 +183,40 @@ module "awsfis" {
         alarm   = module.alarm["rds-cpu"].alarm.arn
         logs    = format("%s:*", module.logs["fis"].log_group.arn)
         role    = module.awsfis.role["fis"].arn
+      }
+    },
+    {
+      name     = "ec2-api-throttle"
+      template = "${path.cwd}/templates/ec2-api-throttle.tpl"
+      params = {
+        actions = jsonencode({
+          "ThrottleAPI" = {
+            "actionId"    = "aws:fis:inject-api-throttle-error",
+            "description" = "Throttle AWS APIs for describing EC2 instances",
+            "targets"     = { "Roles" : "ec2" }
+            "parameters" = {
+              "service"    = "ec2",
+              "operations" = "DescribeInstances,DescribeVolumes",
+              "percentage" = "90",
+              "duration"   = "PT2M"
+            },
+          }
+        })
+        targets = jsonencode({
+          "ec2" = {
+            "resourceType"  = "aws:iam:role",
+            "resourceArns"  = [module.ec2["a"].role.canary.arn]
+            "selectionMode" = "ALL"
+          }
+        })
+        alarms = jsonencode([
+          {
+            "source" = "aws:cloudwatch:alarm",
+            "value"  = module.ec2["a"].alarms.cpu.arn
+          },
+        ])
+        logs = format("%s:*", module.logs["fis"].log_group.arn)
+        role = module.awsfis.role["fis"].arn
       }
     },
   ]

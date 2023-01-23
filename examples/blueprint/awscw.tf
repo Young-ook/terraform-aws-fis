@@ -36,7 +36,7 @@ module "alarm" {
   metric_query = each.value.metric_query
 }
 
-resource "aws_cloudwatch_metric_alarm" "cpu" {
+resource "aws_cloudwatch_metric_alarm" "eks-cpu" {
   alarm_name                = join("-", [var.name, "cpu", "alarm"])
   alarm_description         = "This metric monitors ec2 cpu utilization"
   tags                      = merge(local.default-tags, var.tags)
@@ -55,7 +55,7 @@ resource "aws_cloudwatch_metric_alarm" "cpu" {
   }
 }
 
-resource "aws_cloudwatch_metric_alarm" "disk" {
+resource "aws_cloudwatch_metric_alarm" "eks-disk" {
   alarm_name                = join("-", [var.name, "disk", "alarm"])
   alarm_description         = "This metric monitors ec2 disk filesystem usage"
   tags                      = merge(local.default-tags, var.tags)
