@@ -199,14 +199,60 @@ This scenario will simulate an accidental AWS API throttling event when your ec2
 1. Select a ec2 instance of autoscaling group that you created by this module. Maybe its name looks like *fis-blueprint-ec2-a-canary*.
 1. Click *Connect* button and choose *Session* tab to access the instance using AWS Session Manager. And finally press the orange *Connect* button and go.
 1. You are in the instance, run aws command-line interface (cli) to describe instances where region you are in.
-1. First try, you will see *Unauthorized* error.
+1. First try, you will see list of ec2 instances.
 1. Back to the FIS page, Select *ThrottleAwsAPIs* template in the experiment templates list. Click the *Actions* and *Start experiment* button to start a new chaos experiment.
 1. Then you will see the changed error message when you run the same aws cli. The error message is API Throttling.
 
 ##### Improvement
-What did you see? Following screenshot shows how it works. First line shows the request and reponse about ec2-describe-instances api using AWS CLI. The error message is *Unauthorized* because the target role the instance has does not have right permission to describe instances. And second line is the reponse of the same AWS API call when throttling event is running. You will find out that the error message has been changed becuase of fault injection experiment.
+What did you see? Following screenshot is an example of experiment. First line shows the request and reponse about ec2-describe-instances API using AWS CLI. It is worked well. And second line is the reponse of the same AWS API call when throttling event is running. You will find out that the error message has been changed becuase of fault injection experiment.
 
-![aws-fis-throttling-ec2-api](../../images/ec2/aws-fis-throttling-ec2-api.png)
+![aws-fis-ec2-api-throttling](../../images/aws-fis-ec2-api-throttling.png)
+
+#### AWS API internal error
+##### Define Steady State
+First of all, we need to define steady state of the service. This means the service is healthy and working well. We use ‘p90’ to refer to the 90th percentile data; that is, 90% of the observations fall below this value. Percentiles for p90, p95, p99, p99.9, p99.99 or any other percentile from 0.1 to 100 in increments of 0.1% (including p100) of request metric can now be visualized in near real time. We will use this alarm for stop condition of fault injection experiment.
+
+**Steady State Hypothesis Example**
++ Title: Services are all available and healthy
++ Type: What are your assumptions?
+   - [ ] No Impact
+   - [ ] Degraded Performance
+   - [ ] Service Outage
+   - [ ] Impproved Performance
++ Probes:
+   - Type: CloudWatch Metric
+   - Status: `p90`
++ Stop condition (Abort condition):
+   - Type: CloudWatch Alarm
+   - Status: `p90`
++ Results:
+   - What did you see?
++ Conclusions:
+   - [ ] Everything is as expected
+   - [ ] Detected something
+   - [ ] Handleable error has occurred
+   - [ ] Need to automate
+   - [ ] Need to dig deeper
+
+##### Stop Condition
+This is a very important feature for reducing customer impact during chaotic engineering of production systems. Some experiments have a lot of impact on customers during fault injection. If the application goes wrong, the experiment must be stopped autumatically.
+
+##### Run Experiment
+This scenario will simulate an accidental AWS API throttling event when your ec2 instance is trying to describe other instances. When running this experiment, you can see the throttling error when you call the AWS APIs (e.g., DescribeInstances). Follows the instructions shown as below to run throttling experiment.
+
+1. Move on the EC2 service page. Press the *Instances (running)* to switch the screen to show the list of running instances.
+1. Select a ec2 instance of autoscaling group that you created by this module. Maybe its name looks like *fis-blueprint-ec2-a-canary*.
+1. Click *Connect* button and choose *Session* tab to access the instance using AWS Session Manager. And finally press the orange *Connect* button and go.
+1. You are in the instance, run aws command-line interface (cli) to describe instances where region you are in.
+1. First try, you will see *Unauthorized* error.
+1. Back to the FIS page, Select *AwsApiInternalError* template in the experiment templates list. Click the *Actions* and *Start experiment* button to start a new chaos experiment.
+1. Then you will see the changed error message when you run the same aws cli.
+
+##### Improvement
+What did you see? Following screenshot is an example of experiment. First line shows the request and reponse about ec2-assign-private-ip-addresses API using AWS CLI. The error message is *Unauthorized* because the target role the instance has does not have right permission to describe instances. And second line is the reponse of the same AWS API call when throttling event is running. You will find out that the error message has been changed becuase of fault injection experiment.
+
+![aws-fis-ec2-api-internal-err](../../images/aws-fis-ec2-api-internal-err.png)
+
 
 ## Clean up
 Run terraform:
