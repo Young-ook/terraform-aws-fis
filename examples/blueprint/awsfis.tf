@@ -119,8 +119,8 @@ module "awsfis" {
       }
     },
     {
-      name     = "terminate-eks-nodes"
-      template = "${path.cwd}/templates/terminate-eks-nodes.tpl"
+      name     = "eks-node-kill"
+      template = "${path.cwd}/templates/eks-node-kill.tpl"
       params = {
         az        = module.random-az.item
         vpc       = module.vpc.vpc.id

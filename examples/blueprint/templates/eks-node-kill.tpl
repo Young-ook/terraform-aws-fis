@@ -1,5 +1,5 @@
 {
-    "description": "Terminate EKS nodes",
+    "description": "Simulate shutdown of EKS nodes",
     "targets": {
         "eks-nodes": {
             "resourceType": "aws:eks:nodegroup",
@@ -10,9 +10,8 @@
         }
     },
     "actions": {
-        "TerminateInstances": {
+        "eks-node-termination": {
             "actionId": "aws:eks:terminate-nodegroup-instances",
-            "description": "terminate the node instances",
             "parameters": {
                 "instanceTerminationPercentage": "40"
             },
