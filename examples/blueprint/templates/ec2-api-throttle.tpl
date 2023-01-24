@@ -10,5 +10,5 @@
             "logGroupArn": "${logs}"
         }
     },
-    "tags": { "Name": "ThrottleAwsAPIs" }
+    "tags": { "Name": "AwsApiThrottle" }
 }
