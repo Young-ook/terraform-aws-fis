@@ -1,5 +1,5 @@
 {
-    "description": "Simulate EC2 disk full error",
+    "description": "Simulate disk full on ec2 instances",
     "targets": ${targets},
     "actions": ${actions},
     "stopConditions": ${alarms},

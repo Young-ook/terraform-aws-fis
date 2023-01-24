@@ -41,5 +41,5 @@
             "logGroupArn": "${logs}"
         }
     },
-    "tags": {"Name": "EC2NetworkDelay"}
+    "tags": {"Name": "Ec2NetworkDelay"}
 }

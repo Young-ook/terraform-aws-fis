@@ -11,6 +11,6 @@
         }
     },
     "tags": {
-        "Name": "AZOutage"
+        "Name": "AzOutage"
     }
 }
