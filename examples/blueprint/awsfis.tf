@@ -142,10 +142,33 @@ module "awsfis" {
       name     = "ec2-disk-full"
       template = "${path.cwd}/templates/ec2-disk-full.tpl"
       params = {
-        doc_arn = module.awsfis.experiment["FIS-Run-Disk-Stress"].arn
-        alarm   = aws_cloudwatch_metric_alarm.eks-disk.arn
-        role    = module.awsfis.role["fis"].arn
-        logs    = format("%s:*", module.logs["fis"].log_group.arn)
+        actions = jsonencode({
+          "DiskFull" = {
+            "actionId"    = "aws:ssm:send-command"
+            "description" = "Run EC2 disk stresss"
+            "targets"     = { "Instances" : "ec2-instances" }
+            "parameters" = {
+              "duration"           = "PT5M"
+              "documentArn"        = module.awsfis.experiment["FIS-Run-Disk-Stress"].arn
+              "documentParameters" = "{\"DurationSeconds\": \"300\", \"Workers\": \"4\", \"Percent\": \"70\", \"InstallDependencies\": \"True\"}"
+            }
+          }
+        })
+        targets = jsonencode({
+          "ec2-instances" = {
+            "resourceType"  = "aws:ec2:instance"
+            "resourceTags"  = { "release" = "canary" }
+            "selectionMode" = "PERCENT(70)"
+          }
+        })
+        alarms = jsonencode([
+          {
+            "source" = "aws:cloudwatch:alarm"
+            "value"  = aws_cloudwatch_metric_alarm.eks-disk.arn
+          },
+        ])
+        logs = format("%s:*", module.logs["fis"].log_group.arn)
+        role = module.awsfis.role["fis"].arn
       }
     },
     {
