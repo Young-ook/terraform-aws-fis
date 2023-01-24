@@ -139,8 +139,8 @@ module "awsfis" {
       }
     },
     {
-      name     = "disk-stress"
-      template = "${path.cwd}/templates/disk-stress.tpl"
+      name     = "ec2-disk-full"
+      template = "${path.cwd}/templates/ec2-disk-full.tpl"
       params = {
         doc_arn = module.awsfis.experiment["FIS-Run-Disk-Stress"].arn
         alarm   = aws_cloudwatch_metric_alarm.eks-disk.arn
