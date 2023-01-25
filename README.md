@@ -16,6 +16,8 @@ To implement Chaos Engineering, one should follow the scientific method to imple
 1. Expand Scope and Re-Test
 1. Share Results
 
+![chaos-engineering-flywheel](images/chaos-engineering-flywheel.png)
+
 # AWS Fault Injection Simulator (FIS)
 [AWS Fault Injection Simulator](https://aws.amazon.com/fis/) is a fully managed service for running fault injection experiments on AWS that makes it easier to improve an application’s performance, observability, and resiliency. Fault injection experiments are used in chaos engineering, which is the practice of stressing an application in testing or production environments by creating disruptive events, such as sudden increase in CPU or memory consumption, observing how the system responds, and implementing improvements. For more details, please visit [what is](https://docs.aws.amazon.com/fis/latest/userguide/what-is.html) page.
 
