@@ -1,5 +1,5 @@
 {
-    "description": "Simulate an AZ outage",
+    "description": "Simulate disk full on ec2 instances",
     "targets": ${targets},
     "actions": ${actions},
     "stopConditions": ${alarms},
@@ -10,7 +10,5 @@
             "logGroupArn": "${logs}"
         }
     },
-    "tags": {
-        "Name": "AzOutage"
-    }
+    "tags": { "Name": "Ec2DiskFull" }
 }

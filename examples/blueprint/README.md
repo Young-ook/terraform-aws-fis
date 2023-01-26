@@ -101,7 +101,7 @@ mapRoles:
 ### Elastic Cloud Compute (EC2)
 #### Run Load Generator
 
-**Script**
+##### Script
 Terraform configuration also creates a load generator for your application instances. This load generator instance runs a load generator script that repeatedly sends http requests to the application load balancer. Before you begin the first chaos engineering experiment, you must run the load generator script. 1) Access your load generator (blazemeter ec2 instance) via session manager of aws systems manager service. If you don't know how to access a ec2 instance through session manager, please refer to this [guide](https://github.com/Young-ook/terraform-aws-ssm/blob/main/README.md#connect) 2) Create a *loadgen.sh* file with bash script example shown as below into home direcotry of *ssm-user* (/home/ssm-user) after terraform apply.
 ```
 #!/bin/bash
@@ -116,7 +116,7 @@ This step is very important because it warms up the instances for cloudwatch met
 ./loadgen.sh
 ```
 
-**BlazeMeter**
+##### BlazeMeter
 Taurus is an open-source test automation framework providing simple yaml based configuration format with DSL (domain specific language). Is also extends and abstracts the functionality of leading open-source testing tools executoers such as JMeter, Gatling, Locust, and more. For more details about blazemeter taurus module, please refert to the [module guide](https://github.com/Young-ook/terraform-aws-fis/blob/main/modules/bzt/README.md). In this blueprint, blazemeter tool and test suite will be installed automatically on your loadgen ec2 instance. After up and running of loadgen instance, access on via session manager. If you don't know how to access a ec2 instance through session manager, please please follow the [instructions](https://github.com/Young-ook/terraform-aws-ssm/blob/main/README.md#connect).
 
 Move to the *ssm-user* home directory (/home/ssm-user) and run blazemeter:
@@ -253,6 +253,14 @@ What did you see? Following screenshot is an example of experiment. First line s
 
 ![aws-fis-ec2-api-internal-err](../../images/aws-fis-ec2-api-internal-err.png)
 
+
+#### EC2 disk full error
+##### Define Steady State
+##### Stop Condition
+##### Run Experiment
+##### Improvement
+
+![aws-fis-ec2-disk-full](../../images/aws-fis-ec2-disk-full.png)
 
 ## Clean up
 Run terraform:

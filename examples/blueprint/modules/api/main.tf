@@ -197,6 +197,23 @@ resource "aws_cloudwatch_metric_alarm" "api-avg" {
   }
 }
 
+resource "aws_cloudwatch_metric_alarm" "disk" {
+  alarm_name          = join("-", [var.name, "disk", "alarm"])
+  alarm_description   = "This metric monitors percentage of disk usage"
+  tags                = var.tags
+  comparison_operator = "GreaterThanThreshold"
+  evaluation_periods  = 1
+  metric_name         = "disk_used_percent"
+  namespace           = "CWAgent"
+  period              = 60
+  unit                = "Seconds"
+  statistic           = "Average"
+  threshold           = 60
+  dimensions = {
+    AutoScalingGroupName = module.vm.cluster.data_plane.node_groups.canary.name
+  }
+}
+
 ### network/dns
 resource "aws_route53_record" "lb" {
   name    = var.name
