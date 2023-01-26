@@ -1,5 +1,5 @@
 {
-    "description": "Simulate AWS API throttling",
+    "description": "Simulate AWS API unavailable error",
     "targets": ${targets},
     "actions": ${actions},
     "stopConditions": ${alarms},
@@ -10,5 +10,5 @@
             "logGroupArn": "${logs}"
         }
     },
-    "tags": { "Name": "AwsApiThrottle" }
+    "tags": { "Name": "AwsApiUnavailableError" }
 }

@@ -119,8 +119,8 @@ module "awsfis" {
       }
     },
     {
-      name     = "terminate-eks-nodes"
-      template = "${path.cwd}/templates/terminate-eks-nodes.tpl"
+      name     = "eks-node-kill"
+      template = "${path.cwd}/templates/eks-node-kill.tpl"
       params = {
         az        = module.random-az.item
         vpc       = module.vpc.vpc.id
@@ -191,27 +191,27 @@ module "awsfis" {
       params = {
         actions = jsonencode({
           "ThrottleAPI" = {
-            "actionId"    = "aws:fis:inject-api-throttle-error",
-            "description" = "Throttle AWS APIs for describing EC2 instances",
-            "targets"     = { "Roles" : "ec2" }
+            "actionId"    = "aws:fis:inject-api-throttle-error"
+            "description" = "AWS API throttle error"
+            "targets"     = { "Roles" = "ec2-instances" }
             "parameters" = {
-              "service"    = "ec2",
-              "operations" = "DescribeInstances,DescribeVolumes",
-              "percentage" = "90",
+              "service"    = "ec2"
+              "operations" = "DescribeInstances,DescribeVolumes"
+              "percentage" = "90"
               "duration"   = "PT2M"
-            },
+            }
           }
         })
         targets = jsonencode({
-          "ec2" = {
-            "resourceType"  = "aws:iam:role",
+          "ec2-instances" = {
+            "resourceType"  = "aws:iam:role"
             "resourceArns"  = [module.ec2["a"].role.canary.arn]
             "selectionMode" = "ALL"
           }
         })
         alarms = jsonencode([
           {
-            "source" = "aws:cloudwatch:alarm",
+            "source" = "aws:cloudwatch:alarm"
             "value"  = module.ec2["a"].alarms.cpu.arn
           },
         ])
@@ -225,19 +225,53 @@ module "awsfis" {
       params = {
         actions = jsonencode({
           "AwsApiInternalError" = {
-            "actionId"    = "aws:fis:inject-api-internal-error",
-            "description" = "AWS API internal error when describing EC2 instances",
-            "targets"     = { "Roles" : "ec2" }
+            "actionId"    = "aws:fis:inject-api-internal-error"
+            "description" = "AWS API internal error"
+            "targets"     = { "Roles" = "ec2-instances" }
             "parameters" = {
-              "service"    = "ec2",
-              "operations" = "AllocateAddress,AssignPrivateIpAddresses,DescribeVolumes",
-              "percentage" = "100",
+              "service"    = "ec2"
+              "operations" = "AllocateAddress,AssignPrivateIpAddresses,DescribeVolumes"
+              "percentage" = "100"
+              "duration"   = "PT2M"
+            }
+          }
+        })
+        targets = jsonencode({
+          "ec2-instances" = {
+            "resourceType"  = "aws:iam:role"
+            "resourceArns"  = [module.ec2["a"].role.canary.arn]
+            "selectionMode" = "ALL"
+          }
+        })
+        alarms = jsonencode([
+          {
+            "source" = "aws:cloudwatch:alarm"
+            "value"  = module.ec2["a"].alarms.cpu.arn
+          },
+        ])
+        logs = format("%s:*", module.logs["fis"].log_group.arn)
+        role = module.awsfis.role["fis"].arn
+      }
+    },
+    {
+      name     = "ec2-api-unavailable"
+      template = "${path.cwd}/templates/ec2-api-unavailable.tpl"
+      params = {
+        actions = jsonencode({
+          "AwsApiUnavailableError" = {
+            "actionId"    = "aws:fis:inject-api-unavailable-error"
+            "description" = "AWS API unavailable error"
+            "targets"     = { "Roles" = "ec2-instances" }
+            "parameters" = {
+              "service"    = "ec2"
+              "operations" = "AssignPrivateIpAddresses,DescribeInstances,DescribeVolumes"
+              "percentage" = "100"
               "duration"   = "PT2M"
             },
           }
         })
         targets = jsonencode({
-          "ec2" = {
+          "ec2-instances" = {
             "resourceType"  = "aws:iam:role",
             "resourceArns"  = [module.ec2["a"].role.canary.arn]
             "selectionMode" = "ALL"
@@ -245,7 +279,7 @@ module "awsfis" {
         })
         alarms = jsonencode([
           {
-            "source" = "aws:cloudwatch:alarm",
+            "source" = "aws:cloudwatch:alarm"
             "value"  = module.ec2["a"].alarms.cpu.arn
           },
         ])
