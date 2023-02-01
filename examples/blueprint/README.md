@@ -262,6 +262,47 @@ What did you see? Following screenshot is an example of experiment. First line s
 
 ![aws-fis-ec2-disk-full](../../images/aws-fis-ec2-disk-full.png)
 
+### Virtual Private Cloud (VPC)
+#### Disrupt Connectivity
+This experiment uses network access control lists (NACLs) to simulate network outage failures. You can find that this experiment action requires IAM permissions to manage NACLs. Refer to the [AWS FIS actions reference](https://docs.aws.amazon.com/fis/latest/userguide/fis-actions-reference.html#network-actions-reference). One thing to note from this experiment is that you cannot block network traffic between your workloads and AWS managed services such as the EKS control plane. The reason is that NACLs only block network traffic to and from the subnet, and connectivity between workloads and AWS managed network interfaces continues to function during network failure injections. During your experimentation, you may see that kubernetes pods can communicate with the EKS control plane, the kubernetes API.
+
+![aws-fis-eks-vpc-flow](../../images/aws-fis-eks-vpc-flow.png)
+![aws-fis-eks-vpc-subnets-routing](../../images/aws-fis-eks-vpc-subnets-routing.png)
+
+##### Define Steady State
+First of all, we need to define steady state of the service. This means the service is healthy and working well. We use ‘p90’ to refer to the 90th percentile data; that is, 90% of the observations fall below this value. Percentiles for p90, p95, p99, p99.9, p99.99 or any other percentile from 0.1 to 100 in increments of 0.1% (including p100) of request metric can now be visualized in near real time. We will use this alarm for stop condition of fault injection experiment.
+
+**Steady State Hypothesis Example**
++ Title: Services are all available and healthy
++ Type: What are your assumptions?
+   - [ ] No Impact
+   - [ ] Degraded Performance
+   - [ ] Service Outage
+   - [ ] Impproved Performance
++ Probes:
+   - Type: CloudWatch Metric
+   - Status: `p90`
++ Stop condition (Abort condition):
+   - Type: CloudWatch Alarm
+   - Status: `p90`
++ Results:
+   - What did you see?
++ Conclusions:
+   - [ ] Everything is as expected
+   - [ ] Detected something
+   - [ ] Handleable error has occurred
+   - [ ] Need to automate
+   - [ ] Need to dig deeper
+
+##### Stop Condition
+This is a very important feature for reducing customer impact during chaotic engineering of production systems. Some experiments have a lot of impact on customers during fault injection. If the application goes wrong, the experiment must be stopped autumatically.
+
+##### Run Experiment
+This scenario simulates an accidental Availability Zone outage event during a busy workload. When running this experiment, you should see your application getting into an anomalous state on the target subnet. Take a look at your monitoring dashboard to see if your application and business are up. To run a network disconnection experiment, follow the instructions below.
+
+##### Improvement
+What did you see? Did your application work well without interruption? Repeat to run the experiments several times to gain confidence.
+
 ## Clean up
 Run terraform:
 ```
