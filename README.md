@@ -1,6 +1,9 @@
 # Reliability
 In statistics and psychometrics, reliability is the overall consistency of a measure. A measure is said to have a high reliability if it produces similar results under consistent conditions.
 
+# Resiliency
+Resiliency is the ability for a system to recover from a failure induced by load, attacks, and failures. A resilient workload has the capability to recover when stressed by more requests for service, attacks either accidental through a bug, or deliberate through intention, and failure of any component in the workload's components.
+
 # Chaos Engineering
 ## Why Chaos Engineering
 There are many reasons to do chaos engineering. We see teams transitioning in this way to reduce incidents, lower downtime costs, train their teams, and prepare for critical moments. Practicing chaos engineering allows you to detect problems before they become accidents and before customers are affected. And chaos engineering is useful for reducing downtime costs because it allows teams to have a resilient architecture. While the number of companies operating at Internet scale increases and high-traffic events such as sales or launches increase, the cost of downtime will become more expensive. Additionally, this continuous practice of chaos engineering gives teams more confidence every day as they build their own applications and systems. It takes less time to fire-fighting and more time to create and create value.
