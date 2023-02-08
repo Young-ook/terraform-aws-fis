@@ -16,7 +16,7 @@ module "awsfis" {
       template = "${path.cwd}/templates/az-outage.tpl"
       params = {
         actions = jsonencode({
-          "AZOutage" = {
+          "AzOutage" = {
             "actionId"    = "aws:network:disrupt-connectivity"
             "description" = "Block all EC2 traffics from and to the subnets"
             "parameters" = {
@@ -25,6 +25,16 @@ module "awsfis" {
             },
             "targets" = {
               "Subnets" = module.random-az.item
+            }
+          }
+          "Ec2Blackhole" = {
+            "actionId"    = "aws:ssm:send-command"
+            "description" = "Drop all network packets from and to EC2 instances"
+            "targets"     = { "Instances" : "ec2-instances" }
+            "parameters" = {
+              "duration"           = "PT5M"
+              "documentArn"        = data.aws_ssm_document.network-blackhole.arn
+              "documentParameters" = "{\"DurationSeconds\":\"300\",\"LossPercent\":\"100\",\"InstallDependencies\":\"True\"}"
             }
           }
           "FailOverCluster" = {
@@ -44,6 +54,21 @@ module "awsfis" {
               "vpc"                        = module.vpc.vpc.id
             }
             "selectionMode" = "ALL"
+          }
+          "ec2-instances" = {
+            "resourceType"  = "aws:ec2:instance"
+            "resourceTags"  = { example = "fis_blueprint" }
+            "selectionMode" = "ALL"
+            "filters" = [
+              {
+                "path"   = "Placement.AvailabilityZone"
+                "values" = [module.random-az.item]
+              },
+              {
+                "path"   = "State.Name"
+                "values" = ["running"]
+              }
+            ],
           }
           "rds-cluster" = {
             "resourceType"  = "aws:rds:cluster"
@@ -311,4 +336,9 @@ module "awsfis" {
       }
     },
   ]
+}
+
+data "aws_ssm_document" "network-blackhole" {
+  name            = "AWSFIS-Run-Network-Packet-Loss"
+  document_format = "YAML"
 }
