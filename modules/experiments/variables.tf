@@ -1,7 +1,7 @@
 ### template
 variable "templates" {
   description = "A list of fault injection experiment templates"
-  type        = list(any)
+  type        = any
   default     = []
 }
 
