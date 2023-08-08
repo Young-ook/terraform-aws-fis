@@ -8,7 +8,12 @@ output "role" {
   }
 }
 
-output "experiment" {
-  description = "Systems manager documents for experiments "
+output "experiments" {
+  description = "AWS FIS experiment template"
+  value       = awscc_fis_experiment_template.exp
+}
+
+output "documents" {
+  description = "Systems manager documents for fault injection experiment"
   value       = aws_ssm_document.doc
 }

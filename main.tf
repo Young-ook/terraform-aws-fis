@@ -69,59 +69,17 @@ resource "aws_iam_role_policy_attachment" "fis-ssm-vpcfull" {
   role       = aws_iam_role.fis-ssm-run.id
 }
 
-resource "local_file" "exp" {
-  for_each        = { for exp in var.experiments : exp.name => exp }
-  content         = templatefile(lookup(each.value, "template"), lookup(each.value, "params", {}))
-  filename        = join("/", [path.module, format("%s.json", each.key)])
-  file_permission = "0600"
-}
+### fault injection experiment template
 
-locals {
-  cli = [
-    {
-      in  = "awsfis-init.tpl"
-      out = "awsfis-init.sh"
-      params = {
-        region   = local.aws.region
-        explist  = join("/", [path.cwd, ".fis_cli_result"])
-        jsonlist = trimsuffix(join(".json ", concat(keys({ for exp in var.experiments : exp.name => exp }), [""])), " ")
-      }
-    },
-    {
-      in  = "awsfis-cleanup.tpl"
-      out = "awsfis-cleanup.sh"
-      params = {
-        region  = local.aws.region
-        explist = join("/", [path.cwd, ".fis_cli_result"])
-      }
-    },
-  ]
-}
-
-resource "local_file" "cli" {
-  for_each = { for k, v in local.cli : k => v }
-  content = templatefile(
-    join("/", [path.module, "templates", lookup(each.value, "in")]),
-    lookup(each.value, "params", {})
-  )
-  filename        = join("/", [path.module, lookup(each.value, "out")])
-  file_permission = "0600"
-}
-
-resource "null_resource" "awsfis-init" {
-  depends_on = [local_file.exp, local_file.cli]
-  provisioner "local-exec" {
-    when    = create
-    command = "cd ${path.module} \n bash awsfis-init.sh"
-  }
-}
-
-resource "null_resource" "awsfis-cleanup" {
-  depends_on = [local_file.exp, local_file.cli]
-  provisioner "local-exec" {
-    when    = destroy
-    command = "cd ${path.module} \n bash awsfis-cleanup.sh"
-  }
+resource "awscc_fis_experiment_template" "exp" {
+  for_each          = { for exp in var.experiments : exp.name => exp }
+  tags              = merge(local.default-tags, { Name = each.key }, var.tags)
+  description       = lookup(each.value, "description", null)
+  role_arn          = aws_iam_role.fis-run.arn
+  stop_conditions   = lookup(each.value, "stop_conditions", null)
+  targets           = lookup(each.value, "targets", null)
+  actions           = lookup(each.value, "actions", null)
+  log_configuration = lookup(each.value, "log_configuration", null)
 }
 
 ### systems manager document for fault injection simulator experiment
