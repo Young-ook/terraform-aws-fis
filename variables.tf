@@ -1,7 +1,7 @@
 ### experiments
 variable "experiments" {
   description = "List of fault injection simulator experiment templates."
-  type        = list(any)
+  type        = any
   validation {
     condition     = var.experiments != null && length(var.experiments) > 0
     error_message = "Experiment template list must not be null. also, the length of list should be greater than 0."
