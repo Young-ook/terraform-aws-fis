@@ -72,7 +72,7 @@ resource "aws_iam_role_policy_attachment" "fis-ssm-vpcfull" {
 ### fault injection experiment template
 
 resource "awscc_fis_experiment_template" "exp" {
-  for_each        = { for exp in var.experiments : exp.name => exp }
+  for_each          = { for exp in var.experiments : exp.name => exp }
   tags              = merge(local.default-tags, { Name = each.key }, var.tags)
   description       = lookup(each.value, "description", null)
   role_arn          = aws_iam_role.fis-run.arn
