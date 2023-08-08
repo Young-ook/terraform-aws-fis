@@ -61,7 +61,7 @@ provider "helm" {
 module "helm-addons" {
   depends_on = [module.eks]
   source     = "Young-ook/eks/aws//modules/helm-addons"
-  version    = "2.0.0"
+  version    = "2.0.6"
   tags       = var.tags
   addons = [
     {
@@ -105,6 +105,13 @@ module "helm-addons" {
       }
       oidc        = module.eks.oidc
       policy_arns = [aws_iam_policy.cas.arn]
+    },
+    {
+      repository        = "${path.module}/charts/"
+      name              = "sock-shop"
+      chart_name        = "sock-shop"
+      namespace         = "sock-shop"
+      dependency_update = true
     },
     {
       repository     = "https://kubernetes-sigs.github.io/metrics-server/"
