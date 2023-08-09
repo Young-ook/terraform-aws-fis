@@ -5,7 +5,7 @@ metadata:
 {{ toYaml .Values.ingress.annotations | indent 4 }}
   labels:
 {{ toYaml .Values.ingress.labels | indent 4 }}
-  name: {{ template "fullname" .}}-socks-ingress
+  name: {{ template "fullname" .}}-ingress
 spec:
   rules:
   - http:
