@@ -92,11 +92,116 @@ mapRoles:
 
 ## Expreiments
 ### Elastic Kubernetes Service (EKS)
-#### Terminate Kubernetes Pod(s)
+#### Microservices Architecture Application
+For this lab, we picked up the [SockShop](./apps/README.md#sockshop) application. This is a sample application that Weaveworks initially developed for learning and demonstration purposes. Follow the instructions to install sockshop microservices architecture application on your EKS cluster before you move to the next stage.
 
+#### Terminate EKS Nodes
+AWS FIS allows you to test resiliency of EKS cluster node groups. See what happens if you shut down some ec2 nodes for kubernetes pods or services within a certain percentage. This test verifies that the EKS managed node group launches new instances to meet the defined desired capacity and ensures that the application containers continues to run well. Also, this test will help you understand what happens to your application when you upgrade your cluster. At this time, in order to satisfy both resiliency and ease of cluster upgrade, the container should be designed so that it can be moved easily. This makes it easy to move containers running on the failed node to another node to continue working. This is an important part of a cloud-native architecture.
+
+##### Define Steady State
+Before we begin a failure experiment, we need to validate the user experience and revise the dashboard and metrics to understand that the systems are working under normal state, in other words, steady state.
+![aws-fis-cw-dashboard](../../images/eks/aws-fis-cw-dashboard.png)
+
+Let’s go ahead and explore Sock Shop application. Some things to try out:
+1. Register and log in using the below credentials (These are very secure so please don’t share them)
+    * Username: `user`
+    * Password: `password`
+1. View various items
+1. Add items to cart
+1. Remove items from cart
+1. Check out items
+
+##### Hypothesis
+The experiment we’ll run is to verify and fine-tune our application availability when compute nodes are terminated accidentally. The application is deployed as a container on the Kubernetes cluster, we assume that if some nodes are teminated, the Kubernetes control plane will reschedule the pods to the other healthy nodes. In order for chaos engineering to follow the scientific method, we need to start by making hypotheses. To help with this, you can use an experiment chart (see below) in your experiment design. We encourage you to take at least 5 minutes to write your experiment plan.
+
+**Steady State Hypothesis Example**
+
++ Title: Services are all available and healthy
++ Type: What are your assumptions?
+   - [ ] No Impact
+   - [ ] Degraded Performance
+   - [ ] Service Outage
+   - [ ] Impproved Performance
++ Probes:
+   - Type: CloudWatch Metric
+   - Status: `service_number_of_running_pods` is greater than 0
++ Stop condition (Abort condition):
+   - Type: CloudWatch Alarm
+   - Status: `service_number_of_running_pods` is less than 1
++ Results:
+   - What did you see?
++ Conclusions:
+   - [ ] Everything is as expected
+   - [ ] Detected something
+   - [ ] Handleable error has occurred
+   - [ ] Need to automate
+   - [ ] Need to dig deeper
+
+##### Run Experiment
+Make sure that all your EKS node group instances are running. Go to the AWS FIS service page and select `TerminateEKSNodes` from the list of experiment templates. Then use the on-screen `Actions` button to start the experiment. AWS FIS shuts down EKS nodes for up to 70% of currently running instances. In this experiment, this value is 40% and it is configured in the experiment template. You can edit this value in the target selection mode configuration if you want to change the number of EKS nodes to shut down You can see the terminated instances on the EC2 service page, and the new instances will appear shortly after the EKS node is shut down.
+
+![aws-fis-terminate-eks-nodes-action-complete](../../images/eks/aws-fis-terminate-eks-nodes-action-complete.png)
+![aws-fis-terminate-eks-nodes](../../images/eks/aws-fis-terminate-eks-nodes.png)
+
+You can see the nodes being shut down in the cluster:
+```
+kubectl -n sockshop get node -w
+NAME                                            STATUS   ROLES    AGE     VERSION
+ip-10-1-1-205.ap-northeast-2.compute.internal   Ready    <none>   21m     v1.20.4-eks-6b7464
+ip-10-1-9-221.ap-northeast-2.compute.internal   Ready    <none>   4m40s   v1.20.4-eks-6b7464
+ip-10-1-9-221.ap-northeast-2.compute.internal   NotReady   <none>   4m40s   v1.20.4-eks-6b7464
+ip-10-1-9-221.ap-northeast-2.compute.internal   NotReady   <none>   4m40s   v1.20.4-eks-6b7464
+```
+
+##### Discussion
+Then access the microservices application again. What happened? Perhaps a node shutdown by a fault injection experiment will cause the application to crash. But your application might be recovered immediatedly because of deployment configuration for high availability (stateless, immutable, replicable) characteristics against single node or availability-zone failure. Before we move to the next step, we need to think about one thing. In this experiment, business healthy state (steady state) is specified as cpu utilization and number of healthy pods. But after the first experiment, you will see the service does not work properly even though the monitoring indicators are in the normal range. It would be weird it is also meaningful. This result shows that unintended problems can occur even if the monitoring numbers are normal. It could be one of the experimental results that can be obtained through chaos engineering.
+
+Go forward.
+
+##### Architecture Improvements
+Cluster Autoscaler is a tool that automatically adjusts the size of the Kubernetes cluster when one of the following conditions is true:
++ there are pods that failed to run in the cluster due to insufficient resources.
++ there are nodes in the cluster that have been underutilized for an extended period of time and their pods can be placed on other existing nodes.
+
+Cluster Autoscaler provides integration with Auto Scaling groups. Cluster Autoscaler will attempt to determine the CPU, memory, and GPU resources provided by an EC2 Auto Scaling Group based on the instance type specified in its Launch Configuration or Launch Template. Click [here](https://github.com/kubernetes/autoscaler/tree/master/cluster-autoscaler/cloudprovider/aws) for more information.
+
+Watch the logs to verify cluster autoscaler is installed properly. If everything looks good, we are now ready to scale our cluster.
+```
+kubectl -n kube-system logs -f deployment/cluster-autoscaler
+```
+
+And check your pods that has been applied *pod-anti-affinity* policy for high availability.
+![aws-fis-eks-pod-anti-affinity](../../images/eks/aws-fis-eks-pod-anti-affinity.png)
+
+##### Rerun Experiment
+Back to the AWS FIS service page, and rerun the terminate eks nodes experiment against the target to ensure that the microservices application is working in the previously assumed steady state.
+![aws-fis-sockshop-with-ha](../../images/eks/aws-fis-sockshop-with-ha.png)
+
+#### Terminate Kubernetes Pod(s)
 ![aws-fis-eks-pod-kill-description](../../images/eks/aws-fis-eks-pod-kill-description.png)
 ![aws-fis-eks-pod-kill-stop-condition](../../images/eks/aws-fis-eks-pod-kill-stop-condition.png)
 ![aws-fis-eks-pod-kill-watch](../../images/eks/aws-fis-eks-pod-kill-watch.png)
+
+#### Stress on Pod(s)
+AWS FIS allows you to test resiliency of kubernetes podskubernetes pods. See what happens on your application when your pods has very high CPU utilization. With this disk stress experiment, also you can test if the alarm fires when there is not enough space on the compute node to write files, such as log files. This test verifies that you have set up an alarm to be raised when the disk utilization metric is greater than a threshold. See what happens to your application when the disk file system utilization on the EKS node (ec2 instance) is very high.
+
+##### Define Steady State
+Before we begin a failure experiment, we need to validate the user experience and business operations, system status are working under normal state, in other words, steady state. The goal of this experiment is to verify that the system automatically react to increas computing resources when requests increases or disk usage alarm works well when disk usage increases.
+
+##### Hypothesis
+The experiment we’ll run is to verify and fine-tune our application reliability when compute nodes becomes busy.
+
+##### Run Experiment
+Make sure that all your EKS node group instances are running. Go to the AWS FIS service page and select `eks-stress` from the list of experiment templates. Then use the on-screen `Actions` button to start the experiment. In this experiment, AWS FIS increases CPU utilization for half of the EC2 instances with the chaos=ready tag. You can change the target percentage of an experiment in the experiment template. To change the number of EKS nodes to which the CPU stress experiment will be applied, edit the filter or tag values in the target selection mode configuration in the template. After starting the experiment, you can see the CPU utilization and Disk filesystem utilization increases on the EC2 service page or the CloudWatch service page.
+
+![aws-fis-cpu-stress-eks-nodes-action-complete](../../images/eks/aws-fis-cpu-stress-eks-nodes-action-complete.png)
+![aws-fis-cw-cpu](../../images/eks/aws-fis-cw-cpu.png)
+![aws-fis-cw-cpu-alarm](../../images/eks/aws-fis-cw-cpu-alarm.png)
+![aws-fis-disk-stress-eks-nodes-action-stopped](../../images/eks/aws-fis-disk-stress-eks-nodes-action-stopped.png)
+![aws-fis-cw-disk](../../images/eks/aws-fis-cw-disk.png)
+
+##### Discussion
+What happened? What did you see? Was your application working well while the fault inejction experiment was running. Discuss what went well and what did not work and why.
 
 ### Elastic Cloud Compute (EC2)
 #### Run Load Generator
