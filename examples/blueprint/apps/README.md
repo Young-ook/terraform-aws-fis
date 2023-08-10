@@ -336,11 +336,11 @@ kubectl delete -f apps/redispy/redispy.yaml
 ```
 
 ## SockShop
-For this lab, we picked up the Sock Shop application. Sock Shop is a microservices architecture sample application that Weaveworks initially developed. They made it open source so it can be used by other organizations for learning and demonstration purposes.
+For this lab, we picked up the sockshop application. This is a microservices architecture sample application that Weaveworks initially developed. They made it open source so it can be used by other organizations for learning and demonstration purposes.
 
 Create the namespace and deploy application.
 ```
-kubectl apply -f apps/sockshop-demo.yaml
+kubectl apply -f apps/sockshop-demo-ha.yaml
 ```
 Verify that the pod came up fine (ensure nothing else is running on port 8079):
 ```
@@ -352,19 +352,11 @@ NAME                         READY   STATUS    RESTARTS   AGE
 front-end-7b8bcd59cb-wd527   1/1     Running   0          9s
 ```
 
-#### Local Workspace
-In your local workspace, connect through a proxy to access your application's endpoint:
+To access your sockshop application, check your application load balancer ingress using kubectl command:
 ```
-kubectl -n sockshop port-forward svc/front-end 8080:80
+kubectl -n sockshop get ing
 ```
-Open `http://localhost:8080` on your web browser. This shows the Sock Shop main page.
-
-#### Cloud9
-In your Cloud9 IDE, run the application:
-```
-kubectl -n sockshop port-forward svc/front-end 8080:80
-```
-Click **Preview** > **Preview Running Application**. This opens up a preview tab and shows the Sock Shop main page.
+You will see the dns name of your application load balancer. And open it on your web browser (Copy the dns name from your terminal disaply and paste it on your web browser window).
 
 ![weaveworks-sockshop-frontend](../../../images/eks/weaveworks-sockshop-frontend.png)
 
