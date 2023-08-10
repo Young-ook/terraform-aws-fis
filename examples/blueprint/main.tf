@@ -15,8 +15,8 @@ provider "aws" {
 ### vpc
 module "vpc" {
   source  = "Young-ook/vpc/aws"
-  version = "1.0.3"
-  name    = var.name
+  version = "1.0.5"
+  name    = join("-", [var.name, "vpc"])
   tags    = var.tags
   vpc_config = {
     cidr        = var.cidr
