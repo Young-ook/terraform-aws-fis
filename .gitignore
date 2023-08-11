@@ -36,3 +36,6 @@ override.tf.json
 
 # Local .zip files for lambda package archive
 **/examples/**/*.zip
+
+# User kubernetes cluster configs
+kubeconfig
