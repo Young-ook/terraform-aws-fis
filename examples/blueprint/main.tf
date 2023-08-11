@@ -12,11 +12,11 @@ provider "aws" {
   region = var.aws_region
 }
 
-# vpc
+### vpc
 module "vpc" {
   source  = "Young-ook/vpc/aws"
-  version = "1.0.3"
-  name    = var.name
+  version = "1.0.5"
+  name    = join("-", [var.name, "vpc"])
   tags    = var.tags
   vpc_config = {
     cidr        = var.cidr
@@ -33,15 +33,17 @@ module "eks" {
   name               = join("-", [var.name, "kubernetes"])
   tags               = var.tags
   subnets            = values(module.vpc.subnets["private"])
-  kubernetes_version = "1.24"
+  kubernetes_version = "1.27"
   enable_ssm         = true
   managed_node_groups = [
     {
       name          = "apps"
+      desired_size  = 3
       instance_type = "m5.large"
     },
     {
       name          = "spot"
+      desired_size  = 3
       capacity_type = "SPOT"
       instance_type = "m5.large"
       tags          = { "chaos" = "ready" }
@@ -61,9 +63,25 @@ provider "helm" {
 module "helm-addons" {
   depends_on = [module.eks]
   source     = "Young-ook/eks/aws//modules/helm-addons"
-  version    = "2.0.0"
+  version    = "2.0.6"
   tags       = var.tags
   addons = [
+    {
+      ### You can disable the mutator webhook feature by setting the helm chart value enableServiceMutatorWebhook to false.
+      ### https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/tag/v2.5.1
+      repository     = "https://aws.github.io/eks-charts"
+      name           = "aws-load-balancer-controller"
+      chart_name     = "aws-load-balancer-controller"
+      chart_version  = "1.5.2"
+      namespace      = "kube-system"
+      serviceaccount = "aws-load-balancer-controller"
+      values = {
+        "clusterName"                 = module.eks.cluster.name
+        "enableServiceMutatorWebhook" = "false"
+      }
+      oidc        = module.eks.oidc
+      policy_arns = [aws_iam_policy.lbc.arn]
+    },
     {
       repository     = "https://aws.github.io/eks-charts"
       name           = "aws-cloudwatch-metrics"
@@ -132,6 +150,13 @@ resource "aws_iam_policy" "cas" {
   tags        = merge({ "terraform.io" = "managed" }, var.tags)
   description = format("Allow cluster-autoscaler to manage AWS resources")
   policy      = file("${path.module}/policy.cluster-autoscaler.json")
+}
+
+resource "aws_iam_policy" "lbc" {
+  name        = "aws-loadbalancer-controller"
+  tags        = merge({ "terraform.io" = "managed" }, var.tags)
+  description = format("Allow aws-load-balancer-controller to manage AWS resources")
+  policy      = file("${path.module}/policy.aws-loadbalancer-controller.json")
 }
 
 provider "kubernetes" {
