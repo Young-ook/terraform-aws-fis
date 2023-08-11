@@ -80,7 +80,7 @@ module "awsfis" {
       stop_conditions = [
         {
           source = "aws:cloudwatch:alarm",
-          value  = aws_cloudwatch_metric_alarm.eks-cpu.arn
+          value  = module.alarm["eks-cpu"].alarm.arn
         },
         {
           source = "aws:cloudwatch:alarm",
@@ -155,11 +155,11 @@ module "awsfis" {
       stop_conditions = [
         {
           source = "aws:cloudwatch:alarm",
-          value  = aws_cloudwatch_metric_alarm.eks-cpu.arn
+          value  = module.alarm["eks-cpu"].alarm.arn
         },
         {
           source = "aws:cloudwatch:alarm",
-          value  = aws_cloudwatch_metric_alarm.svc-health.arn
+          value  = module.alarm["svc-health"].alarm.arn
         }
       ]
       log_configuration = {
@@ -215,7 +215,7 @@ module "awsfis" {
       stop_conditions = [
         {
           source = "aws:cloudwatch:alarm",
-          value  = aws_cloudwatch_metric_alarm.svc-health.arn
+          value  = module.alarm["svc-health"].alarm.arn
         },
       ]
       log_configuration = {
@@ -268,11 +268,11 @@ module "awsfis" {
       stop_conditions = [
         {
           source = "aws:cloudwatch:alarm",
-          value  = aws_cloudwatch_metric_alarm.eks-disk.arn
+          value  = module.alarm["eks-disk"].alarm.arn
         },
         {
           source = "aws:cloudwatch:alarm",
-          value  = aws_cloudwatch_metric_alarm.eks-cpu.arn
+          value  = module.alarm["eks-cpu"].alarm.arn
         }
       ]
       log_configuration = {

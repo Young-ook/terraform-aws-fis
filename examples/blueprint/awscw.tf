@@ -1,7 +1,7 @@
 ### application/alarm
 module "alarm" {
   source  = "Young-ook/eventbridge/aws//modules/alarm"
-  version = "0.0.6"
+  version = "0.0.13"
   for_each = { for a in [
     {
       name        = "rds-cpu"
@@ -28,71 +28,81 @@ module "alarm" {
         },
       ]
     },
+    {
+      name        = "eks-cpu"
+      description = "This metric monitors eks node cpu utilization"
+      alarm_metric = {
+        comparison_operator = "GreaterThanOrEqualToThreshold"
+        evaluation_periods  = 1
+        datapoints_to_alarm = 1
+        threshold           = 60
+      }
+      metric_query = [
+        {
+          id          = "eks_cpu_high"
+          return_data = true
+          metric = [
+            {
+              metric_name = "node_cpu_utilization"
+              namespace   = "ContainerInsights"
+              stat        = "Average"
+              period      = 30
+              dimensions  = { ClusterName = module.eks.cluster.name }
+            },
+          ]
+        },
+      ]
+    },
+    {
+      name        = "eks-disk"
+      description = "This metric monitors ec2 disk filesystem usage"
+      alarm_metric = {
+        comparison_operator = "GreaterThanOrEqualToThreshold"
+        extended_statistic  = "p90"
+        evaluation_periods  = 1
+        datapoints_to_alarm = 1
+        period              = 30
+        threshold           = 60
+        metric_name         = "node_filesystem_utilization"
+        namespace           = "ContainerInsights"
+        dimensions          = { ClusterName = module.eks.cluster.name }
+      }
+    },
+    {
+      name        = "svc-health"
+      description = "This metric monitors healty backed pods of a service"
+      alarm_metric = {
+        comparison_operator = "LessThanThreshold"
+        evaluation_periods  = 1
+        datapoints_to_alarm = 1
+        threshold           = 1
+      }
+      metric_query = [
+        {
+          id          = "runnung_pods"
+          return_data = true
+          metric = [
+            {
+              metric_name = "service_number_of_running_pods"
+              namespace   = "ContainerInsights"
+              stat        = "Average"
+              period      = 10
+              dimensions = {
+                Namespace   = "sockshop"
+                Service     = "front-end"
+                ClusterName = module.eks.cluster.name
+              }
+            },
+          ]
+        },
+      ]
+    },
   ] : a.name => a }
   name         = join("-", [each.key, "alarm"])
   tags         = merge(local.default-tags, var.tags)
   description  = each.value.description
   alarm_metric = each.value.alarm_metric
-  metric_query = each.value.metric_query
-}
-
-resource "aws_cloudwatch_metric_alarm" "eks-cpu" {
-  alarm_name                = join("-", [var.name, "cpu", "alarm"])
-  alarm_description         = "This metric monitors ec2 cpu utilization"
-  tags                      = merge(local.default-tags, var.tags)
-  metric_name               = "node_cpu_utilization"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  datapoints_to_alarm       = 1
-  evaluation_periods        = 1
-  namespace                 = "ContainerInsights"
-  period                    = 30
-  threshold                 = 60
-  statistic                 = "Average"
-  insufficient_data_actions = []
-
-  dimensions = {
-    ClusterName = module.eks.cluster.name
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "eks-disk" {
-  alarm_name                = join("-", [var.name, "disk", "alarm"])
-  alarm_description         = "This metric monitors ec2 disk filesystem usage"
-  tags                      = merge(local.default-tags, var.tags)
-  metric_name               = "node_filesystem_utilization"
-  comparison_operator       = "GreaterThanOrEqualToThreshold"
-  datapoints_to_alarm       = 1
-  evaluation_periods        = 1
-  namespace                 = "ContainerInsights"
-  period                    = 30
-  threshold                 = 60
-  extended_statistic        = "p90"
-  insufficient_data_actions = []
-
-  dimensions = {
-    ClusterName = module.eks.cluster.name
-  }
-}
-
-resource "aws_cloudwatch_metric_alarm" "svc-health" {
-  alarm_name                = join("-", [var.name, "svc", "health"])
-  alarm_description         = "This metric monitors healty backed pods of a service"
-  tags                      = merge(local.default-tags, var.tags)
-  metric_name               = "service_number_of_running_pods"
-  comparison_operator       = "LessThanThreshold"
-  datapoints_to_alarm       = 1
-  evaluation_periods        = 1
-  namespace                 = "ContainerInsights"
-  period                    = 10
-  threshold                 = 1
-  statistic                 = "Average"
-  insufficient_data_actions = []
-
-  dimensions = {
-    Namespace   = "sockshop"
-    Service     = "front-end"
-    ClusterName = module.eks.cluster.name
-  }
+  metric_query = try(each.value.metric_query, null)
 }
 
 ### application/logs
