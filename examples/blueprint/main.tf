@@ -237,13 +237,13 @@ resource "aws_elasticache_replication_group" "redis" {
 module "rds" {
   depends_on = [module.vpc]
   source     = "Young-ook/aurora/aws"
-  version    = "2.1.2"
+  version    = "2.2.1"
   name       = join("-", [var.name, "rds"])
   tags       = merge(var.tags, local.default-tags)
   vpc        = module.vpc.vpc.id
   subnets    = values(module.vpc.subnets["private"])
   cidrs      = [var.cidr]
-  aurora_cluster = {
+  cluster = {
     engine            = "aurora-mysql"
     family            = "aurora-mysql8.0"
     version           = "8.0.mysql_aurora.3.01.0"
@@ -258,7 +258,7 @@ module "rds" {
       character_set_client = "utf8"
     }
   }
-  aurora_instances = [
+  instances = [
     {
       instance_type = "db.t3.medium"
     },
