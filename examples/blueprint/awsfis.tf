@@ -5,6 +5,12 @@ module "random-az" {
   items  = var.azs
 }
 
+data "aws_ssm_document" "network-blackhole" {
+  name            = "AWSFIS-Run-Network-Packet-Loss"
+  document_format = "YAML"
+}
+
+### experiments
 module "awsfis" {
   source  = "Young-ook/fis/aws"
   version = "2.0.0"
@@ -347,21 +353,11 @@ module "awsfis" {
           parameters = { forceFailover = "false" }
           targets    = { DBInstances = "rds-instances" }
         }
-        failover-rds = {
-          description = "Failover Aurora cluster"
-          action_id   = "aws:rds:failover-db-cluster"
-          targets     = { Clusters = "rds-cluster" }
-        }
       }
       targets = {
         rds-instances = {
           resource_type  = "aws:rds:db"
           resource_arns  = [module.rds.instances.0.arn]
-          selection_mode = "ALL"
-        }
-        rds-cluster = {
-          resource_type  = "aws:rds:cluster"
-          resource_arns  = [module.rds.cluster.arn]
           selection_mode = "ALL"
         }
       }
@@ -379,9 +375,4 @@ module "awsfis" {
       }
     },
   ]
-}
-
-data "aws_ssm_document" "network-blackhole" {
-  name            = "AWSFIS-Run-Network-Packet-Loss"
-  document_format = "YAML"
 }
