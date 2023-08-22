@@ -70,7 +70,6 @@ tfenv use <version>
 # Experiments
 - [AWS FIS Blueprint](https://github.com/Young-ook/terraform-aws-fis/tree/main/examples/blueprint)
 - [Amazon EC2](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/ec2)
-- [Amazon EKS](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/eks)
 - [Amazon RDS](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/rds)
 - [Amazon ElastiCache for Redis](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/redis)
 - [Application Modernization with Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker/tree/main/examples/aws-modernization-with-spinnaker)
