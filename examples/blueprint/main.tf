@@ -33,7 +33,7 @@ module "eks" {
   name               = join("-", [var.name, "kubernetes"])
   tags               = var.tags
   subnets            = values(module.vpc.subnets["private"])
-  kubernetes_version = "1.27"
+  kubernetes_version = var.kubernetes_version
   enable_ssm         = true
   managed_node_groups = [
     {
