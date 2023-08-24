@@ -69,10 +69,11 @@ tfenv use <version>
 
 # Experiments
 - [AWS FIS Blueprint](https://github.com/Young-ook/terraform-aws-fis/tree/main/examples/blueprint)
-- [Amazon EC2](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/ec2)
-- [Amazon RDS](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/rds)
-- [Amazon ElastiCache for Redis](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/redis)
+- [Chaos Engineering with AWS FIS Hands-on Lab](https://catalog.us-east-1.prod.workshops.aws/workshops/7379e94f-6981-4dd8-bb46-8ec4aff3a825/ko-KR)
 - [Application Modernization with Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker/tree/main/examples/aws-modernization-with-spinnaker)
+- [Amazon EC2](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/ec2)
+- [Amazon EKS](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/eks)
+- [Amazon ElastiCache for Redis](https://github.com/Young-ook/terraform-aws-fis/blob/main/examples/redis)
 
 # Known Issues
 ## Unknown parameter
