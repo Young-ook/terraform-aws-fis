@@ -125,6 +125,13 @@ module "helm-addons" {
       policy_arns = [aws_iam_policy.cas.arn]
     },
     {
+      repository     = "${path.module}/charts/"
+      name           = "aws-fis-controller"
+      chart_name     = "aws-fis-controller"
+      namespace      = "kube-system"
+      serviceaccount = "aws-fis-controller"
+    },
+    {
       repository     = "https://kubernetes-sigs.github.io/metrics-server/"
       name           = "metrics-server"
       chart_name     = "metrics-server"
