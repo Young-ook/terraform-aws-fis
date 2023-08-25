@@ -106,37 +106,32 @@ module "awsfis" {
       description = "Simulate stress on kubernetes resources",
       actions = {
         eks-pod-cpu = {
-          action_id = "aws:eks:inject-kubernetes-custom-resource",
+          action_id = "aws:eks:pod-cpu-stress",
           parameters = {
-            maxDuration          = "PT5M"
-            kubernetesApiVersion = "chaos-mesh.org/v1alpha1"
-            kubernetesKind       = "StressChaos"
-            kubernetesNamespace  = "chaos-mesh"
-            kubernetesSpec : "{\"mode\": \"all\",\"selector\": {\"labelSelectors\": {\"name\": \"carts\"}},\"stressors\": {\"cpu\": {\"workers\": 1,\"load\": 60}},\"duration\":\"1m\"}"
+            duration                 = "PT5M"
+            percent                  = "80"
+            workers                  = "1"
+            kubernetesServiceAccount = "aws-fis-controller"
           }
-          targets = { Cluster = "eks-cluster" }
+          targets = { Pods = "eks-pods" }
         }
         eks-pod-kill = {
-          action_id = "aws:eks:inject-kubernetes-custom-resource"
+          action_id = "aws:eks:pod-delete"
           parameters = {
-            maxDuration          = "PT5M"
-            kubernetesApiVersion = "chaos-mesh.org/v1alpha1"
-            kubernetesKind       = "PodChaos"
-            kubernetesNamespace  = "chaos-mesh"
-            kubernetesSpec       = "{\"selector\":{\"namespaces\":[\"sockshop\"],\"labelSelectors\":{\"name\":\"carts\"}},\"mode\":\"one\",\"action\": \"pod-kill\",\"gracePeriod\":0}"
+            gracePeriodSeconds       = "0"
+            kubernetesServiceAccount = "aws-fis-controller"
           }
-          targets : { Cluster = "eks-cluster" }
+          targets : { Pods = "eks-pods" }
         }
         eks-pod-mem = {
-          action_id = "aws:eks:inject-kubernetes-custom-resource"
+          action_id = "aws:eks:pod-memory-stress"
           parameters = {
-            maxDuration          = "PT5M"
-            kubernetesApiVersion = "chaos-mesh.org/v1alpha1"
-            kubernetesKind       = "StressChaos"
-            kubernetesNamespace  = "chaos-mesh"
-            kubernetesSpec       = "{\"mode\": \"one\",\"selector\": {\"labelSelectors\": {\"name\": \"carts\"}},\"stressors\": {\"memory\": {\"workers\": 4,\"size\": \"256MB\"}}}"
+            duration                 = "PT5M"
+            percent                  = "80"
+            workers                  = "1"
+            kubernetesServiceAccount = "aws-fis-controller"
           }
-          targets = { Cluster = "eks-cluster" }
+          targets = { Pods = "eks-pods" }
         }
         eks-node-kill = {
           action_id = "aws:eks:terminate-nodegroup-instances"
@@ -147,9 +142,14 @@ module "awsfis" {
         }
       }
       targets = {
-        eks-cluster = {
-          resource_type  = "aws:eks:cluster"
-          resource_arns  = [module.eks.cluster["control_plane"].arn]
+        eks-pods = {
+          resource_type = "aws:eks:pod"
+          parameters = {
+            clusterIdentifier = module.eks.cluster.name
+            namespace         = "default"
+            selectorType      = "labelSelector"
+            selectorValue     = "mylabel=mytarget"
+          }
           selection_mode = "PERCENT(40)"
         }
         eks-nodes = {
@@ -169,7 +169,7 @@ module "awsfis" {
         }
       ]
       log_configuration = {
-        log_schema_version = 1
+        log_schema_version = 2
         cloudwatch_logs_configuration = {
           log_group_arn = format("%s:*", module.logs["fis"].log_group.arn)
         }
