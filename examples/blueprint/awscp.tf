@@ -32,11 +32,12 @@ module "ci" {
     environment = {
       compute_type    = lookup(each.value, "compute_type", "BUILD_GENERAL1_SMALL")
       type            = lookup(each.value, "type", "LINUX_CONTAINER")
-      image           = lookup(each.value, "image", "aws/codebuild/standard:4.0")
+      image           = lookup(each.value, "image", "aws/codebuild/standard:5.0")
       privileged_mode = true
       environment_variables = {
-        APP_SRC = lookup(each.value, "app_path")
-        ECR_URI = module.ecr[lookup(each.value, "repo")].url
+        AWS_REGION = var.aws_region
+        APP_SRC    = lookup(each.value, "app_path")
+        ECR_URI    = module.ecr[lookup(each.value, "repo")].url
       }
     }
   }
