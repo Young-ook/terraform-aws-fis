@@ -380,7 +380,9 @@ module "awsfis" {
 # Need to update aws-auth configmap with,
 #
 #    - rolearn: arn:aws:iam::{AWS_ACCOUNT_ID}:role/{AWS_IAM_ROLE_FOR_AWS_FIS}
-#      groups:  ["system:masters", "chaos-mesh-manager-role"]
+#      username: fis-experiment
+#
+# for more details, https://docs.aws.amazon.com/fis/latest/userguide/eks-pod-actions.html
 #
 # `eksctl` provides a command to update the aws-auth ConfigMap to bind the Kubernetes RBAC with AWS IAM.
 #
