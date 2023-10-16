@@ -94,7 +94,7 @@ module "awsfis" {
         }
       ]
       log_configuration = {
-        log_schema_version = 1
+        log_schema_version = 2
         cloudwatch_logs_configuration = {
           log_group_arn = format("%s:*", module.logs["fis"].log_group.arn)
         }
@@ -225,7 +225,7 @@ module "awsfis" {
         },
       ]
       log_configuration = {
-        log_schema_version = 1
+        log_schema_version = 2
         cloudwatch_logs_configuration = {
           log_group_arn = format("%s:*", module.logs["fis"].log_group.arn)
         }
@@ -282,7 +282,7 @@ module "awsfis" {
         }
       ]
       log_configuration = {
-        log_schema_version = 1
+        log_schema_version = 2
         cloudwatch_logs_configuration = {
           log_group_arn = format("%s:*", module.logs["fis"].log_group.arn)
         }
@@ -338,7 +338,7 @@ module "awsfis" {
         }
       ]
       log_configuration = {
-        log_schema_version = 1
+        log_schema_version = 2
         cloudwatch_logs_configuration = {
           log_group_arn = format("%s:*", module.logs["fis"].log_group.arn)
         }
@@ -368,7 +368,7 @@ module "awsfis" {
         }
       ]
       log_configuration = {
-        log_schema_version = 1
+        log_schema_version = 2
         cloudwatch_logs_configuration = {
           log_group_arn = format("%s:*", module.logs["fis"].log_group.arn)
         }
