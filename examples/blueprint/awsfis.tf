@@ -146,16 +146,16 @@ module "awsfis" {
           resource_type = "aws:eks:pod"
           parameters = {
             clusterIdentifier = module.eks.cluster.name
-            namespace         = "default"
+            namespace         = "sockshop"
             selectorType      = "labelSelector"
-            selectorValue     = "mylabel=mytarget"
+            selectorValue     = "name=carts-db"
           }
-          selection_mode = "PERCENT(40)"
+          selection_mode = "PERCENT(50)"
         }
         eks-nodes = {
           resource_type  = "aws:eks:nodegroup"
           resource_arns  = [module.eks.cluster.data_plane.managed_node_groups.apps.arn]
-          selection_mode = "ALL"
+          selection_mode = "PERCENT(15)"
         }
       }
       stop_conditions = [
