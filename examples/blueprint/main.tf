@@ -128,7 +128,7 @@ module "helm-addons" {
       repository     = "${path.module}/charts/"
       name           = "aws-fis-controller"
       chart_name     = "aws-fis-controller"
-      namespace      = "default"
+      namespace      = "sockshop"
       serviceaccount = "aws-fis-controller"
     },
     {
