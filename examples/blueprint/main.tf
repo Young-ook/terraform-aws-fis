@@ -166,20 +166,6 @@ provider "kubernetes" {
   cluster_ca_certificate = module.eks.kubeauth.ca
 }
 
-### security/policy
-module "aws-auth" {
-  depends_on = [module.eks]
-  providers  = { kubernetes = kubernetes.aws-auth }
-  source     = "Young-ook/eks/aws//modules/aws-auth"
-  version    = "2.0.2"
-  aws_auth_roles = [
-    {
-      rolearn = module.awsfis.role["fis"].arn
-      groups  = ["system:masters", "chaos-mesh-manager-role"]
-    },
-  ]
-}
-
 ### cache/redis
 resource "aws_security_group" "redis" {
   depends_on = [module.vpc]

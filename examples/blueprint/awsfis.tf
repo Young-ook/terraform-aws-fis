@@ -376,3 +376,30 @@ module "awsfis" {
     },
   ]
 }
+
+# Need to update aws-auth configmap with,
+#
+#    - rolearn: arn:aws:iam::{AWS_ACCOUNT_ID}:role/{AWS_IAM_ROLE_FOR_AWS_FIS}
+#      groups:  ["system:masters", "chaos-mesh-manager-role"]
+#
+# `eksctl` provides a command to update the aws-auth ConfigMap to bind the Kubernetes RBAC with AWS IAM.
+#
+
+resource "local_file" "eksctl" {
+  depends_on = [module.eks, module.helm-addons]
+  content = templatefile(join("/", [path.module, "eksctl-config.tpl"]), {
+    aws_region = var.aws_region
+    eks_name   = module.eks.cluster.name
+    groups     = ["system:masters", "chaos-mesh-manager-role"]
+    arn        = module.awsfis.role["fis"].arn
+  })
+  filename        = join("/", [path.module, "eksctl-config.yaml"])
+  file_permission = "0600"
+}
+
+resource "null_resource" "eksctl" {
+  depends_on = [local_file.eksctl]
+  provisioner "local-exec" {
+    command = "eksctl create iamidentitymapping -f ${path.module}/eksctl-config.yaml"
+  }
+}
