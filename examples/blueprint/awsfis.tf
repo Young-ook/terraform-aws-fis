@@ -387,11 +387,19 @@ module "awsfis" {
 
 resource "local_file" "eksctl" {
   depends_on = [module.eks, module.helm-addons]
-  content = templatefile(join("/", [path.module, "eksctl-config.tpl"]), {
-    aws_region = var.aws_region
-    eks_name   = module.eks.cluster.name
-    groups     = ["system:masters", "chaos-mesh-manager-role"]
-    arn        = module.awsfis.role["fis"].arn
+  content = yamlencode({
+    apiVersion = "eksctl.io/v1alpha5"
+    kind       = "ClusterConfig"
+    metadata = {
+      name   = module.eks.cluster.name
+      region = var.aws_region
+    }
+    iamIdentityMappings = [
+      {
+        arn   = module.awsfis.role["fis"].arn
+        group = ["system:masters", "chaos-mesh-manager-role"]
+      },
+    ]
   })
   filename        = join("/", [path.module, "eksctl-config.yaml"])
   file_permission = "0600"
