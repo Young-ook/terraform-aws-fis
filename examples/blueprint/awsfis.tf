@@ -397,7 +397,7 @@ resource "local_file" "eksctl" {
     iamIdentityMappings = [
       {
         arn   = module.awsfis.role["fis"].arn
-        group = ["system:masters", "chaos-mesh-manager-role"]
+        groups = ["system:masters", "chaos-mesh-manager-role"]
       },
     ]
   })
