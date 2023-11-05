@@ -141,13 +141,6 @@ module "helm-addons" {
         "args[0]" = "--kubelet-preferred-address-types=InternalIP"
       }
     },
-    {
-      repository     = "https://charts.chaos-mesh.org"
-      name           = "chaos-mesh"
-      chart_name     = "chaos-mesh"
-      namespace      = "chaos-mesh"
-      serviceaccount = "chaos-mesh-controller"
-    },
   ]
 }
 
