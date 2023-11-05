@@ -19,6 +19,11 @@ variable "cidr" {
   default     = "10.2.0.0/16"
 }
 
+variable "kubernetes_version" {
+  description = "Kubernetes version"
+  type        = string
+}
+
 ### description
 variable "name" {
   description = "The logical name of the module instance"

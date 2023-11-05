@@ -86,7 +86,7 @@ module "alarm" {
               metric_name = "service_number_of_running_pods"
               namespace   = "ContainerInsights"
               stat        = "Average"
-              period      = 10
+              period      = 30
               dimensions = {
                 Namespace   = "sockshop"
                 Service     = "front-end"

@@ -33,19 +33,19 @@ module "eks" {
   name               = join("-", [var.name, "kubernetes"])
   tags               = var.tags
   subnets            = values(module.vpc.subnets["private"])
-  kubernetes_version = "1.27"
+  kubernetes_version = var.kubernetes_version
   enable_ssm         = true
   managed_node_groups = [
     {
       name          = "apps"
       desired_size  = 3
-      instance_type = "m5.large"
+      instance_type = "m5.2xlarge"
     },
     {
       name          = "spot"
       desired_size  = 3
       capacity_type = "SPOT"
-      instance_type = "m5.large"
+      instance_type = "m5.2xlarge"
       tags          = { "chaos" = "ready" }
     },
   ]
@@ -125,6 +125,13 @@ module "helm-addons" {
       policy_arns = [aws_iam_policy.cas.arn]
     },
     {
+      repository     = "${path.module}/charts/"
+      name           = "aws-fis-controller"
+      chart_name     = "aws-fis-controller"
+      namespace      = "sockshop"
+      serviceaccount = "aws-fis-controller"
+    },
+    {
       repository     = "https://kubernetes-sigs.github.io/metrics-server/"
       name           = "metrics-server"
       chart_name     = "metrics-server"
@@ -133,13 +140,6 @@ module "helm-addons" {
       values = {
         "args[0]" = "--kubelet-preferred-address-types=InternalIP"
       }
-    },
-    {
-      repository     = "https://charts.chaos-mesh.org"
-      name           = "chaos-mesh"
-      chart_name     = "chaos-mesh"
-      namespace      = "chaos-mesh"
-      serviceaccount = "chaos-mesh-controller"
     },
   ]
 }
