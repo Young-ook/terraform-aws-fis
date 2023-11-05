@@ -39,13 +39,13 @@ module "eks" {
     {
       name          = "apps"
       desired_size  = 3
-      instance_type = "m5.large"
+      instance_type = "m5.2xlarge"
     },
     {
       name          = "spot"
       desired_size  = 3
       capacity_type = "SPOT"
-      instance_type = "m5.large"
+      instance_type = "m5.2xlarge"
       tags          = { "chaos" = "ready" }
     },
   ]
