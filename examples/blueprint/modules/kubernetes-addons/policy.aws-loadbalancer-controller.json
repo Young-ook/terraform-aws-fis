@@ -26,8 +26,7 @@
                 "elasticloadbalancing:DescribeTargetGroups",
                 "elasticloadbalancing:DescribeTargetGroupAttributes",
                 "elasticloadbalancing:DescribeTargetHealth",
-                "elasticloadbalancing:DescribeTags",
-                "elasticloadbalancing:AddTags"
+                "elasticloadbalancing:DescribeTags"
             ],
             "Resource": "*"
         },

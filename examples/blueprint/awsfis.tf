@@ -140,7 +140,7 @@ module "awsfis" {
             instanceTerminationPercentage = "20"
           }
           start_after = ["eks-pod-kill"]
-          targets = { Nodegroups = "eks-nodes" }
+          targets     = { Nodegroups = "eks-nodes" }
         }
       }
       targets = {
@@ -390,7 +390,7 @@ module "awsfis" {
 #
 
 resource "local_file" "eksctl" {
-  depends_on = [module.eks, module.helm-addons]
+  depends_on = [module.eks, module.kubernetes-addons]
   content = yamlencode({
     apiVersion = "eksctl.io/v1alpha5"
     kind       = "ClusterConfig"
