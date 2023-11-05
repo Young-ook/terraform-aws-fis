@@ -121,6 +121,7 @@ module "awsfis" {
             gracePeriodSeconds       = "0"
             kubernetesServiceAccount = "aws-fis-controller"
           }
+          start_after = ["eks-pod-cpu", "eks-pod-mem"]
           targets : { Pods = "eks-pods" }
         }
         eks-pod-mem = {
@@ -138,6 +139,7 @@ module "awsfis" {
           parameters = {
             instanceTerminationPercentage = "20"
           }
+          start_after = ["eks-pod-kill"]
           targets = { Nodegroups = "eks-nodes" }
         }
       }
@@ -155,7 +157,7 @@ module "awsfis" {
         eks-nodes = {
           resource_type  = "aws:eks:nodegroup"
           resource_arns  = [module.eks.cluster.data_plane.managed_node_groups.apps.arn]
-          selection_mode = "PERCENT(15)"
+          selection_mode = "ALL"
         }
       }
       stop_conditions = [
