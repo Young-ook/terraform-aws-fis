@@ -11,11 +11,11 @@ resource "aws_iam_policy" "lbc" {
   policy      = file("${path.module}/policy.aws-loadbalancer-controller.json")
 }
 
-resource "aws_iam_policy" "cas" {
-  name        = "cluster-autoscaler"
+resource "aws_iam_policy" "kpt" {
+  name        = "karpenter"
   tags        = merge({ "terraform.io" = "managed" }, var.tags)
-  description = format("Allow cluster-autoscaler to manage AWS resources")
-  policy      = file("${path.module}/policy.cluster-autoscaler.json")
+  description = format("Allow karpenter to manage AWS resources")
+  policy      = file("${path.module}/policy.karpenter.json")
 }
 
 ### helm-addons
@@ -70,17 +70,21 @@ module "ctl" {
       policy_arns = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
     },
     {
-      repository     = "${path.module}/charts/"
-      name           = "cluster-autoscaler"
-      chart_name     = "cluster-autoscaler"
-      namespace      = "kube-system"
-      serviceaccount = "cluster-autoscaler"
+      ### If you are getting a 403 forbidden error, try 'docker logout public.ecr.aws'
+      ### https://karpenter.sh/preview/troubleshooting/#helm-error-when-pulling-the-chart
+      repository     = null
+      name           = "karpenter"
+      chart_name     = "oci://public.ecr.aws/karpenter/karpenter"
+      chart_version  = "v0.27.1"
+      namespace      = "karpenter"
+      serviceaccount = "karpenter"
       values = {
-        "awsRegion"                 = module.aws.region.id
-        "autoDiscovery.clusterName" = var.eks.cluster.name
+        "settings.aws.clusterName"            = var.eks.cluster.name
+        "settings.aws.clusterEndpoint"        = var.eks.cluster.control_plane.endpoint
+        "settings.aws.defaultInstanceProfile" = var.eks.instance_profile.node_groups == null ? var.eks.instance_profile.managed_node_groups.arn : var.eks.instance_profile.node_groups.arn
       }
       oidc        = var.eks.oidc
-      policy_arns = [aws_iam_policy.cas.arn]
+      policy_arns = [aws_iam_policy.kpt.arn]
     },
     {
       repository     = "${path.module}/charts/"
