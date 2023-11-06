@@ -105,3 +105,17 @@ module "ctl" {
     },
   ]
 }
+
+module "app" {
+  source  = "Young-ook/eks/aws//modules/helm-addons"
+  version = "2.0.6"
+  tags    = var.tags
+  addons = [
+    {
+      repository     = "${path.module}/charts/"
+      name           = "sockshop"
+      chart_name     = "sockshop"
+      namespace      = "sockshop"
+    },
+  ]
+}
