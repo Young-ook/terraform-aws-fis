@@ -157,7 +157,7 @@ module "awsfis" {
         eks-nodes = {
           resource_type  = "aws:eks:nodegroup"
           resource_arns  = [module.eks.cluster.data_plane.managed_node_groups.apps.arn]
-          selection_mode = "ALL"
+          selection_mode = "COUNT(1)"
         }
       }
       stop_conditions = [
