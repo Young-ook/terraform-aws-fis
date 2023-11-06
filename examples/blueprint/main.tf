@@ -38,14 +38,15 @@ module "eks" {
   managed_node_groups = [
     {
       name          = "apps"
-      desired_size  = 3
-      instance_type = "m5.2xlarge"
+      desired_size  = 8
+      max_size      = 9
+      instance_type = "m5.xlarge"
     },
     {
       name          = "spot"
-      desired_size  = 3
+      desired_size  = 2
       capacity_type = "SPOT"
-      instance_type = "m5.2xlarge"
+      instance_type = "m5.xlarge"
       tags          = { "chaos" = "ready" }
     },
   ]
