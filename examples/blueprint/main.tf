@@ -38,14 +38,15 @@ module "eks" {
   managed_node_groups = [
     {
       name          = "apps"
-      desired_size  = 3
-      instance_type = "m5.2xlarge"
+      desired_size  = 8
+      max_size      = 9
+      instance_type = "m5.xlarge"
     },
     {
       name          = "spot"
-      desired_size  = 3
+      desired_size  = 2
       capacity_type = "SPOT"
-      instance_type = "m5.2xlarge"
+      instance_type = "m5.xlarge"
       tags          = { "chaos" = "ready" }
     },
   ]
@@ -59,111 +60,13 @@ provider "helm" {
   }
 }
 
-### helm-addons
-module "helm-addons" {
+### kubernetes-addons
+module "kubernetes-addons" {
   depends_on = [module.eks]
-  source     = "Young-ook/eks/aws//modules/helm-addons"
-  version    = "2.0.6"
+  source     = "./modules/kubernetes-addons"
+  eks        = module.eks
+  vpc        = module.vpc
   tags       = var.tags
-  addons = [
-    {
-      ### You can disable the mutator webhook feature by setting the helm chart value enableServiceMutatorWebhook to false.
-      ### https://github.com/kubernetes-sigs/aws-load-balancer-controller/releases/tag/v2.5.1
-      repository     = "https://aws.github.io/eks-charts"
-      name           = "aws-load-balancer-controller"
-      chart_name     = "aws-load-balancer-controller"
-      chart_version  = "1.5.2"
-      namespace      = "kube-system"
-      serviceaccount = "aws-load-balancer-controller"
-      values = {
-        "clusterName"                 = module.eks.cluster.name
-        "enableServiceMutatorWebhook" = "false"
-      }
-      oidc        = module.eks.oidc
-      policy_arns = [aws_iam_policy.lbc.arn]
-    },
-    {
-      repository     = "https://aws.github.io/eks-charts"
-      name           = "aws-cloudwatch-metrics"
-      chart_name     = "aws-cloudwatch-metrics"
-      namespace      = "kube-system"
-      serviceaccount = "aws-cloudwatch-metrics"
-      values = {
-        "clusterName" = module.eks.cluster.name
-      }
-      oidc        = module.eks.oidc
-      policy_arns = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-    },
-    {
-      repository     = "https://aws.github.io/eks-charts"
-      name           = "aws-for-fluent-bit"
-      chart_name     = "aws-for-fluent-bit"
-      namespace      = "kube-system"
-      serviceaccount = "aws-for-fluent-bit"
-      values = {
-        "cloudWatch.enabled"      = true
-        "cloudWatch.region"       = var.aws_region
-        "cloudWatch.logGroupName" = format("/aws/containerinsights/%s/application", module.eks.cluster.name)
-        "firehose.enabled"        = false
-        "kinesis.enabled"         = false
-        "elasticsearch.enabled"   = false
-      }
-      oidc        = module.eks.oidc
-      policy_arns = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-    },
-    {
-      repository     = "${path.module}/charts/"
-      name           = "cluster-autoscaler"
-      chart_name     = "cluster-autoscaler"
-      namespace      = "kube-system"
-      serviceaccount = "cluster-autoscaler"
-      values = {
-        "awsRegion"                 = var.aws_region
-        "autoDiscovery.clusterName" = module.eks.cluster.name
-      }
-      oidc        = module.eks.oidc
-      policy_arns = [aws_iam_policy.cas.arn]
-    },
-    {
-      repository     = "${path.module}/charts/"
-      name           = "aws-fis-controller"
-      chart_name     = "aws-fis-controller"
-      namespace      = "sockshop"
-      serviceaccount = "aws-fis-controller"
-    },
-    {
-      repository     = "https://kubernetes-sigs.github.io/metrics-server/"
-      name           = "metrics-server"
-      chart_name     = "metrics-server"
-      namespace      = "kube-system"
-      serviceaccount = "metrics-server"
-      values = {
-        "args[0]" = "--kubelet-preferred-address-types=InternalIP"
-      }
-    },
-  ]
-}
-
-### security/policy
-resource "aws_iam_policy" "cas" {
-  name        = "cluster-autoscaler"
-  tags        = merge({ "terraform.io" = "managed" }, var.tags)
-  description = format("Allow cluster-autoscaler to manage AWS resources")
-  policy      = file("${path.module}/policy.cluster-autoscaler.json")
-}
-
-resource "aws_iam_policy" "lbc" {
-  name        = "aws-loadbalancer-controller"
-  tags        = merge({ "terraform.io" = "managed" }, var.tags)
-  description = format("Allow aws-load-balancer-controller to manage AWS resources")
-  policy      = file("${path.module}/policy.aws-loadbalancer-controller.json")
-}
-
-provider "kubernetes" {
-  alias                  = "aws-auth"
-  host                   = module.eks.kubeauth.host
-  token                  = module.eks.kubeauth.token
-  cluster_ca_certificate = module.eks.kubeauth.ca
 }
 
 ### cache/redis

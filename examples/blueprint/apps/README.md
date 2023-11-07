@@ -336,12 +336,8 @@ kubectl delete -f apps/redispy/redispy.yaml
 ```
 
 ## SockShop
-For this lab, we picked up the sockshop application. This is a microservices architecture sample application that Weaveworks initially developed. They made it open source so it can be used by other organizations for learning and demonstration purposes.
+For this lab, we picked up the sockshop application. This is a microservices architecture sample application that Weaveworks initially developed. They made it open source so it can be used by other organizations for learning and demonstration purposes. This blueprint deploys your sockshop application to your EKS cluster using the local helm chart.
 
-Create the namespace and deploy application.
-```
-kubectl apply -f apps/sockshop-demo-ha.yaml
-```
 Verify that the pod came up fine (ensure nothing else is running on port 8079):
 ```
 kubectl -n sockshop get pod -l name=front-end
@@ -368,10 +364,9 @@ Run load generator inside kubernetes
 kubectl apply -f apps/sockshop/sockshop-loadtest.yaml
 ```
 
-### Delete the application
-Delete all kubernetes resources.
+### Stop and delete the load generator
+Delete the load generator resources.
 ```
-kubectl delete -f apps/sockshop/sockshop-demo-ha.yaml
 kubectl delete -f apps/sockshop/sockshop-loadtest.yaml
 ```
 

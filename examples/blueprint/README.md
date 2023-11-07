@@ -98,7 +98,7 @@ mapRoles:
 ## Expreiments
 ### Elastic Kubernetes Service (EKS)
 #### Microservices Architecture Application
-For this lab, we picked up the [SockShop](./apps/README.md#sockshop) application. This is a sample application that Weaveworks initially developed for learning and demonstration purposes. Follow the instructions to install sockshop microservices architecture application on your EKS cluster before you move to the next stage.
+For this lab, we picked up the [SockShop](./apps/README.md#sockshop) application. This is a sample application that Weaveworks initially developed for learning and demonstration purposes. Make sure that your sockshop microservices architecture application is running on your EKS cluster before you move to the next stage.
 
 #### Terminate EKS Nodes
 AWS FIS allows you to test resiliency of EKS cluster node groups. See what happens if you shut down some ec2 nodes for kubernetes pods or services within a certain percentage. This test verifies that the EKS managed node group launches new instances to meet the defined desired capacity and ensures that the application containers continues to run well. Also, this test will help you understand what happens to your application when you upgrade your cluster. At this time, in order to satisfy both resiliency and ease of cluster upgrade, the container should be designed so that it can be moved easily. This makes it easy to move containers running on the failed node to another node to continue working. This is an important part of a cloud-native architecture.
