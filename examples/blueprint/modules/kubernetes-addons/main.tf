@@ -41,35 +41,6 @@ module "ctl" {
       policy_arns = [aws_iam_policy.lbc.arn]
     },
     {
-      repository     = "https://aws.github.io/eks-charts"
-      name           = "aws-cloudwatch-metrics"
-      chart_name     = "aws-cloudwatch-metrics"
-      namespace      = "kube-system"
-      serviceaccount = "aws-cloudwatch-metrics"
-      values = {
-        "clusterName" = var.eks.cluster.name
-      }
-      oidc        = var.eks.oidc
-      policy_arns = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-    },
-    {
-      repository     = "https://aws.github.io/eks-charts"
-      name           = "aws-for-fluent-bit"
-      chart_name     = "aws-for-fluent-bit"
-      namespace      = "kube-system"
-      serviceaccount = "aws-for-fluent-bit"
-      values = {
-        "cloudWatch.enabled"      = true
-        "cloudWatch.region"       = module.aws.region.id
-        "cloudWatch.logGroupName" = format("/aws/containerinsights/%s/application", var.eks.cluster.name)
-        "firehose.enabled"        = false
-        "kinesis.enabled"         = false
-        "elasticsearch.enabled"   = false
-      }
-      oidc        = var.eks.oidc
-      policy_arns = ["arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"]
-    },
-    {
       ### If you are getting a 403 forbidden error, try 'docker logout public.ecr.aws'
       ### https://karpenter.sh/preview/troubleshooting/#helm-error-when-pulling-the-chart
       repository     = null
@@ -106,16 +77,38 @@ module "ctl" {
   ]
 }
 
-module "app" {
-  source  = "Young-ook/eks/aws//modules/helm-addons"
-  version = "2.0.6"
-  tags    = var.tags
+### eks-addons
+module "eks-addons" {
+  depends_on = [module.ctl]
+  source     = "Young-ook/eks/aws//modules/eks-addons"
+  version    = "2.0.6"
+  tags       = var.tags
   addons = [
     {
-      repository     = "${path.module}/charts/"
-      name           = "sockshop"
-      chart_name     = "sockshop"
-      namespace      = "sockshop"
+      name           = "amazon-cloudwatch-observability"
+      namespace      = "amazon-cloudwatch"
+      serviceaccount = "cloudwatch-agent"
+      eks_name       = var.eks.cluster.name
+      oidc           = var.eks.oidc
+      policy_arns = [
+        format("arn:%s:iam::aws:policy/AWSXrayWriteOnlyAccess", module.aws.partition.partition),
+        format("arn:%s:iam::aws:policy/CloudWatchAgentServerPolicy", module.aws.partition.partition),
+      ]
+    },
+  ]
+}
+
+module "app" {
+  depends_on = [module.eks-addons]
+  source     = "Young-ook/eks/aws//modules/helm-addons"
+  version    = "2.0.6"
+  tags       = var.tags
+  addons = [
+    {
+      repository = "${path.module}/charts/"
+      name       = "sockshop"
+      chart_name = "sockshop"
+      namespace  = "sockshop"
     },
   ]
 }
