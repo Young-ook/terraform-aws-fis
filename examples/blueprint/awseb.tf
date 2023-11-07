@@ -10,7 +10,7 @@ data "archive_file" "lambda_zip_file" {
 module "cron" {
   depends_on = [data.archive_file.lambda_zip_file]
   source     = "Young-ook/eventbridge/aws//modules/aws-events"
-  version    = "0.0.9"
+  version    = "0.0.14"
   name       = join("-", [var.name, "cron"])
   tags       = var.tags
   rules = [
