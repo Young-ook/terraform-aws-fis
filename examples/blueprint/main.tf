@@ -671,7 +671,7 @@ resource "aws_elasticache_replication_group" "redis" {
   depends_on                 = [module.vpc]
   replication_group_id       = join("-", [var.name, "redis"])
   description                = "Cluster mode enabled ElastiCache for Redis"
-  tags                       = merge(var.tags, local.default-tags)
+  tags                       = merge(local.default-tags, var.tags)
   engine                     = "redis"
   engine_version             = "6.x"
   port                       = "6379"
