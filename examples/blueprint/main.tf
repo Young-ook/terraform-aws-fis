@@ -70,11 +70,11 @@ module "awsfis" {
       targets = {
         var.azs[module.random-az.index] = {
           resource_type = "aws:ec2:subnet"
+          selection_mode = "ALL"
           parameters = {
             availabilityZoneIdentifier = module.random-az.item
             vpc                        = module.vpc.vpc.id
           }
-          selection_mode = "ALL"
         }
         ec2-instances = {
           resource_type  = "aws:ec2:instance"
@@ -571,13 +571,6 @@ module "logs" {
         retension_days = 3
       }
     },
-    {
-      type = "redis"
-      log_group = {
-        namespace      = "/aws/elasticache"
-        retension_days = 3
-      }
-    },
   ] : l.type => l }
   name      = join("-", [var.name, each.key])
   log_group = each.value.log_group
@@ -641,55 +634,16 @@ module "kubernetes-addons" {
 }
 
 ### cache/redis
-resource "aws_security_group" "redis" {
+module "redis" {
   depends_on = [module.vpc]
+  source     = "Young-ook/aurora/aws//modules/redis"
+  version    = "2.2.1"
   name       = join("-", [var.name, "redis"])
-  tags       = merge(var.tags, local.default-tags)
-  vpc_id     = module.vpc.vpc.id
-
-  ingress {
-    from_port   = "6379"
-    to_port     = "6379"
-    protocol    = "tcp"
-    cidr_blocks = [module.vpc.vpc.cidr_block]
-  }
-}
-
-resource "random_password" "redis" {
-  length           = 16
-  special          = true
-  override_special = "!&#$^<>-"
-}
-
-resource "aws_elasticache_subnet_group" "redis" {
-  depends_on = [module.vpc]
-  name       = join("-", [var.name, "redis"])
-  subnet_ids = values(module.vpc.subnets["private"])
-}
-
-resource "aws_elasticache_replication_group" "redis" {
-  depends_on                 = [module.vpc]
-  replication_group_id       = join("-", [var.name, "redis"])
-  description                = "Cluster mode enabled ElastiCache for Redis"
-  tags                       = merge(local.default-tags, var.tags)
-  engine                     = "redis"
-  engine_version             = "6.x"
-  port                       = "6379"
-  node_type                  = "cache.t2.micro"
-  security_group_ids         = [aws_security_group.redis.id]
-  subnet_group_name          = aws_elasticache_subnet_group.redis.name
-  parameter_group_name       = "default.redis6.x.cluster.on"
-  num_node_groups            = 3
-  replicas_per_node_group    = 2
-  automatic_failover_enabled = true
-  multi_az_enabled           = true
-  transit_encryption_enabled = true
-  auth_token                 = random_password.redis.result
-  log_delivery_configuration {
-    destination      = module.logs["redis"].log_group.name
-    destination_type = "cloudwatch-logs"
-    log_format       = "text"
-    log_type         = "slow-log"
+  tags       = merge(local.default-tags, var.tags)
+  vpc        = module.vpc.vpc.id
+  subnets    = values(module.vpc.subnets["private"])
+  cluster = {
+    instance_type = "cache.m6g.large"
   }
 }
 

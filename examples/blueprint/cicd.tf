@@ -81,8 +81,8 @@ resource "local_file" "redispy" {
   content = templatefile(join("/", [path.module, "apps", "redispy", "redispy.yaml.tpl"]),
     {
       ecr_url        = module.ecr["redispy"].url
-      redis_endpoint = aws_elasticache_replication_group.redis.configuration_endpoint_address
-      redis_password = random_password.redis.result
+      redis_endpoint = module.redis.endpoint
+      redis_password = module.redis.user.password
     }
   )
   filename        = join("/", [path.module, "apps", "redispy", "redispy.yaml"])
