@@ -63,7 +63,7 @@ module "awsfis" {
           action_id   = "aws:elasticache:interrupt-cluster-az-power"
           targets     = { ReplicationGroups = "elasticache-cluster" }
           parameters = {
-            duration = "PT30M"
+            duration = "PT5M"
           }
         }
       }
@@ -107,7 +107,7 @@ module "awsfis" {
           resource_tags  = { example = "fis_blueprint" }
           selection_mode = "ALL"
           parameters = {
-            availabilityZzoneIdentifier = module.random-az.item
+            availabilityZoneIdentifier = module.random-az.item
           }
         }
       }
