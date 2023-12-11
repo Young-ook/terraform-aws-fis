@@ -58,6 +58,14 @@ module "awsfis" {
           action_id   = "aws:rds:failover-db-cluster"
           targets     = { Clusters = "rds-cluster" }
         }
+        pause-elasticache = {
+          description = "Pause ElasticCache cluster"
+          action_id   = "aws:elasticache:interrupt-cluster-az-power"
+          targets     = { ReplicationGroups = "elasticache-cluster" }
+          parameters = {
+            duration = "PT5M"
+          }
+        }
       }
       targets = {
         var.azs[module.random-az.index] = {
@@ -93,6 +101,14 @@ module "awsfis" {
               values = [module.random-az.item]
             },
           ],
+        }
+        elasticache-cluster = {
+          resource_type  = "aws:elasticache:redis-replicationgroup"
+          resource_tags  = { example = "fis_blueprint" }
+          selection_mode = "ALL"
+          parameters = {
+            availabilityZoneIdentifier = module.random-az.item
+          }
         }
       }
       stop_conditions = [
@@ -655,7 +671,7 @@ resource "aws_elasticache_replication_group" "redis" {
   depends_on                 = [module.vpc]
   replication_group_id       = join("-", [var.name, "redis"])
   description                = "Cluster mode enabled ElastiCache for Redis"
-  tags                       = merge(var.tags, local.default-tags)
+  tags                       = merge(local.default-tags, var.tags)
   engine                     = "redis"
   engine_version             = "6.x"
   port                       = "6379"
