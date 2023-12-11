@@ -58,6 +58,14 @@ module "awsfis" {
           action_id   = "aws:rds:failover-db-cluster"
           targets     = { Clusters = "rds-cluster" }
         }
+        pause-elasticache = {
+          description = "Pause ElasticCache cluster"
+          action_id   = "aws:elasticache:interrupt-cluster-az-power"
+          targets     = { ReplicationGroups = "elasticache-cluster" }
+          parameters = {
+            duration = "PT30M"
+          }
+        }
       }
       targets = {
         var.azs[module.random-az.index] = {
@@ -93,6 +101,14 @@ module "awsfis" {
               values = [module.random-az.item]
             },
           ],
+        }
+        elasticache-cluster = {
+          resource_type  = "aws:elasticache:redis-replicationgroup"
+          resource_tags  = { example = "fis_blueprint" }
+          selection_mode = "ALL"
+          parameters = {
+            availabilityZzoneIdentifier = module.random-az.item
+          }
         }
       }
       stop_conditions = [
