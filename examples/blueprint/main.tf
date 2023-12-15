@@ -1,3 +1,5 @@
+### FIS Blueprint
+
 terraform {
   required_version = "~> 1.0"
   required_providers {
@@ -69,7 +71,7 @@ module "awsfis" {
       }
       targets = {
         var.azs[module.random-az.index] = {
-          resource_type = "aws:ec2:subnet"
+          resource_type  = "aws:ec2:subnet"
           selection_mode = "ALL"
           parameters = {
             availabilityZoneIdentifier = module.random-az.item
@@ -593,7 +595,7 @@ module "vpc" {
 ### application/kubernetes
 module "eks" {
   source             = "Young-ook/eks/aws"
-  version            = "2.0.0"
+  version            = "2.0.10"
   name               = join("-", [var.name, "kubernetes"])
   tags               = var.tags
   subnets            = values(module.vpc.subnets["private"])
