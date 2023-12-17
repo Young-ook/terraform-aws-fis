@@ -21,7 +21,7 @@ resource "aws_iam_policy" "kpt" {
 ### helm-addons
 module "ctl" {
   source  = "Young-ook/eks/aws//modules/helm-addons"
-  version = "2.0.6"
+  version = "2.0.10"
   tags    = var.tags
   addons = [
     {
@@ -81,7 +81,7 @@ module "ctl" {
 module "eks-addons" {
   depends_on = [module.ctl]
   source     = "Young-ook/eks/aws//modules/eks-addons"
-  version    = "2.0.6"
+  version    = "2.0.10"
   tags       = var.tags
   addons = [
     {
@@ -101,7 +101,7 @@ module "eks-addons" {
 module "app" {
   depends_on = [module.eks-addons]
   source     = "Young-ook/eks/aws//modules/helm-addons"
-  version    = "2.0.6"
+  version    = "2.0.10"
   tags       = var.tags
   addons = [
     {
