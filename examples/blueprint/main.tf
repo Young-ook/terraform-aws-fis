@@ -81,7 +81,7 @@ module "awsfis" {
         ec2-instances = {
           resource_type  = "aws:ec2:instance"
           resource_tags  = { example = "fis_blueprint" }
-          selection_mode = "ALL"
+          selection_mode = "COUNT(5)"
           filters = [
             {
               path   = "Placement.AvailabilityZone"
@@ -97,12 +97,6 @@ module "awsfis" {
           resource_type  = "aws:rds:cluster"
           resource_tags  = { example = "fis_blueprint" }
           selection_mode = "ALL"
-          filters = [
-            {
-              path   = "Placement.AvailabilityZone"
-              values = [module.random-az.item]
-            },
-          ],
         }
         elasticache-cluster = {
           resource_type  = "aws:elasticache:redis-replicationgroup"
