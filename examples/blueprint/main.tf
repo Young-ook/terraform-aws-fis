@@ -45,16 +45,18 @@ module "awsfis" {
             scope    = "availability-zone"
           }
         }
-        ec2-blackhole = {
-          description = "Drop all network packets from and to EC2 instances"
-          action_id   = "aws:ssm:send-command"
-          targets     = { Instances = "ec2-instances" }
-          parameters = {
-            duration           = "PT5M"
-            documentArn        = data.aws_ssm_document.network-blackhole.arn
-            documentParameters = "{\"DurationSeconds\":\"300\",\"LossPercent\":\"100\",\"InstallDependencies\":\"True\"}"
-          }
-        }
+        ### temporarily deactivated because of awsfis-ssm bug
+        ### failed experiment with this mesage: Specified document is invalid or does not exist.
+        #ec2-blackhole = {
+        #  description = "Drop all network packets from and to EC2 instances"
+        #  action_id   = "aws:ssm:send-command"
+        #  targets     = { Instances = "ec2-instances" }
+        #  parameters = {
+        #    duration           = "PT5M"
+        #    documentArn        = data.aws_ssm_document.network-blackhole.arn
+        #    documentParameters = "{\"DurationSeconds\":\"300\",\"LossPercent\":\"100\",\"InstallDependencies\":\"True\"}"
+        #  }
+        #}
         failover-rds = {
           description = "Failover Aurora cluster"
           action_id   = "aws:rds:failover-db-cluster"
@@ -78,21 +80,22 @@ module "awsfis" {
             vpc                        = module.vpc.vpc.id
           }
         }
-        ec2-instances = {
-          resource_type  = "aws:ec2:instance"
-          resource_tags  = { example = "fis_blueprint" }
-          selection_mode = "COUNT(5)"
-          filters = [
-            {
-              path   = "Placement.AvailabilityZone"
-              values = [module.random-az.item]
-            },
-            {
-              path   = "State.Name"
-              values = ["running"]
-            }
-          ],
-        }
+        ### temporarily deactivated because of awsfis-ssm bug
+        #ec2-instances = {
+        #  resource_type  = "aws:ec2:instance"
+        #  resource_tags  = { example = "fis_blueprint" }
+        #  selection_mode = "COUNT(5)"
+        #  filters = [
+        #    {
+        #      path   = "Placement.AvailabilityZone"
+        #      values = [module.random-az.item]
+        #    },
+        #    {
+        #      path   = "State.Name"
+        #      values = ["running"]
+        #    }
+        #  ],
+        #}
         rds-cluster = {
           resource_type  = "aws:rds:cluster"
           resource_tags  = { example = "fis_blueprint" }
