@@ -14,15 +14,68 @@ provider "aws" {
   region = var.aws_region
 }
 
-module "random-az" {
-  source = "../../modules/roulette"
-  items  = var.azs
+### dashboard
+### https://docs.aws.amazon.com/resilience-hub/latest/APIReference/API_AddDraftAppVersionResourceMappings.html
+### https://docs.aws.amazon.com/resilience-hub/latest/APIReference/API_PutDraftAppVersionTemplate.html
+locals {
+  state_file_mapping = [
+    {
+      ### Available values for mapping type:
+      ### CfnStack | Resource | AppRegistryApp | ResourceGroup | Terraform | EKS
+      mapping_type          = "Terraform"
+      terraform_source_name = "TerraformStateFile"
+      physical_resource_id = {
+        identifier = "s3://tfstate"
+        type       = "Native"
+      }
+    }
+  ]
+  eks_mapping = [
+    {
+      mapping_type    = "EKS"
+      eks_source_name = format("%s/%s", module.eks.cluster.name, "default")
+      physical_resource_id = {
+        identifier = format("%s/%s", module.eks.cluster.control_plane.arn, "default")
+        type       = "Arn"
+      }
+    }
+  ]
+  eks_app_components = {
+    appComponents = [{
+      name          = module.eks.cluster.name
+      type          = "AWS::ResilienceHub::ComputeAppComponent"
+      resourceNames = [module.eks.cluster.name]
+    }]
+    resources = [{
+      name = module.eks.cluster.name
+      type = "AWS::EKS::Deployment"
+      logicalResourceId = {
+        identifier    = module.eks.cluster.name
+        eksSourceName = format("%s/%s", module.eks.cluster.name, "default")
+      }
+    }]
+    excludedResources = {}
+    version           = 2
+  }
+}
+
+module "arh" {
+  source = "../../modules/arh"
+  application = {
+    components        = local.eks_app_components
+    resource_mappings = local.eks_mapping
+  }
 }
 
 ### experiments
 data "aws_ssm_document" "network-blackhole" {
   name            = "AWSFIS-Run-Network-Packet-Loss"
   document_format = "YAML"
+}
+
+module "random-az" {
+  source = "../../modules/roulette"
+  items  = var.azs
 }
 
 module "awsfis" {
@@ -432,6 +485,11 @@ resource "local_file" "eksctl" {
       {
         arn             = module.awsfis.role["fis"].arn
         username        = "fis-experiment"
+        noDuplicateARNs = true
+      },
+      {
+        arn             = module.arh.role.arn
+        groups          = ["arh-manager-group"]
         noDuplicateARNs = true
       },
     ]
