@@ -1,17 +1,6 @@
 ### fault injection simulator experiment templates
 
-module "aws" {
-  source = "Young-ook/spinnaker/aws//modules/aws-partitions"
-}
-
-locals {
-  aws = {
-    dns       = module.aws.partition.dns_suffix
-    partition = module.aws.partition.partition
-    region    = module.aws.region.name
-  }
-}
-
+### security/policy
 resource "aws_iam_role" "fis-run" {
   name = join("-", [local.name, "fis-run"])
   tags = merge(local.default-tags, var.tags)

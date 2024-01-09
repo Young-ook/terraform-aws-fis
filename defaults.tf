@@ -1,4 +1,4 @@
-### default variables
+### default values
 
 ### aws partitions
 module "aws" {
@@ -13,15 +13,4 @@ locals {
   }
 }
 
-locals {
-  default_app = {
-    name      = "appcommon"
-    type      = "AWS::ResilienceHub::AppCommonAppComponent"
-    resources = []
-  }
-  default_policy = {
-    tier = "MissionCritical"
-    rto  = 600
-    rpo  = 600
-  }
-}
+locals {}
