@@ -87,6 +87,8 @@ module.awsfis.null_resource.awsfis-init (local-exec): Unknown parameter in input
 - [Disaster Recovery of Workloads on AWS: Recovery in the Cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html)
 - [Disaster Recovery of On-Premises Applications to AWS](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-of-on-premises-applications-to-aws/abstract-and-introduction.html)
 - [Operational Readiness Reviews (ORR)](https://docs.aws.amazon.com/wellarchitected/latest/operational-readiness-reviews/wa-operational-readiness-reviews.html)
+- [Resilient Applications on AWS for Financial Services](https://d1.awsstatic.com/Financial%20Services/Resilient%20Applications%20on%20AWS%20for%20Financial%20Services.pdf)
+- [Financial Services Industry Lens - AWS Well-Architected Framework](https://docs.aws.amazon.com/wellarchitected/latest/financial-services-industry-lens/welcome.html)
 
 ## Chaos Engineering
 - [Chaos Engineering (카오스 엔지니어링)](https://youngookkim.tistory.com/48)
