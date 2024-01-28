@@ -390,9 +390,22 @@ terraform destroy -var-file fixture.tc1.tfvars
 - [AWS Lambda: Resilience under the hood](https://aws.amazon.com/blogs/compute/aws-lambda-resilience-under-the-hood/)
 - [Use AWS Fault Injection Service to demonstrate multi-region and multi-AZ application resilience](https://aws.amazon.com/blogs/aws/use-aws-fault-injection-service-to-demonstrate-multi-region-and-multi-az-application-resilience/)
 
-## Chaos Mesh
+## Chaos Engineering
+### Chaos Mesh
 - [Simulate Kubernetes Resource Stress Test](https://chaos-mesh.org/docs/simulate-heavy-stress-on-kubernetes/) 
 - [Simulate AWS Faults](https://chaos-mesh.org/docs/simulate-aws-chaos/)
+
+### Chaos Lambda
+- [Chaos Lambda](https://github.com/artilleryio/chaos-lambda): Serverless implementation of Netflix's [Chaos Monkey](https://github.com/Netflix/SimianArmy/wiki/Chaos-Monkey)
+
+## Performance Engineering
+- [Packets-per-second limits in EC2](https://stressgrid.com/blog/pps_limits_in_ec2/)
+- [EC2 Packets per Second: Guaranteed Throughput vs Best Effort](https://www.bluematador.com/blog/ec2-packets-per-second-guaranteed-throughput-vs-best-effort)
+- [Amazon EC2 instance network bandwidth](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-network-bandwidth.html)
+- [Monitor network performance for your EC2 instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-network-performance-ena.html)
+
+## Security Engineering
+- [Penetration Testing](https://aws.amazon.com/security/penetration-testing/)
 
 ## Terraform Modules
 - [Terraform module: Amazon Aurora](https://github.com/Young-ook/terraform-aws-aurora)
