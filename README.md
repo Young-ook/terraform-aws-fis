@@ -87,8 +87,6 @@ module.awsfis.null_resource.awsfis-init (local-exec): Unknown parameter in input
 
 ## Disaster Recovery (DR)
 - [Disaster Recovery of Workloads on AWS](https://youtu.be/cJZw5mrxryA)
-- [Disaster Recovery of Workloads on AWS: Recovery in the Cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html)
-- [Disaster Recovery of On-Premises Application to AWS](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-of-on-premises-applications-to-aws/abstract-and-introduction.html)
 - [RPO and RTO: Understanding the Differences](https://www.enterprisestorageforum.com/management/rpo-and-rto-understanding-the-differences/)
 
 ## Distributed System
@@ -101,10 +99,12 @@ module.awsfis.null_resource.awsfis-init (local-exec): Unknown parameter in input
 - [Azure Well-Architected](https://learn.microsoft.com/en-us/azure/well-architected/)
 - [AWS Well-Architected](https://aws.amazon.com/architecture/well-architected/)
 - [AWS Well-Architected Lab](https://wellarchitectedlabs.com/)
-
-## Whitepapers
 - [AWS Well-Architected Framework - Reliability](https://docs.aws.amazon.com/wellarchitected/latest/reliability-pillar/welcome.html)
 - [AWS Well-Architected Framework - Operational Excellence](https://docs.aws.amazon.com/wellarchitected/latest/operational-excellence-pillar/welcome.html)
+- [Ensuring rollback safety during deployments](https://aws.amazon.com/builders-library/ensuring-rollback-safety-during-deployments/)
+- [Instrumenting distributed systems for operational visibility](https://aws.amazon.com/builders-library/instrumenting-distributed-systems-for-operational-visibility/)
+
+## Whitepapers
 - [Disaster Recovery of Workloads on AWS: Recovery in the Cloud](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-workloads-on-aws/disaster-recovery-workloads-on-aws.html)
-- [Disaster Recovery of On-Premises Applications to AWS](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-of-on-premises-applications-to-aws/abstract-and-introduction.html)
+- [Disaster Recovery of On-Premises Application to AWS](https://docs.aws.amazon.com/whitepapers/latest/disaster-recovery-of-on-premises-applications-to-aws/abstract-and-introduction.html)
 - [Operational Readiness Reviews (ORR)](https://docs.aws.amazon.com/wellarchitected/latest/operational-readiness-reviews/wa-operational-readiness-reviews.html)

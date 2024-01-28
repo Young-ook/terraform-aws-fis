@@ -384,6 +384,7 @@ terraform destroy -var-file fixture.tc1.tfvars
 - [Using AWS Resilience Hub with Microservices](https://youtu.be/oWCzzYLGLoY)
 
 ## AWS Fault Injection Service
+- [AWS Fault Injection Simulator – Use Controlled Experiments to Boost Resilience](https://aws.amazon.com/blogs/aws/aws-fault-injection-simulator-use-controlled-experiments-to-boost-resilience/)
 - [Chaos Testing with AWS Fault Injection Simulator and AWS CodePipeline](https://aws.amazon.com/blogs/architecture/chaos-testing-with-aws-fault-injection-simulator-and-aws-codepipeline/)
 - [Increase your e-commerce website reliability using chaos engineering and AWS Fault Injection Simulator](https://aws.amazon.com/blogs/devops/increase-e-commerce-reliability-using-chaos-engineering-with-aws-fault-injection-simulator/)
 - [AWS Fault Injection Simulator - Use controlled experiments to boost resilience](https://aws.amazon.com/blogs/aws/aws-fault-injection-simulator-use-controlled-experiments-to-boost-resilience/)
@@ -391,12 +392,13 @@ terraform destroy -var-file fixture.tc1.tfvars
 - [Use AWS Fault Injection Service to demonstrate multi-region and multi-AZ application resilience](https://aws.amazon.com/blogs/aws/use-aws-fault-injection-service-to-demonstrate-multi-region-and-multi-az-application-resilience/)
 
 ## Chaos Engineering
-### Chaos Mesh
-- [Simulate Kubernetes Resource Stress Test](https://chaos-mesh.org/docs/simulate-heavy-stress-on-kubernetes/) 
-- [Simulate AWS Faults](https://chaos-mesh.org/docs/simulate-aws-chaos/)
-
-### Chaos Lambda
+- [Chaos Mesh: Simulate Kubernetes Resource Stress Test](https://chaos-mesh.org/docs/simulate-heavy-stress-on-kubernetes/)
+- [Chaos Mesh: Simulate AWS Faults](https://chaos-mesh.org/docs/simulate-aws-chaos/)
+- [Chaos Monkey](https://github.com/Netflix/chaosmonkey)
 - [Chaos Lambda](https://github.com/artilleryio/chaos-lambda): Serverless implementation of Netflix's [Chaos Monkey](https://github.com/Netflix/SimianArmy/wiki/Chaos-Monkey)
+- [Gremlin: A Step-by-Step Guide to Creating Failure on AWS](https://www.gremlin.com/chaos-monkey/chaos-monkey-tutorial/)
+- [Gremlin: Comparing Chaos Engineering tools](https://www.gremlin.com/community/tutorials/chaos-engineering-tools-comparison/)
+- [Gremlin: AWS Marketplace DevOps Workshop Series Hands-on Lab with Gremlin](https://gremlin.awsworkshop.io/)
 
 ## Performance Engineering
 - [Packets-per-second limits in EC2](https://stressgrid.com/blog/pps_limits_in_ec2/)
@@ -408,7 +410,7 @@ terraform destroy -var-file fixture.tc1.tfvars
 - [Penetration Testing](https://aws.amazon.com/security/penetration-testing/)
 
 ## Terraform Modules
-- [Terraform module: Amazon Aurora](https://github.com/Young-ook/terraform-aws-aurora)
-- [Terraform module: Amazon EKS](https://github.com/Young-ook/terraform-aws-eks)
-- [Terraform module: AWS Systems Manager](https://github.com/Young-ook/terraform-aws-ssm)
-- [Terraform module: Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker)
+- [Terraform Module: Amazon Aurora](https://github.com/Young-ook/terraform-aws-aurora)
+- [Terraform Module: Amazon EKS](https://github.com/Young-ook/terraform-aws-eks)
+- [Terraform Module: AWS Systems Manager](https://github.com/Young-ook/terraform-aws-ssm)
+- [Terraform Module: Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker)
