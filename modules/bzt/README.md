@@ -130,3 +130,6 @@ Options:
 
 ![aws-ssm-bzt-dashboard](../../images/aws-ssm-bzt-dashboard.png)
 ![aws-ssm-bzt-log](../../images/aws-ssm-bzt-log.png)
+
+# Additional Resources
+- [Distributed Load Testing on AWS](https://github.com/aws-solutions/distributed-load-testing-on-aws)
