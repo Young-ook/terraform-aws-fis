@@ -378,3 +378,6 @@ Make sure the game 2048 application is removed from the kubernetes cluster befor
 │ 	status code: 400, request id: f76a5dc7-0107-4847-a006-4c4e46be9720
 ╵
 ```
+
+# Additional Resources
+- [SockShop Microservices Application](https://github.com/microservices-demo/microservices-demo)

@@ -370,26 +370,48 @@ terraform destroy -var-file fixture.tc1.tfvars
 ```
 
 # Additional Resources
-## Amazon Route 53 Application Recovery Controller
+## Amazon CloudWatch
+- [Communicate monitoring information by sharing Amazon CloudWatch dashboards](https://aws.amazon.com/ko/blogs/mt/communicate-monitoring-information-by-sharing-amazon-cloudwatch-dashboards/)
+- [Amazon CloudWatch Percentiles on Amazon S3 brings more precision to tracking application response time metrics](https://aws.amazon.com/blogs/storage/amazon-s3-cloudwatch-percentiles/)
+- [Monitoring and understanding Amazon EBS performance using Amazon CloudWatch](https://aws.amazon.com/blogs/storage/valuable-tips-for-monitoring-and-understanding-amazon-ebs-performance-using-amazon-cloudwatch/)
+- [New – Real-User Monitoring for Amazon CloudWatch](https://aws.amazon.com/blogs/aws/cloudwatch-rum/)
+- [One Observability Workshop](https://catalog.workshops.aws/observability/en-US)
+- [AWS Observability Project](https://github.com/aws-observability)
+- [AWS Distro for OpenTelemetry](https://aws-otel.github.io/)
+
+## Amazon DocumentDB
+- [Building resilient applications with Amazon DocumentDB (with MongoDB compatibility), Part 1: Client configuration](https://aws.amazon.com/blogs/database/building-resilient-applications-with-amazon-documentdb-with-mongodb-compatibility-part-1-client-configuration/)
+- [Building resilient applications with Amazon DocumentDB (with MongoDB compatibility), Part 2: Exception handling](https://aws.amazon.com/blogs/database/building-resilient-applications-with-amazon-documentdb-with-mongodb-compatibility-part-2-exception-handling/)
+
+## Amazon EC2
+- [Introducing Native Support for Predictive Scaling with Amazon EC2 Auto Scaling](https://aws.amazon.com/blogs/compute/introducing-native-support-for-predictive-scaling-with-amazon-ec2-auto-scaling/)
+- [Amazon EC2 Testing Policy](https://aws.amazon.com/ec2/testing/)
+
+## Amazon RDS
+- [Perform Chaos Testing on your Amazon Aurora Cluster](https://aws.amazon.com/blogs/architecture/perform-chaos-testing-on-your-amazon-aurora-cluster/)
+
+## Amazon Route 53 Application Recovery Controller (ARC)
 - [Introducing Amazon Route 53 Application Recovery Controller](https://aws.amazon.com/blogs/aws/amazon-route-53-application-recovery-controller/)
 - [Building highly resilient applications using Amazon Route 53 Application Recovery Controller, Part 1: Single-Region stack](https://aws.amazon.com/blogs/networking-and-content-delivery/building-highly-resilient-applications-using-amazon-route-53-application-recovery-controller-part-1-single-region-stack/)
 - [Building highly resilient applications using Amazon Route 53 Application Recovery Controller, Part 2: Multi-Region stack](https://aws.amazon.com/blogs/networking-and-content-delivery/building-highly-resilient-applications-using-amazon-route-53-application-recovery-controller-part-2-multi-region-stack/)
 
-## AWS Resilience Hub
+## AWS Resilience Hub (Fault Injection Service)
 ![aws-resilience-hub](../../images/aws-resilience-hub.png)
-- [How to use Resilience Hub’s Fault Injection Experiments to test application’s resilience](https://aws.amazon.com/blogs/mt/how-to-use-resiliency-hubs-fault-injection-experiments-to-test-applications-resilience/)
+- [Building Resilient Well-Architected Workloads Using AWS Resilience Hub](https://aws.amazon.com/blogs/architecture/building-resilient-well-architected-workloads-using-aws-resilience-hub/)
 - [Manage Application Resilience with AWS Resilience Hub, Part 1](https://youtu.be/Hp9waMg2258)
 - [Manage Application Resilience with AWS Resilience Hub, Part 2](https://youtu.be/NTvtkWlosjo)
 - [Manage Cross-Account Resources in AWS Resilience Hub](https://youtu.be/HU26PSkcIr4)
 - [Using AWS Resilience Hub with Microservices](https://youtu.be/oWCzzYLGLoY)
-
-## AWS Fault Injection Service
+- [How to use Resilience Hub’s Fault Injection Experiments to test application’s resilience](https://aws.amazon.com/blogs/mt/how-to-use-resiliency-hubs-fault-injection-experiments-to-test-applications-resilience/)
 - [AWS Fault Injection Simulator – Use Controlled Experiments to Boost Resilience](https://aws.amazon.com/blogs/aws/aws-fault-injection-simulator-use-controlled-experiments-to-boost-resilience/)
 - [Chaos Testing with AWS Fault Injection Simulator and AWS CodePipeline](https://aws.amazon.com/blogs/architecture/chaos-testing-with-aws-fault-injection-simulator-and-aws-codepipeline/)
 - [Increase your e-commerce website reliability using chaos engineering and AWS Fault Injection Simulator](https://aws.amazon.com/blogs/devops/increase-e-commerce-reliability-using-chaos-engineering-with-aws-fault-injection-simulator/)
 - [AWS Fault Injection Simulator - Use controlled experiments to boost resilience](https://aws.amazon.com/blogs/aws/aws-fault-injection-simulator-use-controlled-experiments-to-boost-resilience/)
 - [AWS Lambda: Resilience under the hood](https://aws.amazon.com/blogs/compute/aws-lambda-resilience-under-the-hood/)
 - [Use AWS Fault Injection Service to demonstrate multi-region and multi-AZ application resilience](https://aws.amazon.com/blogs/aws/use-aws-fault-injection-service-to-demonstrate-multi-region-and-multi-az-application-resilience/)
+- [AWS FIS Experiment Template Examples](https://docs.aws.amazon.com/fis/latest/userguide/experiment-template-example.html)
+- [Workshop: Chaos Engineering on AWS](https://catalog.us-east-1.prod.workshops.aws/workshops/5fc0039f-9f15-47f8-aff0-09dc7b1779ee/en-US)
+- [Workshop: Disaster Recovery on AWS](https://disaster-recovery.workshop.aws/en/)
 
 ## Chaos Engineering
 - [Chaos Mesh: Simulate Kubernetes Resource Stress Test](https://chaos-mesh.org/docs/simulate-heavy-stress-on-kubernetes/)
@@ -398,7 +420,8 @@ terraform destroy -var-file fixture.tc1.tfvars
 - [Chaos Lambda](https://github.com/artilleryio/chaos-lambda): Serverless implementation of Netflix's [Chaos Monkey](https://github.com/Netflix/SimianArmy/wiki/Chaos-Monkey)
 - [Gremlin: A Step-by-Step Guide to Creating Failure on AWS](https://www.gremlin.com/chaos-monkey/chaos-monkey-tutorial/)
 - [Gremlin: Comparing Chaos Engineering tools](https://www.gremlin.com/community/tutorials/chaos-engineering-tools-comparison/)
-- [Gremlin: AWS Marketplace DevOps Workshop Series Hands-on Lab with Gremlin](https://gremlin.awsworkshop.io/)
+- [AWS Marketplace DevOps Workshop with Gremlin](https://gremlin.awsworkshop.io/)
+- [AWS DevOps Partners Workshop - GitLab, HashiCorp, Gremlin](https://ghg.awsworkshop.io/)
 
 ## Performance Engineering
 - [Packets-per-second limits in EC2](https://stressgrid.com/blog/pps_limits_in_ec2/)
