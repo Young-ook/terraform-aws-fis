@@ -419,7 +419,8 @@ terraform destroy -var-file fixture.tc1.tfvars
 - [Chaos Lambda](https://github.com/artilleryio/chaos-lambda): Serverless implementation of Netflix's [Chaos Monkey](https://github.com/Netflix/SimianArmy/wiki/Chaos-Monkey)
 - [Gremlin: A Step-by-Step Guide to Creating Failure on AWS](https://www.gremlin.com/chaos-monkey/chaos-monkey-tutorial/)
 - [Gremlin: Comparing Chaos Engineering tools](https://www.gremlin.com/community/tutorials/chaos-engineering-tools-comparison/)
-- [Gremlin: AWS Marketplace DevOps Workshop Series Hands-on Lab with Gremlin](https://gremlin.awsworkshop.io/)
+- [AWS Marketplace DevOps Workshop with Gremlin](https://gremlin.awsworkshop.io/)
+- [AWS DevOps Partners Workshop - GitLab, HashiCorp, Gremlin](https://ghg.awsworkshop.io/)
 
 ## Performance Engineering
 - [Packets-per-second limits in EC2](https://stressgrid.com/blog/pps_limits_in_ec2/)
