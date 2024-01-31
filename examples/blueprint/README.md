@@ -370,11 +370,20 @@ terraform destroy -var-file fixture.tc1.tfvars
 ```
 
 # Additional Resources
+## Amazon CloudWatch
+- [Communicate monitoring information by sharing Amazon CloudWatch dashboards](https://aws.amazon.com/ko/blogs/mt/communicate-monitoring-information-by-sharing-amazon-cloudwatch-dashboards/)
+- [Amazon CloudWatch Percentiles on Amazon S3 brings more precision to tracking application response time metrics](https://aws.amazon.com/blogs/storage/amazon-s3-cloudwatch-percentiles/)
+- [Monitoring and understanding Amazon EBS performance using Amazon CloudWatch](https://aws.amazon.com/blogs/storage/valuable-tips-for-monitoring-and-understanding-amazon-ebs-performance-using-amazon-cloudwatch/)
+- [New – Real-User Monitoring for Amazon CloudWatch](https://aws.amazon.com/blogs/aws/cloudwatch-rum/)
+- [One Observability Workshop](https://catalog.workshops.aws/observability/en-US)
+- [AWS Observability Project](https://github.com/aws-observability)
+- [AWS Distro for OpenTelemetry](https://aws-otel.github.io/)
+
 ## Amazon EC2
 - [Introducing Native Support for Predictive Scaling with Amazon EC2 Auto Scaling](https://aws.amazon.com/blogs/compute/introducing-native-support-for-predictive-scaling-with-amazon-ec2-auto-scaling/)
 - [Amazon EC2 Testing Policy](https://aws.amazon.com/ec2/testing/)
 
-## Amazon Route 53 Application Recovery Controller
+## Amazon Route 53 Application Recovery Controller (ARC)
 - [Introducing Amazon Route 53 Application Recovery Controller](https://aws.amazon.com/blogs/aws/amazon-route-53-application-recovery-controller/)
 - [Building highly resilient applications using Amazon Route 53 Application Recovery Controller, Part 1: Single-Region stack](https://aws.amazon.com/blogs/networking-and-content-delivery/building-highly-resilient-applications-using-amazon-route-53-application-recovery-controller-part-1-single-region-stack/)
 - [Building highly resilient applications using Amazon Route 53 Application Recovery Controller, Part 2: Multi-Region stack](https://aws.amazon.com/blogs/networking-and-content-delivery/building-highly-resilient-applications-using-amazon-route-53-application-recovery-controller-part-2-multi-region-stack/)
@@ -409,8 +418,6 @@ terraform destroy -var-file fixture.tc1.tfvars
 - [EC2 Packets per Second: Guaranteed Throughput vs Best Effort](https://www.bluematador.com/blog/ec2-packets-per-second-guaranteed-throughput-vs-best-effort)
 - [Amazon EC2 instance network bandwidth](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-network-bandwidth.html)
 - [Monitor network performance for your EC2 instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-network-performance-ena.html)
-- [One Observability Workshop](https://catalog.workshops.aws/observability/en-US)
-- [Communicate monitoring information by sharing Amazon CloudWatch dashboards](https://aws.amazon.com/ko/blogs/mt/communicate-monitoring-information-by-sharing-amazon-cloudwatch-dashboards/)
 
 ## Security Engineering
 - [Penetration Testing](https://aws.amazon.com/security/penetration-testing/)
