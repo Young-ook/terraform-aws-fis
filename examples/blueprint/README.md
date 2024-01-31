@@ -379,6 +379,10 @@ terraform destroy -var-file fixture.tc1.tfvars
 - [AWS Observability Project](https://github.com/aws-observability)
 - [AWS Distro for OpenTelemetry](https://aws-otel.github.io/)
 
+## Amazon DocumentDB
+- [Building resilient applications with Amazon DocumentDB (with MongoDB compatibility), Part 1: Client configuration](https://aws.amazon.com/blogs/database/building-resilient-applications-with-amazon-documentdb-with-mongodb-compatibility-part-1-client-configuration/)
+- [Building resilient applications with Amazon DocumentDB (with MongoDB compatibility), Part 2: Exception handling](https://aws.amazon.com/blogs/database/building-resilient-applications-with-amazon-documentdb-with-mongodb-compatibility-part-2-exception-handling/)
+
 ## Amazon EC2
 - [Introducing Native Support for Predictive Scaling with Amazon EC2 Auto Scaling](https://aws.amazon.com/blogs/compute/introducing-native-support-for-predictive-scaling-with-amazon-ec2-auto-scaling/)
 - [Amazon EC2 Testing Policy](https://aws.amazon.com/ec2/testing/)
