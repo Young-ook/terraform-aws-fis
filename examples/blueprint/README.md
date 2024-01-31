@@ -392,6 +392,8 @@ terraform destroy -var-file fixture.tc1.tfvars
 - [AWS Fault Injection Simulator - Use controlled experiments to boost resilience](https://aws.amazon.com/blogs/aws/aws-fault-injection-simulator-use-controlled-experiments-to-boost-resilience/)
 - [AWS Lambda: Resilience under the hood](https://aws.amazon.com/blogs/compute/aws-lambda-resilience-under-the-hood/)
 - [Use AWS Fault Injection Service to demonstrate multi-region and multi-AZ application resilience](https://aws.amazon.com/blogs/aws/use-aws-fault-injection-service-to-demonstrate-multi-region-and-multi-az-application-resilience/)
+- [Workshop: Chaos Engineering on AWS](https://catalog.us-east-1.prod.workshops.aws/workshops/5fc0039f-9f15-47f8-aff0-09dc7b1779ee/en-US)
+- [Workshop: Disaster Recovery on AWS](https://disaster-recovery.workshop.aws/en/)
 
 ## Chaos Engineering
 - [Chaos Mesh: Simulate Kubernetes Resource Stress Test](https://chaos-mesh.org/docs/simulate-heavy-stress-on-kubernetes/)
@@ -407,6 +409,8 @@ terraform destroy -var-file fixture.tc1.tfvars
 - [EC2 Packets per Second: Guaranteed Throughput vs Best Effort](https://www.bluematador.com/blog/ec2-packets-per-second-guaranteed-throughput-vs-best-effort)
 - [Amazon EC2 instance network bandwidth](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-network-bandwidth.html)
 - [Monitor network performance for your EC2 instance](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/monitoring-network-performance-ena.html)
+- [One Observability Workshop](https://catalog.workshops.aws/observability/en-US)
+- [Communicate monitoring information by sharing Amazon CloudWatch dashboards](https://aws.amazon.com/ko/blogs/mt/communicate-monitoring-information-by-sharing-amazon-cloudwatch-dashboards/)
 
 ## Security Engineering
 - [Penetration Testing](https://aws.amazon.com/security/penetration-testing/)
