@@ -372,6 +372,7 @@ terraform destroy -var-file fixture.tc1.tfvars
 # Additional Resources
 ## Amazon EC2
 - [Introducing Native Support for Predictive Scaling with Amazon EC2 Auto Scaling](https://aws.amazon.com/blogs/compute/introducing-native-support-for-predictive-scaling-with-amazon-ec2-auto-scaling/)
+- [Amazon EC2 Testing Policy](https://aws.amazon.com/ec2/testing/)
 
 ## Amazon Route 53 Application Recovery Controller
 - [Introducing Amazon Route 53 Application Recovery Controller](https://aws.amazon.com/blogs/aws/amazon-route-53-application-recovery-controller/)
