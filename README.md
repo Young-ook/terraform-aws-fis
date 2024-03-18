@@ -95,6 +95,9 @@ module.awsfis.null_resource.awsfis-init (local-exec): Unknown parameter in input
 ## Google Site Reliability Engineering (SRE)
 - [SRE Books](https://sre.google/books/)
 
+## Netflix
+- [Project Nimble: Region Evacuation Reimagined](https://netflixtechblog.com/project-nimble-region-evacuation-reimagined-d0d0568254d4)
+
 ## Well-Architected
 - [Azure Well-Architected](https://learn.microsoft.com/en-us/azure/well-architected/)
 - [AWS Well-Architected](https://aws.amazon.com/architecture/well-architected/)
