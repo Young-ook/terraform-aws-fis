@@ -72,7 +72,7 @@ The experiment we’ll run is to verify and fine-tune our application availabili
    - [ ] No Impact
    - [ ] Degraded Performance
    - [ ] Service Outage
-   - [ ] Impproved Performance
+   - [ ] Improved Performance
 + Probes:
    - Type: CloudWatch Metric
    - Status: `service_number_of_running_pods` is greater than 0
@@ -194,7 +194,7 @@ First of all, we need to define steady state of the service. This means the serv
    - [ ] No Impact
    - [ ] Degraded Performance
    - [ ] Service Outage
-   - [ ] Impproved Performance
+   - [ ] Improved Performance
 + Probes:
    - Type: CloudWatch Metric
    - Status: `p90`
@@ -229,7 +229,7 @@ First of all, we need to define steady state of the service. This means the serv
    - [ ] No Impact
    - [ ] Degraded Performance
    - [ ] Service Outage
-   - [ ] Impproved Performance
+   - [ ] Improved Performance
 + Probes:
    - Type: CloudWatch Metric
    - Status: `p90`
@@ -274,7 +274,7 @@ First of all, we need to define steady state of the service. This means the serv
    - [ ] No Impact
    - [ ] Degraded Performance
    - [ ] Service Outage
-   - [ ] Impproved Performance
+   - [ ] Improved Performance
 + Probes:
    - Type: CloudWatch Metric
    - Status: `p90`
@@ -334,7 +334,7 @@ First of all, we need to define steady state of the service. This means the serv
    - [ ] No Impact
    - [ ] Degraded Performance
    - [ ] Service Outage
-   - [ ] Impproved Performance
+   - [ ] Improved Performance
 + Probes:
    - Type: CloudWatch Metric
    - Status: `p90`
