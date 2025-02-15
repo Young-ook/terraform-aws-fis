@@ -67,7 +67,7 @@ tfenv install latest
 tfenv use <version>
 ```
 
-# Experiments
+# Examples
 - [AWS FIS Blueprint](https://github.com/Young-ook/terraform-aws-fis/tree/main/examples/blueprint)
 - [Application Modernization with Spinnaker](https://github.com/Young-ook/terraform-aws-spinnaker/tree/main/examples/aws-modernization-with-spinnaker)
 - [Chaos Engineering with AWS FIS Hands-on Lab](https://catalog.us-east-1.prod.workshops.aws/workshops/7379e94f-6981-4dd8-bb46-8ec4aff3a825/ko-KR)
