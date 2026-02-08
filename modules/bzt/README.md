@@ -1,3 +1,6 @@
+> [!NOTE]
+> Load Testing with Taurus example is moved to [terraform-aws-ec2](https://github.com/Young-ook/terraform-aws-ec2/blob/main/examples/blueprint/apps/README.md#load-test-taurus-by-blazemeter) repo.
+
 # Taurus by BlazeMeter
 [Taurus](https://gettaurus.org/) is a integrated load testing tool that hides the complexity of performance and functional tests with an automation-friendly convenience wrapper. Taurus relies on JMeter, Gatling, Locust.io, and Selenium WebDriver as its underlying tools.
 
